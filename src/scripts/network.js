@@ -41,7 +41,7 @@ export function initNetwork(root) {
     const pos = {};
     if (!vertical) {
       const x0 = pad + 40;
-      const x1 = W - pad - 40;
+      const x1 = W - pad - 170; // columna libre a la derecha para Other stuff
       const yTop = 72;
       const rowGap = Math.min(52, (H * 0.5) / nRows);
       experiences.forEach((e) => {
@@ -217,8 +217,15 @@ export function initNetwork(root) {
       document.querySelector(inside.href)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
       return;
     }
-    const id = inside.kind === 'archive' ? `bubble-${inside.group}` : 'bubble-other';
-    const dialog = document.getElementById(id);
+    openBubble(document.getElementById(`bubble-${inside.group}`), g);
+  }
+
+  root.querySelector('[data-open-other]')?.addEventListener('click', (ev) => {
+    openBubble(document.getElementById('bubble-other'), ev.currentTarget);
+  });
+
+  // Abre el diálogo como un círculo que crece desde el elemento pulsado.
+  function openBubble(dialog, g) {
     const b = g.getBoundingClientRect();
     dialog.style.setProperty('--x', `${b.left + b.width / 2}px`);
     dialog.style.setProperty('--y', `${b.top + b.height / 2}px`);

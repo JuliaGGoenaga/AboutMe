@@ -1,0 +1,195 @@
+---
+// Las tres líneas como tres círculos que se solapan: el solape es el tema del PhD.
+// Al pasar el ratón, enfocar o tocar una burbuja, su detalle aparece al lado.
+import { lines } from '../data/content';
+
+// Centros de los círculos en un lienzo de 600 x 560 (triángulo equilátero).
+const centers = [
+  { x: 210, y: 210 },
+  { x: 390, y: 210 },
+  { x: 300, y: 366 },
+];
+const R = 165;
+// Posición de cada título, empujado hacia fuera del solape.
+const labels = [
+  { x: 150, y: 160 },
+  { x: 450, y: 160 },
+  { x: 300, y: 450 },
+];
+---
+
+<div class="lines" data-lines>
+  <div class="venn">
+    <svg viewBox="0 0 600 560" aria-hidden="true">
+      {centers.map((c, i) => <circle class="disc" data-i={i} cx={c.x} cy={c.y} r={R} />)}
+    </svg>
+    {
+      lines.map((l, i) => (
+        <button
+          type="button"
+          class="label"
+          data-i={i}
+          aria-controls="line-detail"
+          aria-pressed={i === 0 ? 'true' : 'false'}
+          style={`left:${(labels[i].x / 600) * 100}%;top:${(labels[i].y / 560) * 100}%`}
+        >
+          {l.title}
+        </button>
+      ))
+    }
+    <p class="core" style={`left:50%;top:${(262 / 560) * 100}%`}>
+      <span>PhD</span>
+      Humanizing decarbonization
+    </p>
+  </div>
+
+  <div class="detail" id="line-detail" aria-live="polite">
+    {
+      lines.map((l, i) => (
+        <div class="panel" data-i={i} hidden={i !== 0}>
+          <h3>{l.title}</h3>
+          <p>{l.summary}</p>
+          <ul>
+            {l.work.map((w) => (
+              <li>{w}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-lines]').forEach((root) => {
+    const discs = root.querySelectorAll<SVGCircleElement>('.disc');
+    const labels = root.querySelectorAll<HTMLButtonElement>('.label');
+    const panels = root.querySelectorAll<HTMLElement>('.panel');
+    const show = (i: number) => {
+      root.dataset.active = String(i);
+      discs.forEach((d) => d.classList.toggle('on', d.dataset.i === String(i)));
+      labels.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.i === String(i))));
+      panels.forEach((p) => (p.hidden = p.dataset.i !== String(i)));
+    };
+    const pick = (el: Element) => show(Number((el as HTMLElement).dataset.i));
+    labels.forEach((b) => {
+      b.addEventListener('mouseenter', () => pick(b));
+      b.addEventListener('focus', () => pick(b));
+      b.addEventListener('click', () => pick(b));
+    });
+    discs.forEach((d) => {
+      d.addEventListener('mouseenter', () => pick(d));
+      d.addEventListener('click', () => pick(d));
+    });
+    show(0);
+  });
+</script>
+
+<style>
+  .lines {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 32px 56px;
+    align-items: center;
+    margin-top: 48px;
+  }
+  .venn {
+    position: relative;
+    max-width: 640px;
+    width: 100%;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .disc {
+    fill: var(--paper-2);
+    fill-opacity: 0.35;
+    stroke: var(--ink);
+    stroke-width: 1;
+    cursor: pointer;
+    transition:
+      fill 0.3s ease,
+      fill-opacity 0.3s ease,
+      stroke-width 0.3s ease;
+    mix-blend-mode: multiply;
+  }
+  .disc.on {
+    fill: var(--minio);
+    fill-opacity: 0.12;
+    stroke: var(--minio);
+    stroke-width: 2;
+  }
+  .label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 11em;
+    padding: 6px;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: clamp(15px, 1.6vw, 20px);
+    font-weight: 540;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-align: center;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .label[aria-pressed='true'] {
+    color: var(--minio);
+  }
+  .core {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 8.5em;
+    margin: 0;
+    text-align: center;
+    font-size: clamp(11px, 1.05vw, 13px);
+    line-height: 1.25;
+    color: var(--ink-2);
+    pointer-events: none;
+  }
+  .core span {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-3);
+  }
+
+  .detail {
+    min-height: 16em;
+  }
+  .panel h3 {
+    margin: 0;
+    font-size: clamp(24px, 2.4vw, 32px);
+    font-weight: 560;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+  }
+  .panel p {
+    margin: 14px 0 0;
+    color: var(--ink-2);
+    max-width: 48ch;
+  }
+  .panel ul {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--ink);
+  }
+  .panel li {
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  @media (max-width: 860px) {
+    .lines {
+      grid-template-columns: 1fr;
+    }
+    .detail {
+      min-height: 0;
+    }
+  }
+</style>

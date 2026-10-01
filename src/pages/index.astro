@@ -2,11 +2,11 @@
 import Base from '../layouts/Base.astro';
 import Soleamiento from '../components/Soleamiento.astro';
 import Network from '../components/Network.astro';
-import { lines, professional, publications, contact, archiveGroups } from '../data/content';
+import Lines from '../components/Lines.astro';
+import { professional, publications, contact, archiveGroups } from '../data/content';
 import { url } from '../lib/images';
 
 const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida', 'ETSAM, Universidad Politécnica de Madrid'];
-const lineTitle = Object.fromEntries(lines.map((l) => [l.id, l.title]));
 ---
 
 <Base
@@ -29,35 +29,32 @@ const lineTitle = Object.fromEntries(lines.map((l) => [l.id, l.title]));
       </p>
     </div>
 
-    <ol class="lines">
-      {
-        lines.map((l) => (
-          <li class="line">
-            <h3>{l.title}</h3>
-            <p>{l.summary}</p>
-            <ul class="work">
-              {l.work.map((w) => (
-                <li>{w}</li>
-              ))}
-            </ul>
-          </li>
-        ))
-      }
-    </ol>
+    <Lines />
   </section>
 
   <Network />
 
   <section id="projects" class="section">
     <h2>Projects</h2>
-    <p class="lead">Professional work at IDOM. Full case studies are on their way.</p>
+    <p class="lead">My work at IDOM: two fields I work in, a project and a tool I have developed.</p>
+    <ul class="fields">
+      {
+        professional.filter((p) => p.kind === 'Field of work').map((p) => (
+          <li>
+            <span class="kind">{p.kind}</span>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </li>
+        ))
+      }
+    </ul>
     <ul class="pro">
       {
-        professional.map((p) => (
+        professional.filter((p) => p.kind !== 'Field of work').map((p) => (
           <li>
             <div class="meta">
-              <span>{p.place}</span>
-              <span>{lineTitle[p.line]}</span>
+              <span class="kind">{p.kind}</span>
+              {p.place && <span>{p.place}</span>}
             </div>
             <h3>{p.title}</h3>
             <p>{p.text}</p>
@@ -160,49 +157,43 @@ const lineTitle = Object.fromEntries(lines.map((l) => [l.id, l.title]));
     gap: 0;
   }
 
-  /* Líneas: tres bandas a todo el ancho, no tarjetas */
-  .lines {
+  /* Trabajo en IDOM: campos a todo el ancho, proyecto y herramienta debajo */
+  .fields {
     list-style: none;
-    margin: 56px 0 0;
+    margin: 48px 0 0;
     padding: 0;
-  }
-  .line {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr);
-    gap: 16px 40px;
-    padding: 28px 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 32px;
+  }
+  .fields li {
+    padding: 24px 0 28px;
     border-top: 1px solid var(--ink);
   }
-  .line h3 {
-    margin: 0;
-    font-size: clamp(22px, 2.2vw, 30px);
-    font-weight: 540;
+  .fields h3 {
+    margin: 8px 0 8px;
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: 560;
     letter-spacing: -0.015em;
-    line-height: 1.15;
   }
-  .line > p {
+  .fields p {
     margin: 0;
     color: var(--ink-2);
+    max-width: 52ch;
   }
-  .work {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    font-size: 15px;
+  .kind {
+    font-size: 13px;
+    color: var(--minio);
   }
-  .work li {
-    padding: 2px 0;
-  }
-  @media (max-width: 860px) {
-    .line {
+  @media (max-width: 760px) {
+    .fields {
       grid-template-columns: 1fr;
     }
   }
-
   /* Proyectos profesionales */
   .pro {
     list-style: none;
-    margin: 48px 0 0;
+    margin: 24px 0 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));

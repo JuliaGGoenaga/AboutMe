@@ -2,7 +2,9 @@
 // o un nodo de la trayectoria, basta con editar estas listas.
 // `TODO` marca datos pendientes de confirmar con Julia.
 
-const WIX = 'https://a11f4610-8827-40c7-955d-eb4f80add051.filesusr.com/ugd/eb6b7d_';
+// PDFs grandes: carpeta "Web portfolio - PDFs" en el Google Drive de Julia
+// (compartida como "Cualquier persona con el enlace").
+const drive = (id: string) => `https://drive.google.com/file/d/${id}/view`;
 
 // --- Líneas de trabajo ------------------------------------------------------
 
@@ -65,7 +67,7 @@ export type Experience = {
   end?: number; // sin `end` = sigue hoy
   place: string;
   links: [string, number][];
-  inside?: { kind: 'archive'; group: 'etsam' | 'unav' } | { kind: 'other' } | { kind: 'section'; href: string };
+  inside?: { kind: 'archive'; group: 'etsam' | 'unav' } | { kind: 'section'; href: string };
 };
 
 export const experiences: Experience[] = [
@@ -95,33 +97,17 @@ export const experiences: Experience[] = [
     detail: 'Sustainability and computational design. Digital transformation group',
     start: 2022, // TODO confirmar
     place: 'Madrid',
-    links: [['carbon', 2022], ['daylight', 2023], ['energy', 2023], ['envelope', 2023], ['computational', 2023], ['digital', 2024], ['ai', 2024]],
+    links: [['carbon', 2022], ['daylight', 2023], ['energy', 2023], ['envelope', 2023], ['computational', 2023], ['digital', 2024], ['ai', 2024], ['teaching', 2024]],
     inside: { kind: 'section', href: '#projects' },
   },
   {
     id: 'phd',
-    label: 'PhD, UNAV and UF',
-    detail: 'Humanizing decarbonization: performance-driven optimization workflow in envelope design',
+    label: 'PhD, UNAV and University of Florida',
+    detail: 'Humanizing decarbonization: performance-driven optimization workflow in envelope design. Research stay at the University of Florida',
     start: 2023, // TODO confirmar
-    place: 'Pamplona and Gainesville',
-    links: [['envelope', 2023], ['daylight', 2023], ['computational', 2024], ['integrated', 2024], ['hci', 2024], ['ai', 2025]],
+    place: 'Pamplona and Florida',
+    links: [['envelope', 2023], ['daylight', 2023], ['computational', 2024], ['integrated', 2024], ['hci', 2024], ['teaching', 2024], ['ai', 2025]],
     inside: { kind: 'section', href: '#research' },
-  },
-  {
-    id: 'uf',
-    label: 'University of Florida',
-    detail: 'Research stay, PhD co-supervision',
-    start: 2025, // TODO confirmar
-    place: 'Florida',
-    links: [['ai', 2025], ['hci', 2025]],
-  },
-  {
-    id: 'universities',
-    label: 'Universities',
-    detail: 'Collaboration in teaching and research',
-    start: 2024, // TODO confirmar
-    place: 'Spain',
-    links: [['teaching', 2024], ['integrated', 2024]],
   },
   {
     id: 'wya',
@@ -131,41 +117,41 @@ export const experiences: Experience[] = [
     place: 'International',
     links: [['teaching', 2020]],
   },
-  {
-    id: 'other',
-    label: 'Other stuff',
-    detail: 'Graphic design: logos, invitations, illustration',
-    start: 2018, // TODO confirmar
-    place: 'Here and there',
-    links: [],
-    inside: { kind: 'other' },
-  },
 ];
 
 export const PRESENT_YEAR = 2026;
 
-// --- Proyectos profesionales (IDOM) ------------------------------------------
+// --- Trabajo en IDOM -----------------------------------------------------------
+// Un proyecto de ejemplo, un desarrollo propio (la herramienta) y dos campos de trabajo.
 // Pendiente de material en "Material web/01 IDOM".
 
-export const professional: { title: string; place: string; text: string; line: LineId }[] = [
+export type ProKind = 'Field of work' | 'Project' | 'Tool';
+
+export const professional: { kind: ProKind; title: string; place?: string; text: string; line: LineId }[] = [
   {
-    title: 'Facade performance analysis',
-    place: 'IDOM',
-    text: 'Development of daylight, solar radiation and energy analyses to inform facade design.',
+    kind: 'Field of work',
+    title: 'Sustainable facades',
+    text: 'Daylight, solar radiation and energy analyses that inform facade design, from early options to the final envelope.',
     line: 'sustainable',
   },
-  { title: 'Project in Germany', place: 'Germany', text: 'Case study in preparation.', line: 'sustainable' }, // TODO
-  { title: 'Project in Denmark', place: 'Denmark', text: 'Case study in preparation.', line: 'sustainable' }, // TODO
   {
-    title: 'Facade design tool',
-    place: 'IDOM',
-    text: 'A computational tool to explore and compare facade options with performance feedback.',
+    kind: 'Field of work',
+    title: 'AI and digital transformation',
+    text: 'Part of the digital transformation group: bringing computational design and AI into everyday design processes across the company.',
     line: 'computational',
   },
   {
-    title: 'Digital transformation group',
+    kind: 'Project',
+    title: 'Facade analysis in practice', // TODO nombre del proyecto
+    place: 'Germany and Denmark', // TODO confirmar
+    text: 'A project case study: how the performance analysis shaped the facade. In preparation.',
+    line: 'sustainable',
+  },
+  {
+    kind: 'Tool',
+    title: 'Facade design tool',
     place: 'IDOM',
-    text: 'Bringing computational design and AI into everyday design processes across the company.',
+    text: 'A computational tool to explore and compare facade options with performance feedback.',
     line: 'computational',
   },
 ];
@@ -223,7 +209,7 @@ export const archive: ArchiveProject[] = [
     text: [
       'A residential tower beside the 25 de Abril bridge, developed down to construction detail: housing typologies, structure and a sustainable facade.',
     ],
-    links: [{ label: 'Full project (PDF)', href: `${WIX}3a9c8385fa384bd088971c70ca884260.pdf` }],
+    links: [{ label: 'Full project (PDF)', href: drive('10Lk0Lgo5KBO8TeU4YpFJEtfvhNcuYyn5') }],
   },
   {
     slug: 'cartagena',
@@ -245,7 +231,7 @@ export const archive: ArchiveProject[] = [
       'A re-naturalisation project for the Lyulin district. Six housing typologies whose interior space changes with the layout of the furniture.',
     ],
     links: [
-      { label: 'Full panel (PDF)', href: `${WIX}99ebabca99fc42988f148d658c82363c.pdf` },
+      { label: 'Full panel (PDF)', href: drive('1XrsKSazPoaX3FuRDZ_TPtUTIidr64rWn') },
       { label: 'Project development', href: 'http://multiplayercity.org/hiri-basoa' },
     ],
   },
@@ -259,7 +245,7 @@ export const archive: ArchiveProject[] = [
     text: [
       'Reuse and revaluation of Javier Carvajal’s structures. The sports space is defined, and connected with the city, by reshaping the contour lines of the terrain.',
     ],
-    links: [{ label: 'More (PDF)', href: `${WIX}faa54ac5cf3e47459dde051ef80da4e3.pdf` }],
+    links: [{ label: 'More (PDF)', href: drive('1Y8H_9L207p6MIWHD0idRdxge2EBjHwE6') }],
   },
   {
     slug: 'macael',
@@ -289,8 +275,8 @@ export const archive: ArchiveProject[] = [
       'A centre where different generations share space and activity. Developed from the basic design to the execution project.',
     ],
     links: [
-      { label: 'Basic design (PDF)', href: `${WIX}5fd17e66e8334fb78fb32f67c811b459.pdf` },
-      { label: 'Execution project (PDF)', href: `${WIX}e2ddb3a0736b495680afe6fb9020e3dc.pdf` },
+      { label: 'Basic design (PDF)', href: drive('19nx9_qIY8pzNDQXJpwBIp0uB24-3ptGG') },
+      { label: 'Execution project (PDF)', href: drive('1PnPXFUim_Ht091Iyrkby_R7SRkQ7mNA2') },
     ],
   },
   {
@@ -307,7 +293,7 @@ export const archive: ArchiveProject[] = [
     links: [
       { label: 'Diario de Navarra', href: 'https://www.diariodenavarra.es/noticias/navarra/2022/07/21/viviendas-palma-disenadas-universidad-navarra-535612-300.html' },
       { label: 'COAM', href: 'https://www.coam.org/es/actualidad/agenda/coam-recomienda/grupo-estudiantes-arquitectura-disenan-viviendas-sostenibles' },
-      { label: 'All the proposals (PDF)', href: `${WIX}cd0f5df2c06c4d7889b80b3f9dd32c11.pdf` },
+      { label: 'All the proposals (PDF)', href: drive('1qeh1wiVfrobVxiIagRaBu1-vOfzt1_zO') },
     ],
     credit: 'Image by another member of the team.',
   },

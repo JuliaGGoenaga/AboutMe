@@ -11,7 +11,9 @@ const groups = (['etsam', 'unav'] as const).map((g) => ({
   items: archive.filter((p) => p.group === g),
   pending: archivePending.filter((p) => p.group === g),
 }));
-const otherImgs = imagesFor('other').slice(0, 8);
+const allOther = imagesFor('other');
+// Primero la boda (foto del sitting e iconos de mesa), luego logos
+const otherImgs = [allOther[20], ...allOther.slice(4, 9), allOther[0], allOther[3]];
 ---
 
 <section id="path" class="network" aria-labelledby="path-title">
@@ -32,6 +34,8 @@ const otherImgs = imagesFor('other').slice(0, 8);
     </header>
     <div class="stage">
       <svg aria-hidden="true"></svg>
+      <!-- Fuera de la línea del tiempo: flota aparte, con el color de acento -->
+      <button type="button" class="floating" data-open-other aria-haspopup="dialog">Other stuff</button>
     </div>
   </div>
 </section>
@@ -95,7 +99,7 @@ const otherImgs = imagesFor('other').slice(0, 8);
         ))
       }
     </ul>
-    <p class="more"><a href={url('other/')}>See everything</a></p>
+    <p class="more"><a href={url('other/#weddings')}>Weddings</a> · <a href={url('other/#logos')}>Logos</a> · <a href={url('other/')}>See everything</a></p>
   </div>
 </dialog>
 
@@ -164,6 +168,51 @@ const otherImgs = imagesFor('other').slice(0, 8);
     font-weight: 560;
     letter-spacing: -0.03em;
     line-height: 1;
+  }
+  .floating {
+    position: absolute;
+    right: 1%;
+    top: 34%;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    border: 1px solid var(--minio);
+    background: color-mix(in srgb, var(--minio) 10%, var(--paper));
+    color: var(--minio);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 560;
+    cursor: pointer;
+    animation: float 6s ease-in-out infinite;
+  }
+  .floating:hover,
+  .floating:focus-visible {
+    background: var(--minio);
+    color: var(--paper);
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(-6px, -10px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .floating {
+      animation: none;
+    }
+  }
+  @media (max-width: 760px) {
+    .floating {
+      width: 84px;
+      height: 84px;
+      font-size: 12.5px;
+      top: auto;
+      bottom: 4%;
+      right: 4%;
+    }
   }
   .controls button,
   .bubble button {

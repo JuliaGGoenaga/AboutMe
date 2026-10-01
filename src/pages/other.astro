@@ -5,6 +5,17 @@ import { contact } from '../data/content';
 import { imagesFor } from '../lib/images';
 
 const imgs = imagesFor('other');
+// 01-04 logos · 05-20 iconos de las mesas del sitting · 21 foto del sitting
+const otherSections = [
+  {
+    id: 'weddings',
+    title: 'Weddings',
+    text: 'Invitations, seating plans and table icons: each table named after a place that mattered to the couple, drawn by hand.',
+    items: [imgs[20], ...imgs.slice(4, 20)],
+    cover: true,
+  },
+  { id: 'logos', title: 'Logos', text: '', items: imgs.slice(0, 4), cover: false },
+];
 ---
 
 <Base title="Other stuff | Julia Gómez Goenaga" description="Graphic design by Julia Gómez Goenaga: logos, invitations and illustration.">
@@ -15,18 +26,21 @@ const imgs = imagesFor('other');
       line drawings. Some of it lives on <a href={contact.instagram}>Instagram</a>.
     </p>
 
-    <section aria-labelledby="misc">
-      <h2 id="misc">Logos, illustrations and events</h2>
-      <ul class="grid">
-        {
-          imgs.map((img, k) => (
-            <li>
-              <Image src={img} alt="" widths={[400, 800]} sizes="(max-width: 700px) 50vw, 25vw" loading={k < 4 ? 'eager' : 'lazy'} />
-            </li>
-          ))
-        }
-      </ul>
-    </section>
+    {
+      otherSections.map((sec) => (
+        <section aria-labelledby={sec.id} id={sec.id}>
+          <h2 id={sec.id}>{sec.title}</h2>
+          {sec.text && <p class="sec-text">{sec.text}</p>}
+          <ul class="grid">
+            {sec.items.map((img, k) => (
+              <li class={sec.cover && k === 0 ? 'photo' : ''}>
+                <Image src={img} alt="" widths={[400, 800, 1200]} sizes="(max-width: 700px) 50vw, 25vw" loading={k < 4 ? 'eager' : 'lazy'} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
   </div>
 </Base>
 
@@ -65,6 +79,20 @@ const imgs = imagesFor('other');
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(220px, 45%), 1fr));
     gap: 16px;
+  }
+  .sec-text {
+    margin: 0;
+    max-width: 60ch;
+    color: var(--ink-2);
+  }
+  .grid .photo {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .grid .photo :global(img) {
+    height: 100%;
+    object-fit: cover;
+    padding: 0;
   }
   .grid :global(img) {
     width: 100%;
