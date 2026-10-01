@@ -197,19 +197,30 @@ const anchors = ['left', 'right', 'bottom'];
     opacity: 1;
     transform: none;
   }
-  /* Cada tarjeta se abre hacia el lado de su círculo, sin tapar su título */
-  .at-left {
-    left: -4%;
-    top: 34%;
+  /* La tarjeta se abre a la izquierda del diagrama, pisando apenas el borde
+     de las burbujas, a la altura del círculo activo */
+  .card {
+    right: 86%;
   }
+  .at-left,
   .at-right {
-    right: -4%;
-    top: 34%;
+    top: 14%;
   }
   .at-bottom {
-    left: 50%;
-    top: 4%;
-    translate: -50% 0;
+    top: 44%;
+  }
+  /* En una sola columna no hay hueco a la izquierda: encima, centrada */
+  @media (max-width: 900px) {
+    .card {
+      right: auto;
+      left: 50%;
+      translate: -50% 0;
+    }
+    .at-left,
+    .at-right,
+    .at-bottom {
+      top: 6%;
+    }
   }
   .card h3 {
     margin: 0;
