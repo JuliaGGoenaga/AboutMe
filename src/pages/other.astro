@@ -1,0 +1,106 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { contact } from '../data/content';
+import { imagesFor } from '../lib/images';
+
+const imgs = imagesFor('other');
+// 05 es el panel de 3 x 10 m del MUN Refugee Challenge
+const panel = imgs[4];
+const rest = imgs.filter((_, i) => i !== 4);
+---
+
+<Base title="Other stuff | Julia Gómez Goenaga" description="Graphic design by Julia Gómez Goenaga: logos, posters, invitations and illustration.">
+  <div class="other">
+    <h1>Other stuff</h1>
+    <p class="lead">
+      Graphic design on the side, for friends, family and causes I care about: logos, posters, wedding invitations and
+      seating plans, and a lot of line drawings. Some of it lives on <a href={contact.instagram}>Instagram</a>.
+    </p>
+
+    <section class="mun" aria-labelledby="mun">
+      <h2 id="mun">MUN Refugee Challenge</h2>
+      <p>
+        A 3 by 10 metre backdrop for the General Assembly of MUN Bilbao 2020, part of the United Nations MUN Refugee
+        Challenge. The image shows the reality of refugees as two sides of the same coin, and asks the viewer to look
+        at it from the other side.
+      </p>
+      <figure class="panel">
+        <Image src={panel} alt="MUN Refugee Challenge backdrop, 3 by 10 metres" widths={[1200, 2400]} sizes="100vw" />
+      </figure>
+    </section>
+
+    <section aria-labelledby="misc">
+      <h2 id="misc">Logos, illustrations and events</h2>
+      <ul class="grid">
+        {
+          rest.map((img, k) => (
+            <li>
+              <Image src={img} alt="" widths={[400, 800]} sizes="(max-width: 700px) 50vw, 25vw" loading={k < 4 ? 'eager' : 'lazy'} />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .other {
+    padding: 112px var(--gutter) 72px;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(48px, 9vw, 128px);
+    font-weight: 560;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+  }
+  .lead {
+    margin: 16px 0 0;
+    max-width: 58ch;
+    font-size: clamp(18px, 1.6vw, 22px);
+    color: var(--ink-2);
+  }
+  section {
+    margin-top: 72px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ink);
+  }
+  h2 {
+    margin: 0 0 12px;
+    font-size: clamp(26px, 3vw, 40px);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+  }
+  .mun p {
+    max-width: 64ch;
+    color: var(--ink-2);
+    margin: 0 0 24px;
+  }
+  figure {
+    margin: 0;
+  }
+  .panel :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .grid {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(220px, 45%), 1fr));
+    gap: 16px;
+  }
+  .grid :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 16px;
+  }
+</style>

@@ -32,7 +32,7 @@ function dayLength(declDeg) {
 function dateFor(declDeg) {
   const f = acos(-declDeg / MAX_DECL) / Math.PI; // 0 = 21 dic, 1 = 21 jun
   const day = new Date(Date.UTC(2025, 11, 21) + f * 182.6 * 864e5);
-  return day.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', timeZone: 'UTC' }).replace('.', '');
+  return day.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 }
 
 export async function initSoleamiento(root) {

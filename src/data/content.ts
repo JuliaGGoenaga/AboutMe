@@ -1,0 +1,363 @@
+// Todo el contenido de la web vive aquí. Para añadir un proyecto, una publicación
+// o un nodo de la trayectoria, basta con editar estas listas.
+// `TODO` marca datos pendientes de confirmar con Julia.
+
+const WIX = 'https://a11f4610-8827-40c7-955d-eb4f80add051.filesusr.com/ugd/eb6b7d_';
+
+// --- Líneas de trabajo ------------------------------------------------------
+
+export type LineId = 'sustainable' | 'computational' | 'integrated';
+
+export const lines: {
+  id: LineId;
+  title: string;
+  summary: string;
+  work: string[];
+}[] = [
+  {
+    id: 'sustainable',
+    title: 'Sustainable architecture',
+    summary:
+      'Daylight and solar radiation analysis and optimization, so that envelopes are designed with performance data from the first sketch.',
+    work: ['Daylight and radiation analysis', 'Energy analysis', 'Facade design', 'Passive design strategies', 'Embodied carbon'],
+  },
+  {
+    id: 'computational',
+    title: 'Computational design and AI',
+    summary:
+      'Computational tools and AI models applied to design, and the digital transformation of design processes inside a large engineering and architecture firm.',
+    work: ['Computational design tools', 'AI model training for design', 'Digital transformation at IDOM'],
+  },
+  {
+    id: 'integrated',
+    title: 'Integrated design and human-computer interaction',
+    summary:
+      'Methods that bring sustainability into the earliest design phases, and simple interactive tools that help architects learn and decide.',
+    work: ['Integrated design methods', 'Simple interactive tools', 'Training architects'],
+  },
+];
+
+// --- Trayectoria: nodos de conocimiento --------------------------------------
+
+export const skills: { id: string; label: string; line: LineId }[] = [
+  { id: 'daylight', label: 'Daylight and radiation', line: 'sustainable' },
+  { id: 'energy', label: 'Energy analysis', line: 'sustainable' },
+  { id: 'envelope', label: 'Envelope and facade design', line: 'sustainable' },
+  { id: 'passive', label: 'Passive design', line: 'sustainable' },
+  { id: 'carbon', label: 'Embodied carbon', line: 'sustainable' },
+  { id: 'computational', label: 'Computational design', line: 'computational' },
+  { id: 'ai', label: 'AI for design', line: 'computational' },
+  { id: 'digital', label: 'Digital transformation', line: 'computational' },
+  { id: 'integrated', label: 'Integrated design', line: 'integrated' },
+  { id: 'hci', label: 'Interactive tools', line: 'integrated' },
+  { id: 'teaching', label: 'Teaching and outreach', line: 'integrated' },
+];
+
+// --- Trayectoria: nodos de experiencia ---------------------------------------
+// `inside` = la burbuja se puede abrir y muestra lo que contiene.
+// `links` = [skill, año en que empieza esa conexión].
+
+export type Experience = {
+  id: string;
+  label: string;
+  detail: string;
+  start: number;
+  end?: number; // sin `end` = sigue hoy
+  place: string;
+  links: [string, number][];
+  inside?: { kind: 'archive'; group: 'etsam' | 'unav' } | { kind: 'other' } | { kind: 'section'; href: string };
+};
+
+export const experiences: Experience[] = [
+  {
+    id: 'etsam',
+    label: 'ETSAM',
+    detail: 'Architecture degree, Universidad Politécnica de Madrid',
+    start: 2016, // TODO confirmar año de inicio
+    end: 2021,
+    place: 'Madrid',
+    links: [['passive', 2019], ['envelope', 2020], ['energy', 2021]],
+    inside: { kind: 'archive', group: 'etsam' },
+  },
+  {
+    id: 'unav-master',
+    label: 'Master, UNAV',
+    detail: "Master's studies, Universidad de Navarra",
+    start: 2021,
+    end: 2023, // TODO confirmar
+    place: 'Pamplona',
+    links: [['energy', 2021], ['passive', 2021], ['carbon', 2022], ['daylight', 2022], ['integrated', 2022]],
+    inside: { kind: 'archive', group: 'unav' },
+  },
+  {
+    id: 'idom',
+    label: 'IDOM',
+    detail: 'Sustainability and computational design. Digital transformation group',
+    start: 2022, // TODO confirmar
+    place: 'Madrid',
+    links: [['carbon', 2022], ['daylight', 2023], ['energy', 2023], ['envelope', 2023], ['computational', 2023], ['digital', 2024], ['ai', 2024]],
+    inside: { kind: 'section', href: '#projects' },
+  },
+  {
+    id: 'phd',
+    label: 'PhD, UNAV and UF',
+    detail: 'Humanizing decarbonization: performance-driven optimization workflow in envelope design',
+    start: 2023, // TODO confirmar
+    place: 'Pamplona and Gainesville',
+    links: [['envelope', 2023], ['daylight', 2023], ['computational', 2024], ['integrated', 2024], ['hci', 2024], ['ai', 2025]],
+    inside: { kind: 'section', href: '#research' },
+  },
+  {
+    id: 'uf',
+    label: 'University of Florida',
+    detail: 'Research stay, PhD co-supervision',
+    start: 2025, // TODO confirmar
+    place: 'Florida',
+    links: [['ai', 2025], ['hci', 2025]],
+  },
+  {
+    id: 'universities',
+    label: 'Universities',
+    detail: 'Collaboration in teaching and research',
+    start: 2024, // TODO confirmar
+    place: 'Spain',
+    links: [['teaching', 2024], ['integrated', 2024]],
+  },
+  {
+    id: 'wya',
+    label: 'World Youth Alliance',
+    detail: 'And other international organisations',
+    start: 2020, // TODO confirmar
+    place: 'International',
+    links: [['teaching', 2020]],
+  },
+  {
+    id: 'other',
+    label: 'Other stuff',
+    detail: 'Graphic design: logos, posters, invitations, illustration',
+    start: 2018, // TODO confirmar
+    place: 'Here and there',
+    links: [],
+    inside: { kind: 'other' },
+  },
+];
+
+export const PRESENT_YEAR = 2026;
+
+// --- Proyectos profesionales (IDOM) ------------------------------------------
+// Pendiente de material en "Material web/01 IDOM".
+
+export const professional: { title: string; place: string; text: string; line: LineId }[] = [
+  {
+    title: 'Facade performance analysis',
+    place: 'IDOM',
+    text: 'Development of daylight, solar radiation and energy analyses to inform facade design.',
+    line: 'sustainable',
+  },
+  { title: 'Project in Germany', place: 'Germany', text: 'Case study in preparation.', line: 'sustainable' }, // TODO
+  { title: 'Project in Denmark', place: 'Denmark', text: 'Case study in preparation.', line: 'sustainable' }, // TODO
+  {
+    title: 'Facade design tool',
+    place: 'IDOM',
+    text: 'A computational tool to explore and compare facade options with performance feedback.',
+    line: 'computational',
+  },
+  {
+    title: 'Digital transformation group',
+    place: 'IDOM',
+    text: 'Bringing computational design and AI into everyday design processes across the company.',
+    line: 'computational',
+  },
+];
+
+// --- Archivo académico -------------------------------------------------------
+
+export type ArchiveProject = {
+  slug: string;
+  group: 'etsam' | 'unav';
+  title: string;
+  subtitle: string;
+  year?: string;
+  place: string;
+  text: string[];
+  links?: { label: string; href: string }[];
+  credit?: string;
+};
+
+export const archiveGroups = {
+  etsam: {
+    title: 'ETSAM',
+    subtitle: 'Architecture degree, Universidad Politécnica de Madrid',
+    years: '2016-2021',
+  },
+  unav: {
+    title: 'Universidad de Navarra',
+    subtitle: "Master's studies",
+    years: '2021-2023',
+  },
+} as const;
+
+export const archive: ArchiveProject[] = [
+  {
+    slug: 'bioperfectible-skin',
+    group: 'etsam',
+    title: 'Bioperfectible skin',
+    subtitle: 'The BioPix envelope as integral architecture. Bachelor thesis',
+    year: '2021',
+    place: 'Madrid',
+    text: [
+      'A study of the BioPix system used on the Andalusian Energy Agency headquarters in Seville by Ruiz Larrea y Asociados: an envelope conceived as the skin of a living organism.',
+      'The thesis catalogues biomimetic facade modules and evaluates their potential to reduce energy demand and to bring ecosystem benefits to energy retrofits. Supervised by Francesca Olivieri.',
+      'Later published as "Piel Bioperfectible. La rehabilitación energética que aporta beneficios ecosistémicos" in Ciudad Sostenible (2022).',
+    ],
+    links: [
+      { label: 'Read the thesis (UPM)', href: 'https://oa.upm.es/68305/' },
+    ],
+  },
+  {
+    slug: 'lisbon',
+    group: 'etsam',
+    title: 'Housing tower in Lisbon',
+    subtitle: 'Next to the 25 de Abril bridge',
+    place: 'Lisbon',
+    text: [
+      'A residential tower beside the 25 de Abril bridge, developed down to construction detail: housing typologies, structure and a sustainable facade.',
+    ],
+    links: [{ label: 'Full project (PDF)', href: `${WIX}3a9c8385fa384bd088971c70ca884260.pdf` }],
+  },
+  {
+    slug: 'cartagena',
+    group: 'etsam',
+    title: 'Fortifications of Cartagena',
+    subtitle: 'A centre for theological studies in the Atalaya Castle',
+    place: 'Cartagena',
+    text: [
+      'A rehabilitation proposal for the fortifications of Cartagena. The new programme settles inside the Atalaya Castle and keeps the traces of time visible, following Juhani Pallasmaa’s idea that old buildings make the continuity of culture tangible.',
+    ],
+  },
+  {
+    slug: 'lyulin',
+    group: 'etsam',
+    title: 'Urban forest in Lyulin',
+    subtitle: 'Re-naturalisation and housing',
+    place: 'Sofia, Bulgaria',
+    text: [
+      'A re-naturalisation project for the Lyulin district. Six housing typologies whose interior space changes with the layout of the furniture.',
+    ],
+    links: [
+      { label: 'Full panel (PDF)', href: `${WIX}99ebabca99fc42988f148d658c82363c.pdf` },
+      { label: 'Project development', href: 'http://multiplayercity.org/hiri-basoa' },
+    ],
+  },
+  {
+    slug: 'madrid-zoo',
+    group: 'etsam',
+    title: 'Sports space at Madrid Zoo',
+    subtitle: 'Reuse of Javier Carvajal’s structures',
+    year: '2019',
+    place: 'Madrid',
+    text: [
+      'Reuse and revaluation of Javier Carvajal’s structures. The sports space is defined, and connected with the city, by reshaping the contour lines of the terrain.',
+    ],
+    links: [{ label: 'More (PDF)', href: `${WIX}faa54ac5cf3e47459dde051ef80da4e3.pdf` }],
+  },
+  {
+    slug: 'macael',
+    group: 'etsam',
+    title: 'Retreat in Macael',
+    subtitle: 'In the marble quarries',
+    place: 'Macael, Almería',
+    text: ['A retreat set in the marble quarries of Macael, developed from the site’s topography to the housing typologies.'],
+  },
+  {
+    slug: 'naturelle',
+    group: 'etsam', // TODO confirmar si es de la ETSAM o del máster
+    title: 'Naturelle en Bois',
+    subtitle: 'Sustainable residential park. Multi Comfort student contest',
+    place: 'Competition',
+    text: [
+      'A bioclimatic residential park: climate and sun analysis of the site, water cycle, and energy and comfort systems designed together with the architecture.',
+    ],
+  },
+  {
+    slug: 'colab',
+    group: 'unav',
+    title: 'COLAB',
+    subtitle: 'Intergenerational centre. Master’s final project',
+    place: 'Spain', // TODO ciudad
+    text: [
+      'A centre where different generations share space and activity. Developed from the basic design to the execution project.',
+    ],
+    links: [
+      { label: 'Basic design (PDF)', href: `${WIX}5fd17e66e8334fb78fb32f67c811b459.pdf` },
+      { label: 'Execution project (PDF)', href: `${WIX}e2ddb3a0736b495680afe6fb9020e3dc.pdf` },
+    ],
+  },
+  {
+    slug: 'la-palma',
+    group: 'unav',
+    title: 'Housing for La Palma',
+    subtitle: 'For those affected by the 2021 volcanic eruption',
+    year: '2022',
+    place: 'La Palma, Canary Islands',
+    text: [
+      'After analysing the climate and the character of the area, the team designed a typological system that adapts to the territory and can be replicated over time.',
+      'The houses are industrialised and parametric, for fast and practical construction that answers the urgency of the problem.',
+    ],
+    links: [
+      { label: 'Diario de Navarra', href: 'https://www.diariodenavarra.es/noticias/navarra/2022/07/21/viviendas-palma-disenadas-universidad-navarra-535612-300.html' },
+      { label: 'COAM', href: 'https://www.coam.org/es/actualidad/agenda/coam-recomienda/grupo-estudiantes-arquitectura-disenan-viviendas-sostenibles' },
+      { label: 'All the proposals (PDF)', href: `${WIX}cd0f5df2c06c4d7889b80b3f9dd32c11.pdf` },
+    ],
+    credit: 'Image by another member of the team.',
+  },
+];
+
+// Proyectos del archivo sin imágenes todavía (aparecen en la burbuja, sin ficha).
+export const archivePending: { group: 'etsam' | 'unav'; title: string; subtitle: string }[] = [
+  {
+    group: 'unav',
+    title: 'Embodied and operational carbon',
+    subtitle: "Master's thesis. The case of IDOM's Madrid headquarters",
+  },
+];
+
+// --- Publicaciones -----------------------------------------------------------
+
+export const publications: {
+  year: string;
+  title: string;
+  type: 'Journal article' | 'Preprint' | 'Thesis' | 'Article';
+  venue: string;
+  authors?: string;
+  href?: string;
+}[] = [
+  {
+    year: '2025',
+    title: 'Digital workflows for informed decision making in building envelope design: a systematic literature review',
+    type: 'Preprint',
+    venue: 'SSRN',
+    authors: 'J. Gómez Goenaga, A. Monge-Barrio, K. Saldaña Ochoa, A. Villanueva Peñalver',
+    href: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5359888',
+  },
+  {
+    year: '2022',
+    title: 'Piel Bioperfectible. La rehabilitación energética que aporta beneficios ecosistémicos',
+    type: 'Article',
+    venue: 'Ciudad Sostenible',
+    authors: 'J. Gómez Goenaga, F. Olivieri', // TODO confirmar autores
+  },
+  {
+    year: '2021',
+    title: 'Piel Bioperfectible. La envolvente BioPix como arquitectura integral',
+    type: 'Thesis',
+    venue: 'Bachelor thesis, ETSAM, Universidad Politécnica de Madrid',
+    href: 'https://oa.upm.es/68305/',
+  },
+];
+
+export const contact = {
+  email: 'juliagomezgoenaga@gmail.com',
+  linkedin: 'https://www.linkedin.com/in/julia-g%C3%B3mez-goenaga-52a097155/',
+  instagram: 'https://www.instagram.com/mrsj.print/',
+};

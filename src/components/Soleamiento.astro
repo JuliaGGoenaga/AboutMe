@@ -8,28 +8,31 @@ const src = `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}data/bilbao.json`;
     data-src={src}
     tabindex="0"
     role="img"
-    aria-label="Axonometría del centro de Bilbao, de San Mamés al Casco Viejo. Mueve el puntero, o usa las flechas: en horizontal cambia la hora y en vertical la fecha, entre el solsticio de invierno y el de verano. Las sombras siguen la posición real del sol."
+    aria-label="Axonometric view of central Bilbao, from San Mamés to the old town. Move the pointer, or use the arrow keys: horizontally to change the time of day, vertically to change the date between the winter and summer solstices. Shadows follow the real position of the sun."
   >
     <canvas></canvas>
   </div>
 
   <div class="copy">
     <h1 id="hero-title">Julia Gómez Goenaga</h1>
-    <!-- TODO: frase definitiva sobre a qué se dedica ahora -->
-    <p>Arquitecta. Proyecto, rehabilitación y sostenibilidad.</p>
+    <p>Architect and researcher. Daylight and radiation analysis, computational design and AI for sustainable buildings.</p>
+    <div class="cta">
+      <a class="btn primary" href="#present">Present</a>
+      <a class="btn" href="#contact">Contact</a>
+    </div>
   </div>
 
   <!-- Cajetín: lectura del sol en tiempo real -->
   <dl class="cajetin" aria-live="off">
-    <div class="title"><dt>Estudio de soleamiento</dt><dd>Bilbao, 43,26° N</dd></div>
-    <div><dt>Fecha</dt><dd data-date>4 abr</dd></div>
-    <div><dt>Hora solar</dt><dd data-hour>14:10</dd></div>
-    <div><dt>Azimut</dt><dd data-az>225°</dd></div>
-    <div><dt>Altura</dt><dd data-alt>44°</dd></div>
+    <div class="title"><dt>Sun study</dt><dd>Bilbao, 43.26° N</dd></div>
+    <div><dt>Date</dt><dd data-date>4 abr</dd></div>
+    <div><dt>Solar time</dt><dd data-hour>14:10</dd></div>
+    <div><dt>Azimuth</dt><dd data-az>225°</dd></div>
+    <div><dt>Altitude</dt><dd data-alt>44°</dd></div>
   </dl>
 
   <p class="credit">
-    Edificios: <a href="https://www.openstreetmap.org/copyright">© colaboradores de OpenStreetMap</a>
+    Buildings: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>
   </p>
 </section>
 
@@ -91,6 +94,30 @@ const src = `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}data/bilbao.json`;
   .copy {
     pointer-events: none;
   }
+  .cta {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    pointer-events: auto;
+  }
+  .btn {
+    padding: 9px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--ink);
+    text-decoration: none;
+    font-size: 15px;
+    background: color-mix(in srgb, var(--paper) 80%, transparent);
+  }
+  .btn.primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn:hover {
+    border-color: var(--minio);
+  }
+  .btn.primary:hover {
+    background: var(--minio);
+  }
   h1 {
     margin: 0;
     font-size: clamp(44px, 8.5vw, 124px);
@@ -100,7 +127,7 @@ const src = `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}data/bilbao.json`;
   }
   .copy p {
     margin: 18px 0 0;
-    max-width: 34ch;
+    max-width: 40ch;
     font-size: clamp(17px, 1.6vw, 21px);
     color: var(--ink-2);
   }

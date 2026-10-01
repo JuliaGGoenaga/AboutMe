@@ -1,0 +1,135 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { archive, archiveGroups, archivePending } from '../../data/content';
+import { imagesFor, url } from '../../lib/images';
+
+const groups = (['etsam', 'unav'] as const).map((g) => ({
+  id: g,
+  ...archiveGroups[g],
+  items: archive.filter((p) => p.group === g),
+  pending: archivePending.filter((p) => p.group === g),
+}));
+---
+
+<Base title="Archive | Julia Gómez Goenaga" description="Academic projects from the ETSAM and the Universidad de Navarra.">
+  <div class="archive">
+    <h1>Archive</h1>
+    <p class="lead">Academic work, from my architecture degree in Madrid to my master's in Pamplona.</p>
+
+    {
+      groups.map((g) => (
+        <section aria-labelledby={`g-${g.id}`}>
+          <header>
+            <h2 id={`g-${g.id}`}>{g.title}</h2>
+            <p>
+              {g.subtitle}, {g.years}
+            </p>
+          </header>
+          <ul class="grid">
+            {g.items.map((p) => {
+              const cover = imagesFor(p.slug)[0];
+              return (
+                <li>
+                  <a href={url(`archive/${p.slug}/`)}>
+                    {cover && <Image src={cover} alt="" widths={[400, 800]} sizes="(max-width: 700px) 100vw, 33vw" />}
+                    <strong>{p.title}</strong>
+                    <span>{p.subtitle}</span>
+                  </a>
+                </li>
+              );
+            })}
+            {g.pending.map((p) => (
+              <li class="pending">
+                <div class="ph" />
+                <strong>{p.title}</strong>
+                <span>{p.subtitle}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .archive {
+    padding: 112px var(--gutter) 72px;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(48px, 9vw, 128px);
+    font-weight: 560;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+  }
+  .lead {
+    margin: 16px 0 0;
+    max-width: 50ch;
+    font-size: clamp(18px, 1.6vw, 22px);
+    color: var(--ink-2);
+  }
+  section {
+    margin-top: 72px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ink);
+  }
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px 24px;
+    margin-bottom: 28px;
+  }
+  h2 {
+    margin: 0;
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+  }
+  header p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+    gap: 36px 20px;
+  }
+  .grid a {
+    display: grid;
+    gap: 6px;
+    text-decoration: none;
+  }
+  .grid :global(img),
+  .ph {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .ph {
+    background: repeating-linear-gradient(45deg, transparent 0 6px, var(--line) 6px 7px);
+  }
+  .pending {
+    display: grid;
+    gap: 6px;
+  }
+  strong {
+    font-weight: 560;
+  }
+  span {
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .grid a:hover strong {
+    color: var(--minio);
+  }
+</style>

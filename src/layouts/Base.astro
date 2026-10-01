@@ -1,15 +1,18 @@
 ---
 import '../styles/global.css';
+import { url } from '../lib/images';
+import { contact } from '../data/content';
 
 interface Props {
   title: string;
   description: string;
 }
 const { title, description } = Astro.props;
+const home = url();
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,19 +22,26 @@ const { title, description } = Astro.props;
     <meta property="og:description" content={description} />
   </head>
   <body>
-    <a class="skip" href="#main">Saltar al contenido</a>
+    <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
-      <a class="brand" href={import.meta.env.BASE_URL}>Julia Gómez Goenaga</a>
-      <!-- TODO: menú definitivo cuando tengamos la estructura -->
-      <nav aria-label="Principal">
-        <a href="#trayectoria">Trayectoria</a>
-        <a href="#proyectos">Proyectos</a>
-        <a href="#contacto">Contacto</a>
+      <a class="brand" href={home}>Julia Gómez Goenaga</a>
+      <nav aria-label="Main">
+        <a href={`${home}#present`}>Present</a>
+        <a href={`${home}#path`}>Path</a>
+        <a href={`${home}#projects`}>Projects</a>
+        <a href={`${home}#research`}>Research</a>
+        <a href={`${home}#contact`}>Contact</a>
       </nav>
     </header>
     <main id="main">
       <slot />
     </main>
+    <footer class="site-footer">
+      <span>© {new Date().getFullYear()} Julia Gómez Goenaga</span>
+      <a href={url('archive/')}>Archive</a>
+      <a href={url('other/')}>Other stuff</a>
+      <a href={contact.linkedin}>LinkedIn</a>
+    </footer>
   </body>
 </html>
 
@@ -56,7 +66,7 @@ const { title, description } = Astro.props;
   }
   nav {
     display: flex;
-    gap: clamp(14px, 2.5vw, 32px);
+    gap: clamp(14px, 2.2vw, 28px);
     font-size: 15px;
   }
   nav a {
@@ -66,9 +76,21 @@ const { title, description } = Astro.props;
   nav a:hover {
     color: var(--ink);
   }
-  @media (max-width: 560px) {
+  @media (max-width: 720px) {
     nav {
       display: none;
     }
+  }
+  .site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    padding: 28px var(--gutter);
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .site-footer span {
+    margin-right: auto;
   }
 </style>

@@ -1,32 +1,342 @@
 ---
 import Base from '../layouts/Base.astro';
 import Soleamiento from '../components/Soleamiento.astro';
+import Network from '../components/Network.astro';
+import { lines, professional, publications, contact, archiveGroups } from '../data/content';
+import { url } from '../lib/images';
+
+const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida', 'ETSAM, Universidad Politécnica de Madrid'];
+const lineTitle = Object.fromEntries(lines.map((l) => [l.id, l.title]));
 ---
 
 <Base
-  title="Julia Gómez Goenaga, arquitecta"
-  description="Portfolio de Julia Gómez Goenaga, arquitecta."
+  title="Julia Gómez Goenaga, architect and researcher"
+  description="Julia Gómez Goenaga is an architect and researcher working on daylight and radiation analysis, computational design and AI for sustainable buildings."
 >
   <Soleamiento />
 
-  <!-- TODO: secciones según la estructura que defina Julia -->
-  <section id="trayectoria" class="pending"><h2>Trayectoria</h2></section>
-  <section id="proyectos" class="pending"><h2>Proyectos</h2></section>
-  <section id="contacto" class="pending">
-    <h2>Contacto</h2>
-    <p><a href="mailto:juliagomezgoenaga@gmail.com">juliagomezgoenaga@gmail.com</a></p>
+  <ul class="affiliations" aria-label="Affiliations">
+    {affiliations.map((a) => <li>{a}</li>)}
+  </ul>
+
+  <section id="present" class="section">
+    <div class="intro">
+      <h2>Present</h2>
+      <p class="lead">
+        I work at IDOM on sustainability and computational design, and I am part of its digital transformation group.
+        In parallel I am doing a PhD between the Universidad de Navarra and the University of Florida, and I
+        collaborate with universities on teaching and research.
+      </p>
+    </div>
+
+    <ol class="lines">
+      {
+        lines.map((l) => (
+          <li class="line">
+            <h3>{l.title}</h3>
+            <p>{l.summary}</p>
+            <ul class="work">
+              {l.work.map((w) => (
+                <li>{w}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <Network />
+
+  <section id="projects" class="section">
+    <h2>Projects</h2>
+    <p class="lead">Professional work at IDOM. Full case studies are on their way.</p>
+    <ul class="pro">
+      {
+        professional.map((p) => (
+          <li>
+            <div class="meta">
+              <span>{p.place}</span>
+              <span>{lineTitle[p.line]}</span>
+            </div>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="academic">
+      <h3>Academic work</h3>
+      <p>
+        Projects from my degree at {archiveGroups.etsam.title} and my master's at the {archiveGroups.unav.title}, also
+        reachable from their bubbles in the path above.
+      </p>
+      <a class="btn" href={url('archive/')}>Open the archive</a>
+    </div>
+  </section>
+
+  <section id="research" class="section">
+    <h2>Research</h2>
+    <div class="phd">
+      <p class="label">PhD, Universidad de Navarra and University of Florida</p>
+      <p class="phd-title">Humanizing decarbonization</p>
+      <p class="phd-sub">Performance-driven optimization workflow in envelope design</p>
+    </div>
+
+    <h3 class="pubs-title">Publications</h3>
+    <table class="pubs">
+      <thead>
+        <tr><th>Year</th><th>Title</th><th>Type</th><th>Published in</th></tr>
+      </thead>
+      <tbody>
+        {
+          publications.map((p) => (
+            <tr>
+              <td>{p.year}</td>
+              <td>
+                {p.href ? <a href={p.href}>{p.title}</a> : p.title}
+                {p.authors && <span class="authors">{p.authors}</span>}
+              </td>
+              <td>{p.type}</td>
+              <td>{p.venue}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section id="engagement" class="section">
+    <h2>Engagement</h2>
+    <p class="lead">
+      I take part in World Youth Alliance and other international organisations, and I have worked on projects in
+      Spain, the United States, Denmark, Ireland, Saudi Arabia and Africa.
+    </p>
+  </section>
+
+  <section id="contact" class="section contact">
+    <h2>Contact</h2>
+    <p class="lead">Happy to talk about daylight, envelopes, computational design and tools that help architects decide.</p>
+    <p class="mail"><a href={`mailto:${contact.email}`}>{contact.email}</a></p>
+    <p><a href={contact.linkedin}>LinkedIn</a></p>
   </section>
 </Base>
 
 <style>
-  .pending {
-    padding: 96px var(--gutter);
+  .affiliations {
+    list-style: none;
+    margin: 0;
+    padding: 18px var(--gutter);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 40px;
     border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .section {
+    padding: clamp(72px, 10vw, 128px) var(--gutter);
+    border-top: 1px solid var(--line);
+  }
+  .affiliations + .section {
+    border-top: 0;
   }
   h2 {
     margin: 0;
-    font-size: clamp(28px, 3.5vw, 44px);
+    font-size: clamp(32px, 4.5vw, 56px);
     font-weight: 560;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+  .lead {
+    max-width: 60ch;
+    font-size: clamp(18px, 1.5vw, 21px);
+    color: var(--ink-2);
+    margin: 16px 0 0;
+  }
+  .intro {
+    display: grid;
+    gap: 0;
+  }
+
+  /* Líneas: tres bandas a todo el ancho, no tarjetas */
+  .lines {
+    list-style: none;
+    margin: 56px 0 0;
+    padding: 0;
+  }
+  .line {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr);
+    gap: 16px 40px;
+    padding: 28px 0;
+    border-top: 1px solid var(--ink);
+  }
+  .line h3 {
+    margin: 0;
+    font-size: clamp(22px, 2.2vw, 30px);
+    font-weight: 540;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+  }
+  .line > p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .work {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+  }
+  .work li {
+    padding: 2px 0;
+  }
+  @media (max-width: 860px) {
+    .line {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Proyectos profesionales */
+  .pro {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    gap: 40px 32px;
+  }
+  .pro li {
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .pro h3 {
+    margin: 10px 0 6px;
+    font-size: 21px;
+    font-weight: 540;
+  }
+  .pro p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .academic {
+    margin-top: 72px;
+    padding: 32px;
+    background: var(--paper-2);
+    display: grid;
+    gap: 12px;
+    justify-items: start;
+  }
+  .academic h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 540;
+  }
+  .academic p {
+    margin: 0;
+    max-width: 60ch;
+    color: var(--ink-2);
+  }
+  .btn {
+    display: inline-block;
+    padding: 9px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--ink);
+    text-decoration: none;
+  }
+  .btn:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* Investigación */
+  .phd {
+    margin-top: 40px;
+    padding: 32px 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  .label {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  .phd-title {
+    margin: 12px 0 0;
+    font-size: clamp(34px, 5vw, 64px);
+    font-weight: 560;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+  }
+  .phd-sub {
+    margin: 8px 0 0;
+    font-size: clamp(18px, 1.8vw, 24px);
+    color: var(--ink-2);
+  }
+  .pubs-title {
+    margin: 56px 0 16px;
+    font-size: 24px;
+    font-weight: 540;
+  }
+  .pubs {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  .pubs th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--ink-3);
+    font-size: 13px;
+    padding: 0 16px 10px 0;
+  }
+  .pubs td {
+    padding: 14px 16px 14px 0;
+    border-top: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .pubs td:first-child {
+    width: 4.5em;
+  }
+  .authors {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  @media (max-width: 720px) {
+    .pubs thead {
+      display: none;
+    }
+    .pubs tr {
+      display: grid;
+      grid-template-columns: 4em 1fr;
+      border-top: 1px solid var(--line);
+      padding: 12px 0;
+    }
+    .pubs td {
+      border: 0;
+      padding: 2px 0;
+    }
+    .pubs td:nth-child(n + 3) {
+      grid-column: 2;
+      color: var(--ink-3);
+      font-size: 13px;
+    }
+  }
+
+  .contact .mail {
+    margin: 32px 0 8px;
+    font-size: clamp(22px, 3vw, 36px);
+    font-weight: 540;
   }
 </style>

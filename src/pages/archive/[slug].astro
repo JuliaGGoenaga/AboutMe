@@ -1,0 +1,190 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { archive, archiveGroups } from '../../data/content';
+import { imagesFor, url } from '../../lib/images';
+
+export function getStaticPaths() {
+  return archive.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
+}
+
+const { project: p } = Astro.props;
+const imgs = imagesFor(p.slug);
+const group = archiveGroups[p.group];
+const siblings = archive.filter((x) => x.group === p.group);
+const i = siblings.findIndex((x) => x.slug === p.slug);
+const next = siblings[(i + 1) % siblings.length];
+---
+
+<Base title={`${p.title} | Julia Gómez Goenaga`} description={`${p.title}. ${p.subtitle}.`}>
+  <article class="project">
+    <header>
+      <a class="back" href={url('archive/')}>Archive, {group.title}</a>
+      <h1>{p.title}</h1>
+      <p class="sub">{p.subtitle}</p>
+      <dl class="facts">
+        <div><dt>Place</dt><dd>{p.place}</dd></div>
+        {p.year && <div><dt>Year</dt><dd>{p.year}</dd></div>}
+        <div><dt>Context</dt><dd>{group.subtitle}</dd></div>
+      </dl>
+    </header>
+
+    <div class="text">
+      {p.text.map((t) => <p>{t}</p>)}
+      {
+        p.links && (
+          <ul class="links">
+            {p.links.map((l) => (
+              <li>
+                <a href={l.href}>{l.label}</a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    <div class="gallery">
+      {
+        imgs.map((img, k) => (
+          <figure class={img.width / img.height > 2.2 ? 'wide' : ''}>
+            <Image
+              src={img}
+              alt={`${p.title}, image ${k + 1}`}
+              widths={[640, 1200, 1800]}
+              sizes="(max-width: 800px) 100vw, 60vw"
+              loading={k < 2 ? 'eager' : 'lazy'}
+            />
+          </figure>
+        ))
+      }
+    </div>
+    {p.credit && <p class="credit">{p.credit}</p>}
+
+    <nav class="next" aria-label="Next project">
+      <a href={url(`archive/${next.slug}/`)}>
+        <span>Next</span>
+        <strong>{next.title}</strong>
+      </a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .project {
+    padding: 112px var(--gutter) 72px;
+  }
+  .back {
+    font-size: 14px;
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+  .back:hover {
+    color: var(--minio);
+  }
+  h1 {
+    margin: 16px 0 0;
+    font-size: clamp(40px, 7vw, 96px);
+    font-weight: 560;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+  }
+  .sub {
+    margin: 12px 0 0;
+    font-size: clamp(18px, 1.8vw, 24px);
+    color: var(--ink-2);
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 40px;
+    margin: 32px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--ink);
+  }
+  .facts dt {
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .facts dd {
+    margin: 0;
+  }
+  .text {
+    max-width: 64ch;
+    margin: 40px 0 56px;
+    font-size: 18px;
+  }
+  .text p {
+    margin: 0 0 1em;
+  }
+  .links {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .links a {
+    display: inline-block;
+    padding: 7px 16px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 15px;
+  }
+  .links a:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  figure {
+    margin: 0;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  figure.wide,
+  figure:first-child {
+    grid-column: 1 / -1;
+  }
+  figure :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  @media (max-width: 700px) {
+    .gallery {
+      grid-template-columns: 1fr;
+    }
+  }
+  .credit {
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  .next {
+    margin-top: 72px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ink);
+  }
+  .next a {
+    display: grid;
+    gap: 4px;
+    text-decoration: none;
+  }
+  .next span {
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  .next strong {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+  }
+  .next a:hover strong {
+    color: var(--minio);
+  }
+</style>
