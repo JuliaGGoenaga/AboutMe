@@ -134,7 +134,7 @@ export const experiences: Experience[] = [
   {
     id: 'other',
     label: 'Other stuff',
-    detail: 'Graphic design: logos, posters, invitations, illustration',
+    detail: 'Graphic design: logos, invitations, illustration',
     start: 2018, // TODO confirmar
     place: 'Here and there',
     links: [],
@@ -271,7 +271,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'naturelle',
-    group: 'etsam', // TODO confirmar si es de la ETSAM o del máster
+    group: 'etsam',
     title: 'Naturelle en Bois',
     subtitle: 'Sustainable residential park. Multi Comfort student contest',
     place: 'Competition',
