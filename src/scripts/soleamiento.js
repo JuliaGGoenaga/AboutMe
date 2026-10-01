@@ -59,7 +59,7 @@ export async function initSoleamiento(root) {
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 6000);
 
   // Axonometría: mirando desde el sureste, para que la ría cruce en diagonal.
-  const target = new THREE.Vector3(60, 0, 40);
+  const target = new THREE.Vector3(-140, 0, 210);
   camera.position.set(target.x + 1100, 1150, target.z + 1300);
   camera.lookAt(target);
 
@@ -146,8 +146,8 @@ export async function initSoleamiento(root) {
   const resize = () => {
     const { width, height } = root.getBoundingClientRect();
     renderer.setSize(width, height, false);
-    // Encuadre: unos 1.700 m de ciudad en el lado más corto (Abandoibarra en el centro).
-    const span = width < 700 ? 1250 : 1700;
+    // Encuadre: unos 1.400 m de ciudad en el lado más corto, centrado un poco a la izquierda del modelo.
+    const span = width < 700 ? 1100 : 1420;
     const aspect = width / height;
     const half = aspect > 1 ? span / 2 : span / 2 / aspect;
     camera.left = -half * aspect;
