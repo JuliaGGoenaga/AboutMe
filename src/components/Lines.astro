@@ -1,6 +1,7 @@
 ---
 // Las tres líneas como tres círculos que se solapan: el solape es el tema del PhD.
-// Al pasar el ratón, enfocar o tocar una burbuja, su detalle aparece al lado.
+// El detalle de cada línea solo aparece al pasar el ratón (o al enfocar o tocar)
+// en una tarjeta translúcida sobre el diagrama.
 import { lines } from '../data/content';
 
 // Centros de los círculos en un lienzo de 600 x 560 (triángulo equilátero).
@@ -16,87 +17,99 @@ const labels = [
   { x: 450, y: 160 },
   { x: 300, y: 450 },
 ];
+// Dónde se abre la tarjeta de cada línea: hacia fuera de su círculo.
+const anchors = ['left', 'right', 'bottom'];
 ---
 
 <div class="lines" data-lines>
-  <div class="venn">
-    <svg viewBox="0 0 600 560" aria-hidden="true">
-      {centers.map((c, i) => <circle class="disc" data-i={i} cx={c.x} cy={c.y} r={R} />)}
-    </svg>
-    {
-      lines.map((l, i) => (
-        <button
-          type="button"
-          class="label"
-          data-i={i}
-          aria-controls="line-detail"
-          aria-pressed={i === 0 ? 'true' : 'false'}
-          style={`left:${(labels[i].x / 600) * 100}%;top:${(labels[i].y / 560) * 100}%`}
-        >
-          {l.title}
-        </button>
-      ))
-    }
-    <p class="core" style={`left:50%;top:${(262 / 560) * 100}%`}>
-      <span>PhD</span>
-      Humanizing decarbonization
-    </p>
-  </div>
+  <svg viewBox="0 0 600 560" aria-hidden="true">
+    {centers.map((c, i) => <circle class="disc" data-i={i} cx={c.x} cy={c.y} r={R} />)}
+  </svg>
+  {
+    lines.map((l, i) => (
+      <button
+        type="button"
+        class="label"
+        data-i={i}
+        aria-expanded="false"
+        aria-controls={`line-card-${i}`}
+        style={`left:${(labels[i].x / 600) * 100}%;top:${(labels[i].y / 560) * 100}%`}
+      >
+        {l.title}
+      </button>
+    ))
+  }
+  <p class="core" style={`left:50%;top:${(262 / 560) * 100}%`}>
+    <span>PhD</span>
+    Humanizing decarbonization
+  </p>
 
-  <div class="detail" id="line-detail" aria-live="polite">
-    {
-      lines.map((l, i) => (
-        <div class="panel" data-i={i} hidden={i !== 0}>
-          <h3>{l.title}</h3>
-          <p>{l.summary}</p>
-          <ul>
-            {l.work.map((w) => (
-              <li>{w}</li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
-  </div>
+  {
+    lines.map((l, i) => (
+      <div class={`card at-${anchors[i]}`} id={`line-card-${i}`} data-i={i} role="tooltip">
+        <h3>{l.title}</h3>
+        <p>{l.summary}</p>
+        <ul>
+          {l.work.map((w) => (
+            <li>{w}</li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
 </div>
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-lines]').forEach((root) => {
     const discs = root.querySelectorAll<SVGCircleElement>('.disc');
     const labels = root.querySelectorAll<HTMLButtonElement>('.label');
-    const panels = root.querySelectorAll<HTMLElement>('.panel');
-    const show = (i: number) => {
-      root.dataset.active = String(i);
-      discs.forEach((d) => d.classList.toggle('on', d.dataset.i === String(i)));
-      labels.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.i === String(i))));
-      panels.forEach((p) => (p.hidden = p.dataset.i !== String(i)));
+    const cards = root.querySelectorAll<HTMLElement>('.card');
+    let active: string | null = null;
+
+    const show = (i: string | null) => {
+      active = i;
+      root.classList.toggle('has-active', i !== null);
+      discs.forEach((d) => d.classList.toggle('on', d.dataset.i === i));
+      labels.forEach((b) => b.setAttribute('aria-expanded', String(b.dataset.i === i)));
+      cards.forEach((c) => c.classList.toggle('open', c.dataset.i === i));
     };
-    const pick = (el: Element) => show(Number((el as HTMLElement).dataset.i));
+
+    // Ratón: se abre al entrar en un círculo o en su título, se cierra al salir del diagrama.
+    [...discs, ...labels].forEach((el) => {
+      el.addEventListener('pointerenter', (e) => {
+        if ((e as PointerEvent).pointerType === 'mouse') show((el as HTMLElement).dataset.i ?? null);
+      });
+    });
+    root.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse') show(null);
+    });
+
+    // Táctil y teclado: tocar o pulsar abre y cierra.
     labels.forEach((b) => {
-      b.addEventListener('mouseenter', () => pick(b));
-      b.addEventListener('focus', () => pick(b));
-      b.addEventListener('click', () => pick(b));
+      b.addEventListener('click', () => show(active === b.dataset.i ? null : (b.dataset.i ?? null)));
+      b.addEventListener('focus', () => show(b.dataset.i ?? null));
+      b.addEventListener('blur', () => {
+        if (!root.matches(':hover')) show(null);
+      });
     });
-    discs.forEach((d) => {
-      d.addEventListener('mouseenter', () => pick(d));
-      d.addEventListener('click', () => pick(d));
+    discs.forEach((d) =>
+      d.addEventListener('click', () => show(active === d.dataset.i ? null : (d.dataset.i ?? null)))
+    );
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') show(null);
     });
-    show(0);
+    document.addEventListener('pointerdown', (e) => {
+      if (!root.contains(e.target as Node)) show(null);
+    });
   });
 </script>
 
 <style>
   .lines {
-    display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: 32px 56px;
-    align-items: center;
-    margin-top: 48px;
-  }
-  .venn {
     position: relative;
-    max-width: 640px;
     width: 100%;
+    max-width: 640px;
+    justify-self: end;
   }
   svg {
     display: block;
@@ -110,17 +123,21 @@ const labels = [
     stroke: var(--ink);
     stroke-width: 1;
     cursor: pointer;
+    mix-blend-mode: multiply;
     transition:
       fill 0.3s ease,
       fill-opacity 0.3s ease,
-      stroke-width 0.3s ease;
-    mix-blend-mode: multiply;
+      stroke 0.3s ease,
+      opacity 0.3s ease;
+  }
+  .has-active .disc:not(.on) {
+    opacity: 0.45;
   }
   .disc.on {
     fill: var(--minio);
     fill-opacity: 0.12;
     stroke: var(--minio);
-    stroke-width: 2;
+    stroke-width: 1.5;
   }
   .label {
     position: absolute;
@@ -130,7 +147,7 @@ const labels = [
     border: 0;
     background: none;
     font: inherit;
-    font-size: clamp(15px, 1.6vw, 20px);
+    font-size: clamp(15px, 1.5vw, 19px);
     font-weight: 540;
     line-height: 1.15;
     letter-spacing: -0.01em;
@@ -138,7 +155,7 @@ const labels = [
     color: var(--ink);
     cursor: pointer;
   }
-  .label[aria-pressed='true'] {
+  .label[aria-expanded='true'] {
     color: var(--minio);
   }
   .core {
@@ -147,7 +164,7 @@ const labels = [
     width: 8.5em;
     margin: 0;
     text-align: center;
-    font-size: clamp(11px, 1.05vw, 13px);
+    font-size: clamp(11px, 1vw, 13px);
     line-height: 1.25;
     color: var(--ink-2);
     pointer-events: none;
@@ -158,38 +175,79 @@ const labels = [
     color: var(--ink-3);
   }
 
-  .detail {
-    min-height: 16em;
+  /* Tarjeta: papel translúcido con desenfoque, como una lámina de croquis encima */
+  .card {
+    position: absolute;
+    z-index: 2;
+    width: min(320px, 78%);
+    padding: 20px 22px 18px;
+    background: color-mix(in srgb, var(--paper) 72%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    backdrop-filter: blur(14px) saturate(1.1);
+    border: 1px solid var(--ink);
+    box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--ink) 45%, transparent);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition:
+      opacity 0.22s ease,
+      transform 0.22s ease;
   }
-  .panel h3 {
+  .card.open {
+    opacity: 1;
+    transform: none;
+  }
+  /* Cada tarjeta se abre hacia el lado de su círculo, sin tapar su título */
+  .at-left {
+    left: -4%;
+    top: 34%;
+  }
+  .at-right {
+    right: -4%;
+    top: 34%;
+  }
+  .at-bottom {
+    left: 50%;
+    top: 4%;
+    translate: -50% 0;
+  }
+  .card h3 {
     margin: 0;
-    font-size: clamp(24px, 2.4vw, 32px);
+    font-size: 19px;
     font-weight: 560;
-    letter-spacing: -0.015em;
-    line-height: 1.1;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--minio);
   }
-  .panel p {
-    margin: 14px 0 0;
+  .card p {
+    margin: 8px 0 0;
+    font-size: 14.5px;
+    line-height: 1.5;
     color: var(--ink-2);
-    max-width: 48ch;
   }
-  .panel ul {
+  .card ul {
     list-style: none;
-    margin: 24px 0 0;
+    margin: 14px 0 0;
     padding: 0;
     border-top: 1px solid var(--ink);
+    font-size: 14px;
   }
-  .panel li {
-    padding: 9px 0;
+  .card li {
+    padding: 6px 0;
     border-bottom: 1px solid var(--line);
   }
-
-  @media (max-width: 860px) {
-    .lines {
-      grid-template-columns: 1fr;
+  .card li:last-child {
+    border-bottom: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .disc {
+      transition: none;
     }
-    .detail {
-      min-height: 0;
+  }
+  @media (max-width: 900px) {
+    .lines {
+      justify-self: center;
     }
   }
 </style>

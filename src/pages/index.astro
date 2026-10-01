@@ -19,7 +19,7 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
     {affiliations.map((a) => <li>{a}</li>)}
   </ul>
 
-  <section id="present" class="section">
+  <section id="present" class="section present">
     <div class="intro">
       <h2>Present</h2>
       <p class="lead">
@@ -27,8 +27,8 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
         In parallel I am doing a PhD between the Universidad de Navarra and the University of Florida, and I
         collaborate with universities on teaching and research.
       </p>
+      <p class="hint">Three lines of work, and where they meet.</p>
     </div>
-
     <Lines />
   </section>
 
@@ -152,9 +152,26 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
     color: var(--ink-2);
     margin: 16px 0 0;
   }
+  .present {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 40px clamp(32px, 5vw, 80px);
+    align-items: center;
+  }
   .intro {
     display: grid;
     gap: 0;
+    align-self: start;
+  }
+  .hint {
+    margin: 32px 0 0;
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  @media (max-width: 900px) {
+    .present {
+      grid-template-columns: 1fr;
+    }
   }
 
   /* Trabajo en IDOM: campos a todo el ancho, proyecto y herramienta debajo */
