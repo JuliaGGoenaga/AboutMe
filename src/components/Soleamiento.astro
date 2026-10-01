@@ -8,7 +8,7 @@ const src = `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}data/bilbao.json`;
     data-src={src}
     tabindex="0"
     role="img"
-    aria-label="Axonometría del Ensanche de Bilbao y Abandoibarra. Mueve el puntero, o usa las flechas: en horizontal cambia la hora y en vertical la fecha, entre el solsticio de invierno y el de verano. Las sombras siguen la posición real del sol."
+    aria-label="Axonometría del centro de Bilbao, de San Mamés al Casco Viejo. Mueve el puntero, o usa las flechas: en horizontal cambia la hora y en vertical la fecha, entre el solsticio de invierno y el de verano. Las sombras siguen la posición real del sol."
   >
     <canvas></canvas>
   </div>
@@ -68,6 +68,8 @@ const src = `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}data/bilbao.json`;
     display: block;
     width: 100%;
     height: 100%;
+    /* El modelo se funde con el papel hacia los bordes */
+    mask-image: radial-gradient(ellipse 75% 72% at 55% 52%, #000 52%, transparent 100%);
   }
 
   /* Velo de papel abajo a la izquierda para que el texto se lea sobre la ciudad */

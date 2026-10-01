@@ -4,7 +4,7 @@ Portfolio personal de Julia Gómez Goenaga, arquitecta. Hecho con [Astro](https:
 
 ## Portada: estudio de soleamiento
 
-La portada es una axonometría del Ensanche de Bilbao y Abandoibarra (la ría, el Guggenheim y la Torre Iberdrola) con datos reales de edificios de OpenStreetMap. El puntero hace de sol:
+La portada es una axonometría de unos 4 × 3 km del centro de Bilbao (Abandoibarra, Ensanche, Indautxu, Casco Viejo, Deusto, Zorrotzaurre y San Mamés) con datos reales de edificios de OpenStreetMap. El puntero hace de sol:
 
 - **en horizontal** cambia la hora, del amanecer al ocaso;
 - **en vertical** cambia la fecha, del solsticio de invierno (abajo) al de verano (arriba).

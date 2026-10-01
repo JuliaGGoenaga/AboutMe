@@ -59,17 +59,18 @@ export async function initSoleamiento(root) {
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 6000);
 
   // Axonometría: mirando desde el sureste, para que la ría cruce en diagonal.
-  const target = new THREE.Vector3(-120, 0, -40);
+  const target = new THREE.Vector3(60, 0, 40);
   camera.position.set(target.x + 1100, 1150, target.z + 1300);
   camera.lookAt(target);
 
   scene.add(new THREE.HemisphereLight(0xffffff, color('--paper-2'), 1.7));
   const sun = new THREE.DirectionalLight(0xffffff, 2.9);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(4096, 4096);
+  const shadowRes = Math.min(renderer.capabilities.maxTextureSize, window.innerWidth < 700 ? 4096 : 8192);
+  sun.shadow.mapSize.set(shadowRes, shadowRes);
   sun.shadow.bias = -0.0004;
   sun.shadow.normalBias = 0.6;
-  Object.assign(sun.shadow.camera, { left: -1000, right: 1000, top: 1000, bottom: -1000, near: 1, far: 5000 });
+  Object.assign(sun.shadow.camera, { left: -2600, right: 2600, top: 2600, bottom: -2600, near: 1, far: 9000 });
   sun.target.position.copy(target);
   scene.add(sun, sun.target);
 
@@ -112,7 +113,7 @@ export async function initSoleamiento(root) {
   // Aristas en tinta, como un dibujo de línea.
   const edges = new THREE.LineSegments(
     new THREE.EdgesGeometry(city, 25),
-    new THREE.LineBasicMaterial({ color: color('--ink'), transparent: true, opacity: 0.32 })
+    new THREE.LineBasicMaterial({ color: color('--ink'), transparent: true, opacity: 0.26 })
   );
   scene.add(edges);
 
@@ -129,7 +130,7 @@ export async function initSoleamiento(root) {
     const alt = rad(Math.max(pos.alt, MIN_ALT));
     // x = este, y = arriba, -z = norte. Azimut desde el norte en sentido horario.
     const dir = new THREE.Vector3(Math.sin(az) * Math.cos(alt), Math.sin(alt), -Math.cos(az) * Math.cos(alt));
-    sun.position.copy(target).addScaledVector(dir, 2500);
+    sun.position.copy(target).addScaledVector(dir, 4000);
     // Con el sol bajo, la luz se calienta un poco.
     const warm = 1 - THREE.MathUtils.smoothstep(pos.alt, MIN_ALT, 25);
     sun.color.setRGB(1, 1 - warm * 0.12, 1 - warm * 0.3);
@@ -145,8 +146,8 @@ export async function initSoleamiento(root) {
   const resize = () => {
     const { width, height } = root.getBoundingClientRect();
     renderer.setSize(width, height, false);
-    // Encuadre: unos 1.300 m de ciudad en el lado más corto.
-    const span = width < 700 ? 900 : 1150;
+    // Encuadre: unos 1.700 m de ciudad en el lado más corto (Abandoibarra en el centro).
+    const span = width < 700 ? 1250 : 1700;
     const aspect = width / height;
     const half = aspect > 1 ? span / 2 : span / 2 / aspect;
     camera.left = -half * aspect;

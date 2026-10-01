@@ -46,6 +46,8 @@ const { title, description } = Astro.props;
     gap: 24px;
     height: 64px;
     padding: 0 var(--gutter);
+    /* Velo de papel para que el menú se lea sobre la ciudad */
+    background: linear-gradient(to bottom, var(--paper) 35%, color-mix(in srgb, var(--paper) 0%, transparent));
   }
   .brand {
     font-weight: 600;

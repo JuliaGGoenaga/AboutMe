@@ -7,7 +7,9 @@ import json, math, hashlib
 LAT0, LON0 = 43.2657, -2.9360
 KX = math.cos(math.radians(LAT0)) * 111320
 KY = 110540
-RIVER_HALF_WIDTH = 48  # la ría en Abandoibarra mide ~90-100 m
+# Semianchura de cada cauce (m). La ría mide ~90-100 m en Abandoibarra;
+# el Canal de Deusto, ~75 m. Los canales menores sin nombre se ignoran.
+RIVER_HALF_WIDTH = {965067500: 48, 607382173: 38}
 
 HEIGHT_OVERRIDE = {  # alturas reales aproximadas donde OSM no las tiene
     118499485: 38,   # Guggenheim (la cubierta llega a ~50 m en puntos)
@@ -98,7 +100,7 @@ def to_m(ring):
     return [xy({'lon': a, 'lat': b}) for a, b in ring[:-1]]
 
 
-def river_polygon(line):
+def river_polygon(line, half):
     """Ensancha la línea central de la ría a un polígono."""
     pts = [xy(p) for p in line if p]
     left, right = [], []
@@ -107,7 +109,7 @@ def river_polygon(line):
         b = pts[min(i + 1, len(pts) - 1)]
         dx, dy = b[0] - a[0], b[1] - a[1]
         n = math.hypot(dx, dy) or 1
-        nx, ny = -dy / n * RIVER_HALF_WIDTH, dx / n * RIVER_HALF_WIDTH
+        nx, ny = -dy / n * half, dx / n * half
         left.append([round(x + nx, 1), round(y + ny, 1)])
         right.append([round(x - nx, 1), round(y - ny, 1)])
     return left + right[::-1]
@@ -137,7 +139,8 @@ def main():
             for o, holes in polys_of(el):
                 out['water'].append({'o': to_m(o), 'i': [to_m(x) for x in holes]})
     for el in json.load(open('river.json'))['elements']:
-        out['water'].append({'o': river_polygon(el['geometry']), 'i': []})
+        if el['id'] in RIVER_HALF_WIDTH:
+            out['water'].append({'o': river_polygon(el['geometry'], RIVER_HALF_WIDTH[el['id']]), 'i': []})
     json.dump(out, open('data.json', 'w'), separators=(',', ':'))
     print(len(out['buildings']), 'volúmenes,', sum(len(b['i']) for b in out['buildings']), 'patios,',
           len(out['parks']), 'parques,', len(out['water']), 'agua,', out['labels'])
