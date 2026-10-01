@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import Soleamiento from '../components/Soleamiento.astro';
+---
+
+<Base
+  title="Julia Gómez Goenaga, arquitecta"
+  description="Portfolio de Julia Gómez Goenaga, arquitecta."
+>
+  <Soleamiento />
+
+  <!-- TODO: secciones según la estructura que defina Julia -->
+  <section id="trayectoria" class="pending"><h2>Trayectoria</h2></section>
+  <section id="proyectos" class="pending"><h2>Proyectos</h2></section>
+  <section id="contacto" class="pending">
+    <h2>Contacto</h2>
+    <p><a href="mailto:juliagomezgoenaga@gmail.com">juliagomezgoenaga@gmail.com</a></p>
+  </section>
+</Base>
+
+<style>
+  .pending {
+    padding: 96px var(--gutter);
+    border-top: 1px solid var(--line);
+  }
+  h2 {
+    margin: 0;
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+  }
+</style>

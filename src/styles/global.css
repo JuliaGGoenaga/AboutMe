@@ -1,0 +1,57 @@
+@import '@fontsource-variable/ibm-plex-sans';
+
+:root {
+  /* Papel frío de plano, tinta y un único acento: minio, la imprimación
+     naranja del acero de los astilleros de la ría. */
+  --paper: #eceef0;
+  --paper-2: #e2e5e8;
+  --ink: #1b1f24;
+  --ink-2: #4a525c;
+  --ink-3: #7d8691;
+  --line: #c3c9cf;
+  --minio: #e2401c;
+
+  --font: 'IBM Plex Sans Variable', system-ui, sans-serif;
+  --gutter: clamp(16px, 3vw, 40px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.55;
+  font-feature-settings: 'tnum' 1;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--minio);
+  outline-offset: 3px;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+}
+.skip:focus {
+  left: var(--gutter);
+  top: 8px;
+  z-index: 10;
+  background: var(--paper);
+  padding: 6px 10px;
+}

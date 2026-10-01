@@ -1,0 +1,172 @@
+---
+const src = `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}data/bilbao.json`;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div
+    class="scene"
+    data-src={src}
+    tabindex="0"
+    role="img"
+    aria-label="Axonometría del Ensanche de Bilbao y Abandoibarra. Mueve el puntero, o usa las flechas: en horizontal cambia la hora y en vertical la fecha, entre el solsticio de invierno y el de verano. Las sombras siguen la posición real del sol."
+  >
+    <canvas></canvas>
+  </div>
+
+  <div class="copy">
+    <h1 id="hero-title">Julia Gómez Goenaga</h1>
+    <!-- TODO: frase definitiva sobre a qué se dedica ahora -->
+    <p>Arquitecta. Proyecto, rehabilitación y sostenibilidad.</p>
+  </div>
+
+  <!-- Cajetín: lectura del sol en tiempo real -->
+  <dl class="cajetin" aria-live="off">
+    <div class="title"><dt>Estudio de soleamiento</dt><dd>Bilbao, 43,26° N</dd></div>
+    <div><dt>Fecha</dt><dd data-date>4 abr</dd></div>
+    <div><dt>Hora solar</dt><dd data-hour>14:10</dd></div>
+    <div><dt>Azimut</dt><dd data-az>225°</dd></div>
+    <div><dt>Altura</dt><dd data-alt>44°</dd></div>
+  </dl>
+
+  <p class="credit">
+    Edificios: <a href="https://www.openstreetmap.org/copyright">© colaboradores de OpenStreetMap</a>
+  </p>
+</section>
+
+<script>
+  import { initSoleamiento } from '../scripts/soleamiento.js';
+  const root = document.querySelector<HTMLElement>('.hero .scene');
+  if (root) initSoleamiento(root);
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100dvh;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    padding: 0 var(--gutter) clamp(28px, 5vh, 56px);
+  }
+  .scene {
+    position: absolute;
+    inset: 0;
+    cursor: crosshair;
+    touch-action: pan-y;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .scene:global(.is-ready) {
+    opacity: 1;
+  }
+  .scene:focus-visible {
+    outline-offset: -6px;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Velo de papel abajo a la izquierda para que el texto se lea sobre la ciudad */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 42%;
+    background: linear-gradient(to top, var(--paper) 18%, transparent);
+    pointer-events: none;
+  }
+
+  .copy,
+  .cajetin,
+  .credit {
+    position: relative;
+    z-index: 1;
+  }
+  .copy {
+    pointer-events: none;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(44px, 8.5vw, 124px);
+    font-weight: 560;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+  }
+  .copy p {
+    margin: 18px 0 0;
+    max-width: 34ch;
+    font-size: clamp(17px, 1.6vw, 21px);
+    color: var(--ink-2);
+  }
+
+  .cajetin {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    border: 1px solid var(--ink);
+    font-size: 13px;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+  }
+  .cajetin div {
+    padding: 8px 12px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .cajetin .title {
+    grid-column: 1 / -1;
+    border-right: 0;
+    border-bottom-color: var(--ink);
+  }
+  .cajetin div:nth-child(2n + 1) {
+    border-right: 0;
+  }
+  .cajetin div:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+  .cajetin dt {
+    color: var(--ink-3);
+    font-size: 11px;
+  }
+  .cajetin dd {
+    margin: 0;
+    font-weight: 500;
+    min-width: 9ch;
+  }
+  .cajetin [data-hour] {
+    color: var(--minio);
+  }
+
+  .credit {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 8px;
+    margin: 0;
+    font-size: 11px;
+    color: var(--ink-3);
+  }
+
+  @media (max-width: 700px) {
+    .hero {
+      grid-template-columns: 1fr;
+      align-content: space-between;
+      padding-top: 104px;
+    }
+    /* En vertical el texto va arriba: velo de papel detrás */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 52%;
+      background: linear-gradient(to bottom, var(--paper) 58%, transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .cajetin {
+      justify-self: start;
+    }
+  }
+</style>

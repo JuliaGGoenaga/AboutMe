@@ -1,0 +1,72 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Saltar al contenido</a>
+    <header class="site-header">
+      <a class="brand" href={import.meta.env.BASE_URL}>Julia Gómez Goenaga</a>
+      <!-- TODO: menú definitivo cuando tengamos la estructura -->
+      <nav aria-label="Principal">
+        <a href="#trayectoria">Trayectoria</a>
+        <a href="#proyectos">Proyectos</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    height: 64px;
+    padding: 0 var(--gutter);
+  }
+  .brand {
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  nav {
+    display: flex;
+    gap: clamp(14px, 2.5vw, 32px);
+    font-size: 15px;
+  }
+  nav a {
+    text-decoration: none;
+    color: var(--ink-2);
+  }
+  nav a:hover {
+    color: var(--ink);
+  }
+  @media (max-width: 560px) {
+    nav {
+      display: none;
+    }
+  }
+</style>
