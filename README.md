@@ -1,6 +1,6 @@
 # Julia Gómez Goenaga · web
 
-Portfolio personal de Julia Gómez Goenaga, arquitecta. Hecho con [Astro](https://astro.build) y publicado en GitHub Pages.
+Portfolio personal de Julia Gómez Goenaga, arquitecta. Hecho con [Astro](https://astro.build) y publicado en GitHub Pages: https://juliaggoenaga.github.io/AboutMe/
 
 ## Portada: estudio de soleamiento
 
