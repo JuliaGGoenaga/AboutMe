@@ -25,6 +25,6 @@ npm run build    # genera dist/
 
 ## Publicación
 
-Cada push a `main` publica la web con la Action [`deploy.yml`](.github/workflows/deploy.yml). En GitHub: *Settings → Pages → Source: GitHub Actions*.
+Cada push a `main` compila la web con la Action [`deploy.yml`](.github/workflows/deploy.yml) y deja el resultado en la rama `gh-pages`. En GitHub: *Settings → Pages → Source: Deploy from a branch → `gh-pages` / (root)*.
 
 Si el repositorio se llama `<usuario>.github.io`, la web queda en `https://<usuario>.github.io`. Con cualquier otro nombre hay que poner `base: '/<nombre-del-repo>'` en [`astro.config.mjs`](astro.config.mjs).
