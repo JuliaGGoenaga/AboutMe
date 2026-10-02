@@ -1,7 +1,8 @@
 ---
 // Las tres líneas como tres círculos que se solapan: el solape es el tema del PhD.
-// El detalle de cada línea solo aparece al pasar el ratón (o al enfocar o tocar)
-// en una tarjeta translúcida sobre el diagrama.
+// Al bajar por "Present" se abren una a una las tarjetas de cada línea y, al
+// final, se destaca el centro: Humanizing decarbonization. Tocar o enfocar un
+// título también abre su tarjeta.
 import { lines } from '../data/content';
 
 // Centros de los círculos en un lienzo de 600 x 560 (triángulo equilátero).
@@ -24,6 +25,7 @@ const anchors = ['left', 'right', 'bottom'];
 <div class="lines" data-lines>
   <svg viewBox="0 0 600 560" aria-hidden="true">
     {centers.map((c, i) => <circle class="disc" data-i={i} cx={c.x} cy={c.y} r={R} />)}
+    <circle class="heart" cx="300" cy="262" r="62" />
   </svg>
   {
     lines.map((l, i) => (
@@ -57,6 +59,13 @@ const anchors = ['left', 'right', 'bottom'];
       </div>
     ))
   }
+  <div class="card at-core" id="line-card-3" data-i="3" role="tooltip">
+    <h3>Humanizing decarbonization</h3>
+    <p>
+      Where the three lines meet: my PhD on a performance-driven optimization workflow in envelope design, bringing AI
+      and simulation into the earliest design decisions.
+    </p>
+  </div>
 </div>
 
 <script>
@@ -69,37 +78,44 @@ const anchors = ['left', 'right', 'bottom'];
     const show = (i: string | null) => {
       active = i;
       root.classList.toggle('has-active', i !== null);
+      root.classList.toggle('core-on', i === '3');
       discs.forEach((d) => d.classList.toggle('on', d.dataset.i === i));
       labels.forEach((b) => b.setAttribute('aria-expanded', String(b.dataset.i === i)));
       cards.forEach((c) => c.classList.toggle('open', c.dataset.i === i));
     };
 
-    // Ratón: se abre al entrar en un círculo o en su título, se cierra al salir del diagrama.
-    [...discs, ...labels].forEach((el) => {
-      el.addEventListener('pointerenter', (e) => {
-        if ((e as PointerEvent).pointerType === 'mouse') show((el as HTMLElement).dataset.i ?? null);
-      });
-    });
-    root.addEventListener('pointerleave', (e) => {
-      if (e.pointerType === 'mouse') show(null);
-    });
+    // Scroll: el avance por la sección "Present" abre las tarjetas en orden y,
+    // al final, destaca el centro.
+    const section = root.closest('section');
+    let manual = false;
+    const onScroll = () => {
+      if (!section || manual) return;
+      const r = section.getBoundingClientRect();
+      const k = Math.min(Math.max(-r.top / Math.max(r.height - innerHeight, 1), 0), 1);
+      const stage = r.top > innerHeight * 0.35 ? null : k < 0.25 ? '0' : k < 0.5 ? '1' : k < 0.75 ? '2' : '3';
+      if (stage !== active) show(stage);
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
 
     // Táctil y teclado: tocar o pulsar abre y cierra.
+    const pick = (i: string | null) => {
+      manual = true;
+      show(i);
+    };
     labels.forEach((b) => {
-      b.addEventListener('click', () => show(active === b.dataset.i ? null : (b.dataset.i ?? null)));
-      b.addEventListener('focus', () => show(b.dataset.i ?? null));
-      b.addEventListener('blur', () => {
-        if (!root.matches(':hover')) show(null);
-      });
+      b.addEventListener('click', () => pick(b.dataset.i ?? null));
+      b.addEventListener('focus', () => pick(b.dataset.i ?? null));
     });
-    discs.forEach((d) =>
-      d.addEventListener('click', () => show(active === d.dataset.i ? null : (d.dataset.i ?? null)))
-    );
+    discs.forEach((d) => d.addEventListener('click', () => pick(d.dataset.i ?? null)));
+    // Al volver a hacer scroll, manda otra vez el scroll
+    addEventListener('wheel', () => (manual = false), { passive: true });
+    addEventListener('touchmove', () => (manual = false), { passive: true });
     root.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') show(null);
-    });
-    document.addEventListener('pointerdown', (e) => {
-      if (!root.contains(e.target as Node)) show(null);
+      if (e.key === 'Escape') {
+        manual = false;
+        onScroll();
+      }
     });
   });
 </script>
@@ -132,6 +148,24 @@ const anchors = ['left', 'right', 'bottom'];
   }
   .has-active .disc:not(.on) {
     opacity: 0.45;
+  }
+  .heart {
+    fill: var(--minio);
+    fill-opacity: 0;
+    stroke: var(--minio);
+    stroke-opacity: 0;
+    transition:
+      fill-opacity 0.5s ease,
+      stroke-opacity 0.5s ease;
+    pointer-events: none;
+  }
+  .core-on .heart {
+    fill-opacity: 0.16;
+    stroke-opacity: 1;
+  }
+  .core-on .disc {
+    opacity: 1;
+    stroke: var(--minio);
   }
   .disc.on {
     fill: var(--minio);
@@ -168,6 +202,16 @@ const anchors = ['left', 'right', 'bottom'];
     line-height: 1.25;
     color: var(--ink-2);
     pointer-events: none;
+  }
+  .core {
+    transition:
+      color 0.4s ease,
+      font-size 0.4s ease;
+  }
+  .core-on .core {
+    color: var(--minio);
+    font-weight: 560;
+    font-size: clamp(13px, 1.3vw, 16px);
   }
   .core span {
     display: block;
@@ -208,6 +252,9 @@ const anchors = ['left', 'right', 'bottom'];
   }
   .at-bottom {
     top: 44%;
+  }
+  .at-core {
+    top: 30%;
   }
   /* En una sola columna no hay hueco a la izquierda: encima, centrada */
   @media (max-width: 900px) {

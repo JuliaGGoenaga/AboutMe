@@ -121,11 +121,13 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
     color: var(--ink-2);
     margin: 16px 0 0;
   }
+  /* Altura extra para que, al bajar, se abran las tres líneas y el centro */
   .present {
+    min-height: 260vh;
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
     gap: 40px clamp(32px, 5vw, 80px);
-    align-items: center;
+    align-items: start;
   }
   .present :global(.lines) {
     position: sticky;

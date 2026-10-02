@@ -216,7 +216,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'cartagena',
-    hideImages: [2, 5, 9, 12, 13],
+    hideImages: [1, 2, 5, 9, 12, 13],
     group: 'etsam',
     title: 'Fortifications of Cartagena',
     subtitle: 'A centre for theological studies in the Atalaya Castle',
