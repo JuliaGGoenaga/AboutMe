@@ -158,6 +158,36 @@ export const sheets: Record<string, Sheet> = {
     },
   },
 
+  // TFM: la pregunta junto al texto; la sede de IDOM; el método (ciclo de vida y
+  // sistema TABS); los resultados y las conclusiones, como pares de diapositivas.
+  'embodied-carbon': {
+    columns: '5fr 7fr',
+    areas: ['text q', 'cover q', 'sede sede', 'lca tabs', 'r1 r2', 'conc prop'],
+    cells: {
+      text: 'text',
+      q: 'stack:c:s06',
+      cover: 'stack:c:s01',
+      sede: 'stack:c:s10',
+      lca: 'stack:c:s04',
+      tabs: 'stack:c:s12',
+      r1: 'stack:c:s21',
+      r2: 'stack:c:s22',
+      conc: 'stack:c:s24',
+      prop: 'stack:c:s27',
+    },
+    captions: {
+      'c:s06': 'Highly efficient buildings, highly polluting buildings?',
+      'c:s10': 'IDOM headquarters in Madrid',
+      'c:s04': 'Life cycle assessment, EN 15978: embodied and operational carbon',
+      'c:s12': 'Thermally activated building structure (TABS): the concrete stores heat and smooths the peaks',
+      'c:s21': 'Embodied and operational carbon: headquarters and reference building',
+      'c:s22': 'Total emissions over the life cycle',
+      'c:s24': 'Global emissions compared with other office buildings',
+      'c:s27': 'Proposals: reducing embodied carbon',
+    },
+    align: { cover: 'end' },
+  },
+
   // Solo el póster del concurso, a sangre, para recorrerlo bajando.
   naturelle: {
     bleed: 'c:poster',

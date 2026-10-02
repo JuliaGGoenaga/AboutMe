@@ -7,14 +7,15 @@ import { Image } from 'astro:assets';
 interface Props {
   src: ImageMetadata;
   alt: string;
+  label?: string;
 }
-const { src, alt } = Astro.props;
+const { src, alt, label = 'Full panel' } = Astro.props;
 ---
 
 <section class="scroller" data-scroller aria-label="Full panel">
   <div class="pin">
-    <Image src={src} alt={alt} widths={[4000, 8000, 10400]} sizes="800vh" loading="lazy" />
-    <p class="hint">Full panel</p>
+    <Image src={src} alt={alt} widths={[4000, 8000, src.width]} sizes="800vh" loading="lazy" />
+    <p class="hint">{label}</p>
   </div>
 </section>
 

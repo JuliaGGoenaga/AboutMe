@@ -17,7 +17,7 @@ const { project: p } = Astro.props;
 // Las imágenes que ya salen en la composición no se repiten en la galería.
 const composed = (Boolean(sheets[p.slug]) && !sheets[p.slug].bleed && !sheets[p.slug].pair) || p.slug === 'cartagena';
 const composeAll = import.meta.glob<{ default: ImageMetadata }>('../../assets/compose/*/*.jpg', { eager: true });
-const scrollerRef = sheets[p.slug]?.scroller;
+const scrollerRef = sheets[p.slug]?.scroller ?? (p.slug === 'cartagena' ? 'c:sheets' : undefined);
 const scrollerImg = scrollerRef ? composeAll[`../../assets/compose/${p.slug}/${scrollerRef.slice(2)}.jpg`]?.default : undefined;
 const hidden = [...(p.hideImages ?? []), ...usedArchive(p.slug)];
 const imgs = imagesFor(p.slug).filter((_, k) => !hidden.includes(k + 1));
@@ -100,7 +100,7 @@ const next = siblings[(i + 1) % siblings.length];
     </div>
     {p.credit && <p class="credit">{p.credit}</p>}
 
-    {scrollerImg && <Scroller src={scrollerImg} alt={`${p.title}, full competition panel`} />}
+    {scrollerImg && <Scroller src={scrollerImg} alt={`${p.title}, all the project sheets`} label={p.slug === 'cartagena' ? 'All the sheets' : 'Full panel'} />}
 
     <!-- Visor: al hacer clic en un dibujo se abre en grande sobre papel translúcido -->
     <dialog class="viewer" aria-label="Drawing">

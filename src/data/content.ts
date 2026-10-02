@@ -216,7 +216,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'cartagena',
-    hideImages: [1, 2, 5, 9, 12, 13],
+    hideImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], // las láminas van en la tira horizontal
     group: 'etsam',
     title: 'Fortifications of Cartagena',
     subtitle: 'A centre for theological studies in the Atalaya Castle',
@@ -275,6 +275,20 @@ export const archive: ArchiveProject[] = [
     ],
   },
   {
+    slug: 'embodied-carbon',
+    group: 'unav',
+    title: 'Embodied and operational carbon',
+    subtitle: "Master's thesis. The case of IDOM's Madrid headquarters",
+    year: '2022',
+    place: 'Madrid',
+    text: [
+      'Buildings account for 37% of global energy-related carbon emissions. Highly efficient buildings reduce their operational carbon, but what about the carbon embodied in their materials and systems?',
+      'The thesis analyses the full life cycle of IDOM’s Madrid headquarters (2010) and its thermally activated building structure (TABS), which uses the thermal mass of the concrete to store heat and reduce the power of the plant.',
+      'The result was unexpected: TABS lowers both operational and embodied carbon, because exposing the concrete removes most interior finishes. Supervised by Aurora Monge-Barrio (Universidad de Navarra) and Antonio Villanueva Peñalver (IDOM). Master in Environmental Design and Management of Buildings.',
+    ],
+    links: [{ label: 'Read the thesis (PDF)', href: drive('1uIsijZs_7Vw1rIy9RSDDzJloHE797KWu') }],
+  },
+  {
     slug: 'colab',
     group: 'unav',
     title: 'COLAB',
@@ -309,13 +323,7 @@ export const archive: ArchiveProject[] = [
 ];
 
 // Proyectos del archivo sin imágenes todavía (aparecen en la burbuja, sin ficha).
-export const archivePending: { group: 'etsam' | 'unav'; title: string; subtitle: string }[] = [
-  {
-    group: 'unav',
-    title: 'Embodied and operational carbon',
-    subtitle: "Master's thesis. The case of IDOM's Madrid headquarters",
-  },
-];
+export const archivePending: { group: 'etsam' | 'unav'; title: string; subtitle: string }[] = [];
 
 // --- Publicaciones -----------------------------------------------------------
 
