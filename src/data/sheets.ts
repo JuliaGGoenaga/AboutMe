@@ -67,8 +67,8 @@ export const sheets: Record<string, Sheet> = {
   // El barrio en axonometría y las tipologías dibujadas con su mobiliario.
   lyulin: {
     columns: '5fr 7fr',
-    areas: ['axo typ', 'text typ', 'text row'],
-    cells: { axo: 'a:01', text: 'text', typ: 'typologies', row: ['a:06', 'a:08', 'a:02'] },
+    areas: ['axo typ', 'text typ'],
+    cells: { axo: 'a:01', text: 'text', typ: 'typologies' },
     scroller: 'c:panel',
   },
 

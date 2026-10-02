@@ -227,7 +227,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'lyulin',
-    hideImages: [9, 10, 11],
+    hideImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], // entre las tipologías y el panel no va nada
     group: 'etsam',
     title: 'Urban forest in Lyulin',
     subtitle: 'Re-naturalisation and housing',

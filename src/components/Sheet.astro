@@ -126,12 +126,15 @@ const cells = Object.entries(sheet.cells);
 
         {value === 'typologies' && (
           <>
-            <p class="block-head">Housing typologies, drawn with their furniture: the interior space changes with the way it is furnished.</p>
-            <div class="strip">
+            <p class="block-head">06 / Living in motion. The six typologies in use, drawn with their furniture and inhabitants.</p>
+            <ol class="typs">
               {many('typ-').map((src, k) => (
-                <Image src={src} alt={`Housing typology plan ${k + 1}`} widths={[400, 800, 1600]} sizes="20vw" loading={k < 4 ? 'eager' : 'lazy'} />
+                <li>
+                  <p class="typ-title">Type {k + 1} in use</p>
+                  <Image src={src} alt={`Housing typology ${k + 1} in use`} widths={[600, 1200, 2000]} sizes="(max-width: 900px) 100vw, 30vw" loading={k < 2 ? 'eager' : 'lazy'} />
+                </li>
               ))}
-            </div>
+            </ol>
           </>
         )}
 
@@ -386,16 +389,22 @@ const cells = Object.entries(sheet.cells);
   .sheets :global(img:hover) {
     transform: translateY(-3px);
   }
-  .strip {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 20px 24px;
+  /* Tipologías como en la lámina 06 del panel: dos columnas, tres filas */
+  .typs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 32px;
+    align-items: end;
   }
-  .strip :global(img) {
-    flex: none;
-    width: auto;
-    height: clamp(140px, 15vw, 240px);
+  .typ-title {
+    margin: 0 0 8px;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    color: var(--ink-3);
+    text-align: center;
   }
   /* En pantallas estrechas la lámina se apila en el orden definido */
   @media (max-width: 900px) {
@@ -408,6 +417,9 @@ const cells = Object.entries(sheet.cells);
     }
   }
   @media (max-width: 700px) {
+    .typs {
+      grid-template-columns: 1fr;
+    }
     .sheets {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
