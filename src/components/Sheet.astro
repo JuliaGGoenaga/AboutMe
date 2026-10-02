@@ -53,17 +53,6 @@ const cells = Object.entries(sheet.cells);
   )
 }
 
-{
-  sheet.after && (
-    <section class="after" aria-label="Sections">
-      {sheet.after.map((r) => (
-        <Image src={ref(r)} alt={`${p.title}, section`} widths={[1280, 1920, 3000]} sizes="100vw" />
-      ))}
-    </section>
-  )
-}
-
-{sheet.axo && <ExplodedAxo src={ref(sheet.axo.src)} title={sheet.axo.title} intro={sheet.axo.intro} spots={sheet.axo.spots} />}
 
 {
   sheet.bleed && (
@@ -90,7 +79,7 @@ const cells = Object.entries(sheet.cells);
     cells.map(([area, value], i) => (
       <div
         class={`cell ${typeof value === 'string' && !value.includes(':') ? value : ''} ${sheet.sticky?.includes(area) ? 'is-sticky' : ''}`}
-        style={`grid-area:${area};align-self:${sheet.align?.[area] ?? 'start'}`}
+        style={`grid-area:${area};align-self:${sheet.align?.[area] ?? 'start'}${sheet.maxw?.[area] ? `;max-width:${sheet.maxw[area]};justify-self:${area === 's36' ? 'end' : 'start'}` : ''}`}
       >
         {value === 'text' && (
           <>
@@ -180,6 +169,28 @@ const cells = Object.entries(sheet.cells);
   )
 }
 
+{
+  sheet.after && (
+    <section class="after" aria-label="Sections">
+      {sheet.after.map((r) => (
+        <Image src={ref(r)} alt={`${p.title}, section`} widths={[1280, 1920, 3000]} sizes="100vw" />
+      ))}
+    </section>
+  )
+}
+
+{
+  sheet.axo && (
+    <ExplodedAxo
+      bg={ref(sheet.axo.bg)}
+      title={sheet.axo.title}
+      intro={sheet.axo.intro}
+      layers={sheet.axo.layers.map((l) => ({ src: ref(l.src), x: l.x, y: l.y, w: l.w, h: l.h, spot: { label: l.label, text: l.text } }))}
+      spots={sheet.axo.spots}
+    />
+  )
+}
+
 <script>
   // Alzados que aparecen uno a uno al bajar
   const io = new IntersectionObserver(
@@ -210,10 +221,12 @@ const cells = Object.entries(sheet.cells);
     font-size: 13px;
     color: var(--ink-3);
   }
+  /* Alzados más pequeños, para verlos junto a las secciones bioclimáticas */
   .reveal {
-    gap: 96px;
+    gap: 56px;
   }
   .reveal figure {
+    width: min(100%, 560px);
     opacity: 0;
     transform: translateY(32px);
     transition:

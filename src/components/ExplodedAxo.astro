@@ -1,79 +1,95 @@
 ---
-// Axonometría explotada interactiva: una lupa sigue al puntero y los puntos
-// numerados explican cada pieza del sistema constructivo.
+// Axonometría explotada animada: las capas de la estructura empiezan ensambladas
+// y se separan al hacer scroll hasta quedar como en el dibujo de Julia.
+// Los números explican cada pieza al pasar por encima o al tocarlos.
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 
+type Spot = { label: string; text: string };
 interface Props {
-  src: ImageMetadata;
+  bg: ImageMetadata;
   title: string;
   intro: string;
-  spots: { x: number; y: number; label: string; text: string }[];
+  // Capas en % de la escena (x, y, ancho, alto), de arriba abajo
+  layers: { src: ImageMetadata; x: number; y: number; w: number; h: number; spot: Spot }[];
+  // Detalles fijos sobre el edificio, en % de la escena
+  spots: (Spot & { x: number; y: number })[];
 }
-const { src, title, intro, spots } = Astro.props;
+const { bg, title, intro, layers, spots } = Astro.props;
+const all = [...layers.map((l) => l.spot), ...spots];
 ---
 
 <section class="axo" data-axo aria-labelledby="axo-title">
-  <header>
-    <h2 id="axo-title">{title}</h2>
-    <p>{intro}</p>
-  </header>
-  <div class="stage" data-stage style={`--full:url(${src.src})`}>
-    <Image src={src} alt="Exploded axonometric of the building and its precast structure" widths={[1280, 1920, 2560]} sizes="(max-width: 900px) 100vw, 75vw" />
-    <div class="lens" aria-hidden="true"></div>
-    {
-      spots.map((s, i) => (
-        <button type="button" class="spot" style={`left:${s.x}%;top:${s.y}%`} data-i={i} aria-describedby={`axo-note-${i}`}>
-          <span>{i + 1}</span>
-        </button>
-      ))
-    }
-    {
-      spots.map((s, i) => (
-        <div class="note" id={`axo-note-${i}`} role="tooltip" data-i={i} style={`left:${s.x}%;top:${s.y}%`} data-side={s.x > 55 ? 'left' : 'right'}>
-          <strong>{s.label}</strong>
-          <p>{s.text}</p>
-        </div>
-      ))
-    }
+  <div class="pin">
+    <header>
+      <h2 id="axo-title">{title}</h2>
+      <p>{intro}</p>
+    </header>
+    <div class="stage" data-stage style={`aspect-ratio:${bg.width}/${bg.height};--ratio:${bg.width / bg.height}`}>
+      <Image class="bg" src={bg} alt="Exploded axonometric of the building and its precast structure" widths={[1280, 1920, 2560]} sizes="80vw" />
+      {
+        layers.map((l, i) => (
+          <div class="layer" data-layer={i} style={`left:${l.x}%;top:${l.y}%;width:${l.w}%;height:${l.h}%`}>
+            <Image src={l.src} alt="" widths={[600, 1000]} sizes="20vw" />
+            <button type="button" class="spot" style="left:100%;top:50%" data-i={i} aria-describedby={`axo-note-${i}`}>
+              <span>{i + 1}</span>
+            </button>
+          </div>
+        ))
+      }
+      {
+        spots.map((s, k) => {
+          const i = layers.length + k;
+          return (
+            <button type="button" class="spot" style={`left:${s.x}%;top:${s.y}%`} data-i={i} aria-describedby={`axo-note-${i}`}>
+              <span>{i + 1}</span>
+            </button>
+          );
+        })
+      }
+    </div>
+    <ol class="legend">
+      {
+        all.map((s, i) => (
+          <li data-i={i} id={`axo-note-${i}`}>
+            <span>{i + 1}</span>
+            <div>
+              <strong>{s.label}</strong>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
   </div>
-  <ol class="legend">
-    {
-      spots.map((s, i) => (
-        <li data-i={i}>
-          <span>{i + 1}</span>
-          {s.label}
-        </li>
-      ))
-    }
-  </ol>
 </section>
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-axo]').forEach((root) => {
     const stage = root.querySelector<HTMLElement>('[data-stage]')!;
-    const lens = root.querySelector<HTMLElement>('.lens')!;
-    const notes = root.querySelectorAll<HTMLElement>('.note');
+    const layers = [...root.querySelectorAll<HTMLElement>('.layer')];
     const spots = root.querySelectorAll<HTMLElement>('.spot');
     const items = root.querySelectorAll<HTMLElement>('.legend li');
-    const ZOOM = 2.6;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const n = layers.length;
 
-    // Lupa: muestra la versión a máxima resolución bajo el puntero.
-    stage.addEventListener('pointermove', (e) => {
-      if (e.pointerType !== 'mouse') return;
-      const r = stage.getBoundingClientRect();
-      const x = e.clientX - r.left;
-      const y = e.clientY - r.top;
-      lens.style.left = `${x}px`;
-      lens.style.top = `${y}px`;
-      lens.style.backgroundSize = `${r.width * ZOOM}px ${r.height * ZOOM}px`;
-      lens.style.backgroundPosition = `${-x * ZOOM + lens.offsetWidth / 2}px ${-y * ZOOM + lens.offsetHeight / 2}px`;
-      stage.classList.add('looking');
-    });
-    stage.addEventListener('pointerleave', () => stage.classList.remove('looking'));
+    // Al principio las capas se solapan (ensambladas); al bajar se separan.
+    const STEP = 0.065; // desplazamiento por nivel, en fracción de la altura de la escena
+    const place = () => {
+      const r = root.getBoundingClientRect();
+      const k = reduce ? 1 : Math.min(Math.max(-r.top / Math.max(r.height - innerHeight, 1), 0), 1);
+      const e = k * k * (3 - 2 * k); // suavizado
+      const h = stage.getBoundingClientRect().height;
+      layers.forEach((l, i) => {
+        l.style.transform = `translate3d(0, ${(n - 1 - i) * STEP * h * (1 - e)}px, 0)`;
+      });
+      root.style.setProperty('--legend', String(e));
+    };
+    addEventListener('scroll', place, { passive: true });
+    addEventListener('resize', place);
+    place();
 
     const show = (i: string | null) => {
-      notes.forEach((n) => n.classList.toggle('open', n.dataset.i === i));
       spots.forEach((s) => s.classList.toggle('on', s.dataset.i === i));
       items.forEach((s) => s.classList.toggle('on', s.dataset.i === i));
     };
@@ -92,26 +108,45 @@ const { src, title, intro, spots } = Astro.props;
 </script>
 
 <style>
+  /* Escena fija mientras se recorre la sección: el scroll anima la explosión */
   .axo {
+    position: relative;
+    height: 240vh;
     margin: 0 0 88px;
   }
+  .pin {
+    position: sticky;
+    top: 64px;
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    grid-template-rows: auto 1fr;
+    gap: 12px 32px;
+    height: calc(100dvh - 64px);
+    padding-bottom: 16px;
+    /* sticky crea su propio contexto: con fondo de papel el blanco del dibujo se funde */
+    background: var(--paper);
+  }
   header {
-    max-width: 62ch;
-    margin-bottom: 20px;
+    grid-column: 1 / -1;
+    max-width: 70ch;
   }
   h2 {
     margin: 0;
-    font-size: clamp(24px, 2.6vw, 34px);
+    font-size: clamp(22px, 2.4vw, 32px);
     font-weight: 560;
     letter-spacing: -0.015em;
   }
   header p {
-    margin: 8px 0 0;
+    margin: 6px 0 0;
     color: var(--ink-2);
+    font-size: 15px;
   }
+  /* La escena cabe en la pantalla sin deformarse: ancho limitado por la altura disponible */
   .stage {
     position: relative;
-    cursor: crosshair;
+    width: min(100%, calc((100dvh - 240px) * var(--ratio)));
+    justify-self: start;
+    align-self: start;
   }
   .stage :global(img) {
     display: block;
@@ -119,37 +154,25 @@ const { src, title, intro, spots } = Astro.props;
     height: auto;
     mix-blend-mode: multiply;
   }
-  .lens {
-    position: absolute;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    border: 1px solid var(--ink);
-    background-color: #fff;
-    background-image: var(--full);
-    background-repeat: no-repeat;
-    box-shadow: 0 18px 40px -18px color-mix(in srgb, var(--ink) 50%, transparent);
-    translate: -50% -50%;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-    z-index: 2;
+  .layer :global(img) {
+    height: 100%;
   }
-  .stage.looking .lens {
-    opacity: 1;
+  .layer {
+    position: absolute;
+    will-change: transform;
   }
   .spot {
     position: absolute;
     translate: -50% -50%;
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
     padding: 0;
     border-radius: 50%;
     border: 1px solid var(--minio);
     background: var(--paper);
     color: var(--minio);
     font: inherit;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 600;
     cursor: help;
     z-index: 3;
@@ -160,65 +183,58 @@ const { src, title, intro, spots } = Astro.props;
     background: var(--minio);
     color: var(--paper);
   }
-  .note {
-    position: absolute;
-    z-index: 4;
-    width: min(280px, 40vw);
-    padding: 14px 16px;
-    background: color-mix(in srgb, var(--paper) 80%, transparent);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--ink);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-    translate: 22px -50%;
-  }
-  .note[data-side='left'] {
-    translate: calc(-100% - 22px) -50%;
-  }
-  .note.open {
-    opacity: 1;
-  }
-  .note strong {
-    color: var(--minio);
-    font-weight: 560;
-  }
-  .note p {
-    margin: 6px 0 0;
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--ink-2);
-  }
   .legend {
     list-style: none;
-    margin: 20px 0 0;
+    margin: 0;
     padding: 0;
+    align-self: center;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
-    gap: 6px 24px;
-    font-size: 14px;
+    gap: 10px;
+    font-size: 13.5px;
     color: var(--ink-2);
+    opacity: calc(0.35 + var(--legend, 0) * 0.65);
   }
   .legend li {
-    display: flex;
-    gap: 10px;
-    align-items: baseline;
+    display: grid;
+    grid-template-columns: 1.6em 1fr;
+    gap: 6px;
+    transition: color 0.15s ease;
   }
-  .legend li span {
+  .legend li > span {
     color: var(--minio);
     font-weight: 600;
-    min-width: 1.4em;
   }
-  .legend li.on {
+  .legend strong {
+    font-weight: 540;
     color: var(--ink);
   }
-  @media (max-width: 760px) {
-    .lens {
-      display: none;
+  .legend p {
+    margin: 2px 0 0;
+    line-height: 1.4;
+  }
+  .legend li:not(.on) p {
+    display: none;
+  }
+  .legend li.on strong {
+    color: var(--minio);
+  }
+  @media (max-width: 900px) {
+    .axo {
+      height: auto;
     }
-    .note {
-      width: 70vw;
+    .pin {
+      position: static;
+      height: auto;
+      grid-template-columns: 1fr;
+    }
+    .stage {
+      width: 100%;
+    }
+    .legend {
+      opacity: 1;
+    }
+    .legend li:not(.on) p {
+      display: block;
     }
   }
 </style>
