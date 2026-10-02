@@ -260,11 +260,12 @@ export const archive: ArchiveProject[] = [
     place: 'Macael, Almería',
     text: [
       'A retreat set in the marble quarries of Macael, developed from the site’s topography to the housing typologies.',
-      'The project starts by studying the relationship between objects scattered across the quarry, with shapes like those of carved marble. Move over the photographs to go through the models.',
+      'The project starts by studying the relationship between objects scattered across the quarry, with shapes like those of carved marble.',
     ],
   },
   {
     slug: 'naturelle',
+    hideImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // todo está en el póster
     group: 'etsam',
     title: 'Naturelle en Bois',
     subtitle: 'Sustainable residential park. Multi Comfort student contest',
@@ -289,21 +290,21 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'la-palma',
+    hideImages: [1],
     group: 'unav',
     title: 'Housing for La Palma',
     subtitle: 'For those affected by the 2021 volcanic eruption',
     year: '2022',
     place: 'La Palma, Canary Islands',
     text: [
-      'After analysing the climate and the character of the area, the team designed a typological system that adapts to the territory and can be replicated over time.',
-      'The houses are industrialised and parametric, for fast and practical construction that answers the urgency of the problem.',
+      'Industrialised, parametric housing for those affected by the volcano, adapted to the territory and fast to build.',
     ],
     links: [
       { label: 'Diario de Navarra', href: 'https://www.diariodenavarra.es/noticias/navarra/2022/07/21/viviendas-palma-disenadas-universidad-navarra-535612-300.html' },
       { label: 'COAM', href: 'https://www.coam.org/es/actualidad/agenda/coam-recomienda/grupo-estudiantes-arquitectura-disenan-viviendas-sostenibles' },
       { label: 'All the proposals (PDF)', href: drive('1qeh1wiVfrobVxiIagRaBu1-vOfzt1_zO') },
     ],
-    credit: 'Image by another member of the team.',
+    credit: 'Team: Julia Gómez Goenaga, Julia Ramírez Fernández, Doménica Gavilánez Aguilar and Ángel Gallo Díaz.',
   },
 ];
 

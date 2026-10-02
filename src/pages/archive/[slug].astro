@@ -15,7 +15,7 @@ export function getStaticPaths() {
 
 const { project: p } = Astro.props;
 // Las imágenes que ya salen en la composición no se repiten en la galería.
-const composed = Boolean(sheets[p.slug]) || p.slug === 'cartagena';
+const composed = (Boolean(sheets[p.slug]) && !sheets[p.slug].bleed && !sheets[p.slug].pair) || p.slug === 'cartagena';
 const composeAll = import.meta.glob<{ default: ImageMetadata }>('../../assets/compose/*/*.jpg', { eager: true });
 const scrollerRef = sheets[p.slug]?.scroller;
 const scrollerImg = scrollerRef ? composeAll[`../../assets/compose/${p.slug}/${scrollerRef.slice(2)}.jpg`]?.default : undefined;
@@ -128,7 +128,7 @@ const next = siblings[(i + 1) % siblings.length];
           .map((c) => c.trim().split(/\s+/))
           .sort((a, b) => parseInt(b[1]) - parseInt(a[1]))[0][0]
       : img.currentSrc || img.src;
-  document.querySelectorAll<HTMLImageElement>('.compose img, .bleed img, .sheet img:not(.flip img), .backdrop img, .scroller img, .gallery img').forEach((img) => {
+  document.querySelectorAll<HTMLImageElement>('.compose img, .bleed img, .bleed-only img, .pair img, .after img, .sheet img:not(.contact img), .backdrop img, .scroller img, .gallery img').forEach((img) => {
     img.tabIndex = 0;
     img.setAttribute('role', 'button');
     const open = () => {
