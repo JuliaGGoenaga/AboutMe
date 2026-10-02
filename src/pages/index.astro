@@ -23,9 +23,23 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
     <div class="intro">
       <h2>Present</h2>
       <p class="lead">
-        I work at IDOM on sustainability and computational design, and I am part of its digital transformation group.
-        In parallel I am doing a PhD between the Universidad de Navarra and the University of Florida, and I
-        collaborate with universities on teaching and research.
+        I’m an architect specialized in sustainable design, currently working at IDOM, where I help integrate technical
+        innovation into architectural practice. Over the past years, I’ve contributed to numerous real-world façade
+        projects, applying performance-based methodologies to optimize design processes and support decarbonization
+        goals.
+      </p>
+      <p class="body">
+        I hold a degree in Architecture from ETSAM (Universidad Politécnica de Madrid) and a Master’s in Architecture and
+        Sustainability from the University of Navarra. I’m currently pursuing a practice-based PhD through a
+        collaboration between IDOM, the University of Navarra, and the University of Florida.
+      </p>
+      <p class="body">
+        My research explores how artificial intelligence can enhance early-stage façade design, leveraging
+        data-informed strategies and simulation tools to enable more intelligent, efficient, and environmentally
+        responsive decision-making from the very beginning of the creative process. My goal is to advance
+        architectural workflows by integrating AI, simulation, and data-driven design into mainstream practice,
+        fostering a new generation of buildings that are not only aesthetically compelling but also technically
+        optimized and environmentally conscious.
       </p>
       <p class="hint">Three lines of work, and where they meet.</p>
     </div>
@@ -75,7 +89,7 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
   <section id="research" class="section">
     <h2>Research</h2>
     <div class="phd">
-      <p class="label">PhD, Universidad de Navarra and University of Florida</p>
+      <p class="label">Practice-based PhD. IDOM, Universidad de Navarra and University of Florida</p>
       <p class="phd-title">Humanizing decarbonization</p>
       <p class="phd-sub">Performance-driven optimization workflow in envelope design</p>
     </div>
@@ -158,10 +172,20 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
     gap: 40px clamp(32px, 5vw, 80px);
     align-items: center;
   }
+  .present :global(.lines) {
+    position: sticky;
+    top: 96px;
+    align-self: start;
+  }
   .intro {
     display: grid;
     gap: 0;
     align-self: start;
+  }
+  .body {
+    margin: 16px 0 0;
+    max-width: 60ch;
+    color: var(--ink-2);
   }
   .hint {
     margin: 32px 0 0;

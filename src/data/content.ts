@@ -84,7 +84,7 @@ export const experiences: Experience[] = [
   {
     id: 'unav-master',
     label: 'Master, UNAV',
-    detail: "Master's studies, Universidad de Navarra",
+    detail: "Master's in Architecture and Sustainability, Universidad de Navarra",
     start: 2021,
     end: 2023, // TODO confirmar
     place: 'Pamplona',
@@ -103,7 +103,7 @@ export const experiences: Experience[] = [
   {
     id: 'phd',
     label: 'PhD, UNAV and University of Florida',
-    detail: 'Humanizing decarbonization: performance-driven optimization workflow in envelope design. Research stay at the University of Florida',
+    detail: 'Practice-based PhD with IDOM. Humanizing decarbonization: performance-driven optimization workflow in envelope design',
     start: 2023, // TODO confirmar
     place: 'Pamplona and Florida',
     links: [['envelope', 2023], ['daylight', 2023], ['computational', 2024], ['integrated', 2024], ['hci', 2024], ['teaching', 2024], ['ai', 2025]],
@@ -178,7 +178,7 @@ export const archiveGroups = {
   },
   unav: {
     title: 'Universidad de Navarra',
-    subtitle: "Master's studies",
+    subtitle: "Master's in Architecture and Sustainability",
     years: '2021-2023',
   },
 } as const;
