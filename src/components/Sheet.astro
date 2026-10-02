@@ -1,0 +1,347 @@
+---
+// Lámina de proyecto: cada proyecto define su propia retícula en src/data/sheets.ts.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import type { ArchiveProject } from '../data/content';
+import { sheets } from '../data/sheets';
+
+interface Props {
+  project: ArchiveProject;
+}
+const { project: p } = Astro.props;
+const sheet = sheets[p.slug];
+
+const archiveImgs = import.meta.glob<{ default: ImageMetadata }>('../assets/archive/*/*.jpg', { eager: true });
+const composeImgs = import.meta.glob<{ default: ImageMetadata }>('../assets/compose/*/*.jpg', { eager: true });
+const ref = (r: string) =>
+  r.startsWith('a:')
+    ? archiveImgs[`../assets/archive/${p.slug}/${r.slice(2)}.jpg`]?.default
+    : composeImgs[`../assets/compose/${p.slug}/${r.slice(2)}.jpg`]?.default;
+const many = (prefix: string) =>
+  Object.entries(composeImgs)
+    .filter(([path]) => path.includes(`/compose/${p.slug}/${prefix}`))
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([, m]) => m.default);
+
+const W = [400, 800, 1600, 2400];
+const gridStyle = `grid-template-columns:${sheet.columns};grid-template-areas:${sheet.areas.map((a) => `"${a}"`).join(' ')}`;
+const cells = Object.entries(sheet.cells);
+---
+
+{
+  sheet.backdrop && (
+    <section class="backdrop" aria-label="Situation">
+      <Image src={ref(sheet.backdrop)} alt={`${p.title}, situation plan`} widths={[1280, 1920, 2800]} sizes="100vw" loading="eager" />
+      <div class="veil">
+        <div class="text">
+          {p.text.map((t) => (
+            <p>{t}</p>
+          ))}
+        </div>
+        {p.links && (
+          <ul class="links">
+            {p.links.map((l) => (
+              <li>
+                <a href={l.href}>{l.label}</a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  )
+}
+
+<section class="sheet" style={gridStyle} aria-label="Project drawings">
+  {
+    cells.map(([area, value], i) => (
+      <div
+        class={`cell ${typeof value === 'string' && !value.includes(':') ? value : ''} ${sheet.sticky?.includes(area) ? 'is-sticky' : ''}`}
+        style={`grid-area:${area};align-self:${sheet.align?.[area] ?? 'start'}`}
+      >
+        {value === 'text' && (
+          <>
+            <div class="text">
+              {p.text.map((t) => (
+                <p>{t}</p>
+              ))}
+            </div>
+            {p.links && (
+              <ul class="links">
+                {p.links.map((l) => (
+                  <li>
+                    <a href={l.href}>{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        )}
+
+        {value === 'catalogue' && (
+          <>
+            <p class="block-head">Catalogue of pixels. Sixteen modules of the BioPix envelope, pages 56 to 71 of the thesis.</p>
+            <ol class="sheets">
+              {many('px-').map((src, k) => (
+                <li>
+                  <Image src={src} alt={`Catalogue sheet, pixel ${k + 1}`} widths={[240, 480, 1200]} sizes="(max-width: 700px) 25vw, 11vw" loading={k < 8 ? 'eager' : 'lazy'} />
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+
+        {value === 'typologies' && (
+          <>
+            <p class="block-head">Housing typologies, drawn with their furniture: the interior space changes with the way it is furnished.</p>
+            <div class="strip">
+              {many('typ-').map((src, k) => (
+                <Image src={src} alt={`Housing typology plan ${k + 1}`} widths={[400, 800, 1600]} sizes="20vw" loading={k < 4 ? 'eager' : 'lazy'} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {value === 'flipbook' && (
+          <div class="flip" data-flip>
+            <div class="frame">
+              {many('ph-').map((src, k) => (
+                <Image src={src} alt={`Clay model study ${k + 1}`} widths={[164]} sizes="380px" class={k === 0 ? 'on' : ''} loading={k < 8 ? 'eager' : 'lazy'} />
+              ))}
+            </div>
+            <p class="block-head" lang="es">Se estudia la relación entre objetos dispersos por la cantera con formas como las del mármol tallado.</p>
+            <ol class="contact">
+              {many('ph-').map((src, k) => (
+                <li>
+                  <Image src={src} alt="" widths={[164]} sizes="95px" data-k={k} />
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
+        {typeof value === 'string' && value.includes(':') && (
+          <Image src={ref(value)} alt={`${p.title}, drawing`} widths={W} sizes="(max-width: 900px) 100vw, 50vw" loading={i < 3 ? 'eager' : 'lazy'} />
+        )}
+
+        {Array.isArray(value) && (
+          <div class="row" style={`grid-template-columns:repeat(${value.length},minmax(0,1fr))`}>
+            {value.map((r) => (
+              <Image src={ref(r)} alt={`${p.title}, drawing`} widths={[400, 800, 1600]} sizes="(max-width: 900px) 33vw, 20vw" />
+            ))}
+          </div>
+        )}
+      </div>
+    ))
+  }
+</section>
+
+<script>
+  // Flipbook: al mover el ratón por el fotograma (o pasar por la hoja de contactos)
+  // se recorren las fotos de las maquetas.
+  document.querySelectorAll<HTMLElement>('[data-flip]').forEach((flip) => {
+    const frames = [...flip.querySelectorAll<HTMLImageElement>('.frame img')];
+    const thumbs = [...flip.querySelectorAll<HTMLImageElement>('.contact img')];
+    const frame = flip.querySelector<HTMLElement>('.frame')!;
+    let cur = 0;
+    const show = (k: number) => {
+      if (k === cur || !frames[k]) return;
+      frames[cur].classList.remove('on');
+      thumbs[cur]?.parentElement?.classList.remove('on');
+      frames[k].classList.add('on');
+      thumbs[k]?.parentElement?.classList.add('on');
+      cur = k;
+    };
+    thumbs[0]?.parentElement?.classList.add('on');
+    frame.addEventListener('pointermove', (e) => {
+      const r = frame.getBoundingClientRect();
+      show(Math.min(frames.length - 1, Math.floor(((e.clientX - r.left) / r.width) * frames.length)));
+    });
+    thumbs.forEach((t, k) => t.addEventListener('pointerenter', () => show(k)));
+  });
+
+</script>
+
+<style>
+  /* Flipbook de Macael */
+  /* Las fotos originales son pequeñas: el fotograma no pasa de ~2x su tamaño */
+  .flip .frame {
+    position: relative;
+    width: min(100%, 380px);
+    aspect-ratio: 164 / 120;
+    cursor: ew-resize;
+    background: #8a8a8a;
+  }
+  .flip .frame :global(img) {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    mix-blend-mode: normal;
+    cursor: ew-resize;
+  }
+  .flip .frame :global(img.on) {
+    opacity: 1;
+  }
+  .flip .block-head {
+    margin: 12px 0 14px;
+    font-style: italic;
+  }
+  .contact {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 6px;
+    max-width: 760px;
+  }
+  .contact li {
+    opacity: 0.55;
+    transition: opacity 0.15s ease;
+  }
+  .contact li.on,
+  .contact li:hover {
+    opacity: 1;
+  }
+  .contact :global(img) {
+    mix-blend-mode: normal;
+    cursor: pointer;
+  }
+
+
+  /* Plano de fondo a sangre y tarjeta translúcida encima */
+  .backdrop {
+    position: relative;
+    margin: 0 calc(-1 * var(--gutter)) 56px;
+  }
+  .backdrop :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    mix-blend-mode: multiply;
+    cursor: zoom-in;
+  }
+  .veil {
+    position: absolute;
+    left: var(--gutter);
+    top: 8%;
+    width: min(380px, 36%);
+    padding: 22px 24px 18px;
+    background: color-mix(in srgb, var(--paper) 74%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--ink);
+  }
+  .veil .text {
+    max-width: none;
+  }
+  @media (max-width: 760px) {
+    .veil {
+      position: static;
+      width: auto;
+      margin: 16px var(--gutter) 0;
+      backdrop-filter: none;
+    }
+  }
+  .sheet {
+    display: grid;
+    gap: 32px 28px;
+    margin: 0 0 88px;
+  }
+  .cell {
+    min-width: 0;
+  }
+  .cell.is-sticky {
+    position: sticky;
+    top: 96px;
+  }
+  .sheet :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    mix-blend-mode: multiply;
+    cursor: zoom-in;
+  }
+  .text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 46ch;
+  }
+  .text p {
+    margin: 0 0 0.9em;
+  }
+  .links {
+    list-style: none;
+    padding: 12px 0 0;
+    margin: 8px 0 0;
+    border-top: 1px solid var(--ink);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .links a {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .links a:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .row {
+    display: grid;
+    gap: 12px;
+    align-items: end;
+  }
+  .block-head {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .sheets {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px 12px;
+  }
+  .sheets :global(img) {
+    transition: transform 0.2s ease;
+  }
+  .sheets :global(img:hover) {
+    transform: translateY(-3px);
+  }
+  .strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 20px 24px;
+  }
+  .strip :global(img) {
+    flex: none;
+    width: auto;
+    height: clamp(100px, 11vw, 170px);
+  }
+  /* En pantallas estrechas la lámina se apila en el orden definido */
+  @media (max-width: 900px) {
+    .sheet {
+      grid-template-columns: 1fr !important;
+      grid-template-areas: none !important;
+    }
+    .cell {
+      grid-area: auto !important;
+    }
+  }
+  @media (max-width: 700px) {
+    .sheets {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

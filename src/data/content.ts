@@ -216,7 +216,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'cartagena',
-    hideImages: [2, 5, 9],
+    hideImages: [2, 5, 9, 12, 13],
     group: 'etsam',
     title: 'Fortifications of Cartagena',
     subtitle: 'A centre for theological studies in the Atalaya Castle',
@@ -258,7 +258,10 @@ export const archive: ArchiveProject[] = [
     title: 'Retreat in Macael',
     subtitle: 'In the marble quarries',
     place: 'Macael, Almería',
-    text: ['A retreat set in the marble quarries of Macael, developed from the site’s topography to the housing typologies.'],
+    text: [
+      'A retreat set in the marble quarries of Macael, developed from the site’s topography to the housing typologies.',
+      'The project starts by studying the relationship between objects scattered across the quarry, with shapes like those of carved marble. Move over the photographs to go through the models.',
+    ],
   },
   {
     slug: 'naturelle',

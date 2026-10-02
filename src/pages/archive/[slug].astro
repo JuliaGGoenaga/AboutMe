@@ -4,6 +4,10 @@ import Base from '../../layouts/Base.astro';
 import { archive, archiveGroups } from '../../data/content';
 import { imagesFor, url } from '../../lib/images';
 import Compose from '../../components/Compose.astro';
+import Sheet from '../../components/Sheet.astro';
+import Scroller from '../../components/Scroller.astro';
+import type { ImageMetadata } from 'astro';
+import { sheets, usedArchive } from '../../data/sheets';
 
 export function getStaticPaths() {
   return archive.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
@@ -11,7 +15,12 @@ export function getStaticPaths() {
 
 const { project: p } = Astro.props;
 // Las imágenes que ya salen en la composición no se repiten en la galería.
-const imgs = imagesFor(p.slug).filter((_, k) => !(p.hideImages ?? []).includes(k + 1));
+const composed = Boolean(sheets[p.slug]) || p.slug === 'cartagena';
+const composeAll = import.meta.glob<{ default: ImageMetadata }>('../../assets/compose/*/*.jpg', { eager: true });
+const scrollerRef = sheets[p.slug]?.scroller;
+const scrollerImg = scrollerRef ? composeAll[`../../assets/compose/${p.slug}/${scrollerRef.slice(2)}.jpg`]?.default : undefined;
+const hidden = [...(p.hideImages ?? []), ...usedArchive(p.slug)];
+const imgs = imagesFor(p.slug).filter((_, k) => !hidden.includes(k + 1));
 // Retícula alineada: las panorámicas a todo el ancho, las verticales estrechas,
 // el resto alternando 7 y 5 columnas.
 let alt = 0;
@@ -43,22 +52,36 @@ const next = siblings[(i + 1) % siblings.length];
       </dl>
     </header>
 
-    <div class="text">
-      {p.text.map((t) => <p>{t}</p>)}
-      {
-        p.links && (
-          <ul class="links">
-            {p.links.map((l) => (
-              <li>
-                <a href={l.href}>{l.label}</a>
-              </li>
-            ))}
-          </ul>
-        )
-      }
-    </div>
+    {
+      !composed && (
+        <div class="text">
+          {p.text.map((t) => <p>{t}</p>)}
+          {p.links && (
+            <ul class="links">
+              {p.links.map((l) => (
+                <li>
+                  <a href={l.href}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )
+    }
 
-    <Compose slug={p.slug} />
+    {sheets[p.slug] && <Sheet project={p} />}
+    {p.slug === 'cartagena' && <Compose project={p} />}
+    {
+      p.slug === 'cartagena' && p.links && (
+        <ul class="links">
+          {p.links.map((l) => (
+            <li>
+              <a href={l.href}>{l.label}</a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
 
     <div class="gallery">
       {
@@ -76,6 +99,8 @@ const next = siblings[(i + 1) % siblings.length];
       }
     </div>
     {p.credit && <p class="credit">{p.credit}</p>}
+
+    {scrollerImg && <Scroller src={scrollerImg} alt={`${p.title}, full competition panel`} />}
 
     <!-- Visor: al hacer clic en un dibujo se abre en grande sobre papel translúcido -->
     <dialog class="viewer" aria-label="Drawing">
@@ -103,7 +128,7 @@ const next = siblings[(i + 1) % siblings.length];
           .map((c) => c.trim().split(/\s+/))
           .sort((a, b) => parseInt(b[1]) - parseInt(a[1]))[0][0]
       : img.currentSrc || img.src;
-  document.querySelectorAll<HTMLImageElement>('.compose img, .gallery img').forEach((img) => {
+  document.querySelectorAll<HTMLImageElement>('.compose img, .bleed img, .sheet img:not(.flip img), .backdrop img, .scroller img, .gallery img').forEach((img) => {
     img.tabIndex = 0;
     img.setAttribute('role', 'button');
     const open = () => {
@@ -195,7 +220,7 @@ const next = siblings[(i + 1) % siblings.length];
     display: flex;
     flex-wrap: wrap;
     gap: 12px 40px;
-    margin: 32px 0 0;
+    margin: 32px 0 56px;
     padding-top: 16px;
     border-top: 1px solid var(--ink);
   }

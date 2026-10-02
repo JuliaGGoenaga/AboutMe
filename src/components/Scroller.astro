@@ -1,0 +1,81 @@
+---
+// Panel completo a pantalla entera al final de la ficha: aparece al llegar abajo
+// y se recorre en horizontal mientras se hace scroll hacia abajo.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+}
+const { src, alt } = Astro.props;
+---
+
+<section class="scroller" data-scroller aria-label="Full panel">
+  <div class="pin">
+    <Image src={src} alt={alt} widths={[4000, 8000, 10400]} sizes="800vh" loading="lazy" />
+    <p class="hint">Full panel</p>
+  </div>
+</section>
+
+<script>
+  // Panel a pantalla completa: al bajar, se desplaza en horizontal.
+  document.querySelectorAll<HTMLElement>('[data-scroller]').forEach((sec) => {
+    const img = sec.querySelector<HTMLImageElement>('img')!;
+    const size = () => {
+      const w = (img.naturalWidth / img.naturalHeight) * innerHeight || innerHeight * 8;
+      const travel = Math.max(0, w - innerWidth);
+      sec.style.height = `${innerHeight + travel}px`;
+      return travel;
+    };
+    let travel = size();
+    const move = () => {
+      const r = sec.getBoundingClientRect();
+      const k = Math.min(Math.max(-r.top / (r.height - innerHeight || 1), 0), 1);
+      img.style.transform = `translate3d(${-k * travel}px,0,0)`;
+    };
+    img.addEventListener('load', () => {
+      travel = size();
+      move();
+    });
+    addEventListener('resize', () => {
+      travel = size();
+      move();
+    });
+    addEventListener('scroll', move, { passive: true });
+    move();
+  });
+</script>
+
+<style>
+  /* Panel completo a pantalla entera, recorrido en horizontal */
+  .scroller {
+    position: relative;
+    margin: 0 calc(-1 * var(--gutter));
+  }
+  .pin {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow: hidden;
+    background: #fff;
+  }
+  .pin :global(img) {
+    height: 100dvh;
+    width: auto;
+    max-width: none;
+    display: block;
+    will-change: transform;
+    cursor: zoom-in;
+  }
+  .hint {
+    position: absolute;
+    left: var(--gutter);
+    bottom: 16px;
+    margin: 0;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--ink-2);
+    background: color-mix(in srgb, var(--paper) 80%, transparent);
+  }
+</style>

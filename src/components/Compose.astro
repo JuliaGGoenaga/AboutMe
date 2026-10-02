@@ -5,10 +5,13 @@
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 
+import type { ArchiveProject } from '../data/content';
+
 interface Props {
-  slug: string;
+  project: ArchiveProject;
 }
-const { slug } = Astro.props;
+const { project } = Astro.props;
+const slug = project.slug;
 
 const all = import.meta.glob<{ default: ImageMetadata }>('../assets/compose/*/*.jpg', { eager: true });
 const img = (name: string) => all[`../assets/compose/${slug}/${name}.jpg`]?.default;
@@ -21,55 +24,16 @@ const many = (prefix: string) =>
 const W = [480, 960, 1600, 2400];
 ---
 
-{
-  slug === 'lisbon' && (
-    <section class="compose lisbon" aria-label="Drawings">
-      <figure class="c-8">
-        <Image src={img('skyline')} alt="Torre Douro on the riverside profile, cover drawing of the construction project" widths={W} sizes="100vw" />
-      </figure>
-      <figure class="c-4">
-        <Image src={img('axo')} alt="Constructive axonometric of the ventilated pixel facade" widths={W} sizes="(max-width: 800px) 100vw, 50vw" />
-        <figcaption>Ventilated facade of pixels, after the BioPix system</figcaption>
-      </figure>
-      <figure class="c-2 low">
-        <Image src={img('north')} alt="North elevation" widths={W} sizes="(max-width: 800px) 50vw, 25vw" />
-        <figcaption>North elevation</figcaption>
-      </figure>
-      <figure class="c-2 low">
-        <Image src={img('west')} alt="West elevation" widths={W} sizes="(max-width: 800px) 50vw, 25vw" />
-        <figcaption>West elevation</figcaption>
-      </figure>
-      <figure class="c-8 start">
-        <Image src={img('pixels')} alt="Schematic layout of the facade pixels on the four elevations" widths={W} sizes="100vw" />
-        <figcaption>Layout of the facade pixels: photovoltaic, solar collector, vegetated, glazed</figcaption>
-      </figure>
-    </section>
-  )
-}
 
-{
-  slug === 'bioperfectible-skin' && (
-    <section class="compose catalogue" aria-labelledby="cat-title">
-      <header class="c-12 cat-head">
-        <h2 id="cat-title">Catalogue of pixels</h2>
-        <p>Sixteen modules of the BioPix envelope, from the photovoltaic pixel to the ceramic one. Pages 56 to 71 of the thesis.</p>
-      </header>
-      <ol class="sheets">
-        {many('px-').map((src, i) => (
-          <li>
-            <Image src={src} alt={`Catalogue sheet, pixel ${i + 1}`} widths={[240, 480, 1200]} sizes="(max-width: 700px) 25vw, 12vw" loading={i < 8 ? 'eager' : 'lazy'} />
-          </li>
-        ))}
-      </ol>
-    </section>
-  )
-}
 
 {
   slug === 'cartagena' && (
     <section class="compose cartagena" aria-label="Drawings">
       <div class="side">
         <Image src={img('thinker')} alt="The Thinker in the courtyard of the Atalaya Castle, collage" widths={[400, 800, 1200]} sizes="(max-width: 900px) 70vw, 28vw" />
+        <div class="ptext">
+          {project.text.map((t) => <p>{t}</p>)}
+        </div>
         <blockquote lang="es">
           <p>
             “Somos seres biológicos y culturales. En lugar de aislarnos en un presente superficial y en una artificialidad
@@ -97,6 +61,10 @@ const W = [480, 960, 1600, 2400];
           <span>Centro de estudios teológicos</span>
           <span>Reutilización de lo existente</span>
         </p>
+        <div class="sketches">
+          <Image src={img('sketch-1')} alt="Hand sketch of the new pavilion inside the castle" widths={[400, 800]} sizes="(max-width: 900px) 45vw, 14vw" />
+          <Image src={img('sketch-2')} alt="Hand sketch of the triangular canopy over the bastion" widths={[400, 800]} sizes="(max-width: 900px) 45vw, 14vw" />
+        </div>
       </div>
       <div class="main">
         <Image src={img('situation')} alt="Situation plan of the fortifications of Cartagena" widths={W} sizes="(max-width: 900px) 100vw, 62vw" />
@@ -115,20 +83,14 @@ const W = [480, 960, 1600, 2400];
 }
 
 {
-  slug === 'lyulin' && (
-    <section class="compose lyulin" aria-labelledby="typ-title">
-      <header class="c-12 cat-head">
-        <h2 id="typ-title">Housing typologies</h2>
-        <p>Six typologies, drawn with their furniture: the interior changes with the way it is furnished.</p>
-      </header>
-      <div class="strip">
-        {many('typ-').map((src, i) => (
-          <Image src={src} alt={`Housing typology plan ${i + 1}`} widths={[400, 800, 1600]} sizes="25vw" loading={i < 4 ? 'eager' : 'lazy'} />
-        ))}
-      </div>
+  slug === 'cartagena' && (
+    <section class="bleed" aria-label="Sections">
+      <Image src={img('section-1')} alt="Section of the Atalaya Castle on its hill" widths={[1280, 1920, 2560]} sizes="100vw" />
+      <Image src={img('section-2')} alt="North elevation of the Atalaya Castle" widths={[1280, 1920, 2560]} sizes="100vw" />
     </section>
   )
 }
+
 
 <style>
   .compose {
@@ -211,8 +173,19 @@ const W = [480, 960, 1600, 2400];
   .main {
     grid-column: 5 / -1;
   }
+  .ptext {
+    margin-top: 28px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+  .ptext p {
+    margin: 0;
+  }
   blockquote {
-    margin: 28px 0 0;
+    margin: 24px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
     padding: 0;
     font-size: 14px;
     line-height: 1.55;
@@ -238,6 +211,26 @@ const W = [480, 960, 1600, 2400];
     display: block;
     font-weight: 400;
     color: var(--ink-2);
+  }
+  .sketches {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 32px;
+    align-items: end;
+  }
+  /* Secciones de lado a lado de la pantalla */
+  .bleed {
+    margin: 0 calc(-1 * var(--gutter)) 72px;
+    display: grid;
+    gap: 8px;
+  }
+  .bleed :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    mix-blend-mode: multiply;
+    cursor: zoom-in;
   }
   .plans {
     margin-top: 24px;
