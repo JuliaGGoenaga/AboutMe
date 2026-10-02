@@ -3,13 +3,24 @@ import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import { archive, archiveGroups } from '../../data/content';
 import { imagesFor, url } from '../../lib/images';
+import Compose from '../../components/Compose.astro';
 
 export function getStaticPaths() {
   return archive.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
 }
 
 const { project: p } = Astro.props;
-const imgs = imagesFor(p.slug);
+// Las imágenes que ya salen en la composición no se repiten en la galería.
+const imgs = imagesFor(p.slug).filter((_, k) => !(p.hideImages ?? []).includes(k + 1));
+// Retícula alineada: las panorámicas a todo el ancho, las verticales estrechas,
+// el resto alternando 7 y 5 columnas.
+let alt = 0;
+const span = (w: number, h: number) => {
+  const r = w / h;
+  if (r > 1.9) return 'full';
+  if (r < 0.8) return 'tall';
+  return alt++ % 2 ? 'b' : 'a';
+};
 const group = archiveGroups[p.group];
 const siblings = archive.filter((x) => x.group === p.group);
 const i = siblings.findIndex((x) => x.slug === p.slug);
@@ -47,10 +58,12 @@ const next = siblings[(i + 1) % siblings.length];
       }
     </div>
 
+    <Compose slug={p.slug} />
+
     <div class="gallery">
       {
         imgs.map((img, k) => (
-          <figure class={img.width / img.height > 2.2 ? 'wide' : ''}>
+          <figure class={span(img.width, img.height)}>
             <Image
               src={img}
               alt={`${p.title}, image ${k + 1}`}
@@ -64,6 +77,12 @@ const next = siblings[(i + 1) % siblings.length];
     </div>
     {p.credit && <p class="credit">{p.credit}</p>}
 
+    <!-- Visor: al hacer clic en un dibujo se abre en grande sobre papel translúcido -->
+    <dialog class="viewer" aria-label="Drawing">
+      <button type="button" class="viewer-close">Close</button>
+      <img alt="" />
+    </dialog>
+
     <nav class="next" aria-label="Next project">
       <a href={url(`archive/${next.slug}/`)}>
         <span>Next</span>
@@ -73,7 +92,78 @@ const next = siblings[(i + 1) % siblings.length];
   </article>
 </Base>
 
+<script>
+  const viewer = document.querySelector<HTMLDialogElement>('dialog.viewer');
+  const big = viewer?.querySelector('img');
+  // La versión más grande disponible del srcset
+  const largest = (img: HTMLImageElement) =>
+    img.srcset
+      ? img.srcset
+          .split(',')
+          .map((c) => c.trim().split(/\s+/))
+          .sort((a, b) => parseInt(b[1]) - parseInt(a[1]))[0][0]
+      : img.currentSrc || img.src;
+  document.querySelectorAll<HTMLImageElement>('.compose img, .gallery img').forEach((img) => {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    const open = () => {
+      if (!viewer || !big) return;
+      big.src = largest(img);
+      big.alt = img.alt;
+      viewer.showModal();
+    };
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open();
+      }
+    });
+  });
+  viewer?.addEventListener('click', () => viewer.close());
+</script>
+
 <style>
+  .viewer {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: clamp(16px, 4vw, 56px);
+    border: 0;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    cursor: zoom-out;
+  }
+  .viewer[open] {
+    display: grid;
+    place-items: center;
+  }
+  .viewer::backdrop {
+    background: transparent;
+  }
+  .viewer img {
+    max-width: 100%;
+    max-height: calc(100dvh - 2 * clamp(16px, 4vw, 56px));
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+  .viewer-close {
+    position: fixed;
+    top: 20px;
+    right: var(--gutter);
+    font: inherit;
+    font-size: 15px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    cursor: pointer;
+  }
+
   .project {
     padding: 112px var(--gutter) 72px;
   }
@@ -144,28 +234,52 @@ const next = siblings[(i + 1) % siblings.length];
     background: var(--ink);
     color: var(--paper);
   }
+  /* Galería sin recuadros: los dibujos se funden con el papel y se alinean
+     a la retícula de 12 columnas */
   .gallery {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 48px 24px;
+    align-items: end;
   }
   figure {
     margin: 0;
-    background: #fff;
-    border: 1px solid var(--line);
+    grid-column: span 6;
   }
-  figure.wide,
-  figure:first-child {
-    grid-column: 1 / -1;
+  figure {
+    grid-column: span 4;
+  }
+  figure.full {
+    grid-column: span 8;
+  }
+  figure.a {
+    grid-column: span 5;
+  }
+  figure.b {
+    grid-column: span 4;
+  }
+  figure.tall {
+    grid-column: span 3;
   }
   figure :global(img) {
     display: block;
     width: 100%;
     height: auto;
+    mix-blend-mode: multiply;
+    cursor: zoom-in;
   }
   @media (max-width: 700px) {
     .gallery {
-      grid-template-columns: 1fr;
+      gap: 28px 16px;
+    }
+    figure,
+    figure.a,
+    figure.b,
+    figure.full {
+      grid-column: 1 / -1;
+    }
+    figure.tall {
+      grid-column: span 6;
     }
   }
   .credit {

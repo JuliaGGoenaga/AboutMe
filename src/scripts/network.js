@@ -164,7 +164,7 @@ export function initNetwork(root) {
       const target =
         which === 'other'
           ? root.querySelector('[data-open-other]')
-          : expNodes[which === 'etsam' ? 'etsam' : 'unav-master'];
+          : expNodes[{ etsam: 'etsam', unav: 'unav-master', idom: 'idom', phd: 'phd' }[which]];
       history.replaceState(null, '', location.pathname);
       requestAnimationFrame(() => openBubble(document.getElementById(`bubble-${which}`), target));
     }
@@ -238,11 +238,8 @@ export function initNetwork(root) {
   // --- Entrar en una burbuja ------------------------------------------------------
   function enter(e, g) {
     const inside = e.inside;
-    if (inside.kind === 'section') {
-      document.querySelector(inside.href)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
-      return;
-    }
-    openBubble(document.getElementById(`bubble-${inside.group}`), g);
+    const id = inside.kind === 'archive' ? inside.group : inside.id;
+    openBubble(document.getElementById(`bubble-${id}`), g);
   }
 
   root.querySelector('[data-open-other]')?.addEventListener('click', (ev) => {
@@ -264,9 +261,9 @@ export function initNetwork(root) {
   new ResizeObserver(() => build()).observe(stage);
   onScroll();
 
-  // Volver desde un proyecto a su burbuja abierta: /#open-etsam, /#open-unav, /#open-other.
+  // Abrir una burbuja desde un enlace: /#open-etsam, /#open-unav, /#open-idom, /#open-phd, /#open-other.
   // Se resuelve tras el primer dibujado de la red (ver build).
-  pendingOpen = location.hash.match(/^#open-(etsam|unav|other)$/)?.[1] ?? null;
+  pendingOpen = location.hash.match(/^#open-(etsam|unav|idom|phd|other)$/)?.[1] ?? null;
   if (pendingOpen) {
     const r = root.getBoundingClientRect();
     window.scrollTo({ top: window.scrollY + r.bottom - window.innerHeight, behavior: 'auto' });
@@ -276,7 +273,7 @@ export function initNetwork(root) {
 // Cierre de los diálogos-burbuja con animación inversa.
 export function initBubbles() {
   document.querySelectorAll('dialog.bubble').forEach((d) => {
-    d.querySelector('[data-close]')?.addEventListener('click', () => d.close());
+    d.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => d.close()));
     d.addEventListener('click', (ev) => {
       if (ev.target === d) d.close();
     });

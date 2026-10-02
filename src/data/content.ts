@@ -67,7 +67,7 @@ export type Experience = {
   end?: number; // sin `end` = sigue hoy
   place: string;
   links: [string, number][];
-  inside?: { kind: 'archive'; group: 'etsam' | 'unav' } | { kind: 'section'; href: string };
+  inside?: { kind: 'archive'; group: 'etsam' | 'unav' } | { kind: 'dialog'; id: 'idom' | 'phd' };
 };
 
 export const experiences: Experience[] = [
@@ -98,7 +98,7 @@ export const experiences: Experience[] = [
     start: 2022, // TODO confirmar
     place: 'Madrid',
     links: [['carbon', 2022], ['daylight', 2023], ['energy', 2023], ['envelope', 2023], ['computational', 2023], ['digital', 2024], ['ai', 2024], ['teaching', 2024]],
-    inside: { kind: 'section', href: '#projects' },
+    inside: { kind: 'dialog', id: 'idom' },
   },
   {
     id: 'phd',
@@ -107,7 +107,7 @@ export const experiences: Experience[] = [
     start: 2023, // TODO confirmar
     place: 'Pamplona and Florida',
     links: [['envelope', 2023], ['daylight', 2023], ['computational', 2024], ['integrated', 2024], ['hci', 2024], ['teaching', 2024], ['ai', 2025]],
-    inside: { kind: 'section', href: '#research' },
+    inside: { kind: 'dialog', id: 'phd' },
   },
   {
     id: 'wya',
@@ -168,6 +168,7 @@ export type ArchiveProject = {
   text: string[];
   links?: { label: string; href: string }[];
   credit?: string;
+  hideImages?: number[]; // posiciones (1 = primera) que ya aparecen en la composición
 };
 
 export const archiveGroups = {
@@ -186,6 +187,7 @@ export const archiveGroups = {
 export const archive: ArchiveProject[] = [
   {
     slug: 'bioperfectible-skin',
+    hideImages: [4, 5, 6],
     group: 'etsam',
     title: 'Bioperfectible skin',
     subtitle: 'The BioPix envelope as integral architecture. Bachelor thesis',
@@ -202,9 +204,10 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'lisbon',
+    hideImages: [11],
     group: 'etsam',
     title: 'Housing tower in Lisbon',
-    subtitle: 'Next to the 25 de Abril bridge',
+    subtitle: 'Torre Douro. Next to the 25 de Abril bridge',
     place: 'Lisbon',
     text: [
       'A residential tower beside the 25 de Abril bridge, developed down to construction detail: housing typologies, structure and a sustainable facade.',
@@ -213,6 +216,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'cartagena',
+    hideImages: [2, 5, 9],
     group: 'etsam',
     title: 'Fortifications of Cartagena',
     subtitle: 'A centre for theological studies in the Atalaya Castle',
@@ -223,6 +227,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'lyulin',
+    hideImages: [9, 10, 11],
     group: 'etsam',
     title: 'Urban forest in Lyulin',
     subtitle: 'Re-naturalisation and housing',

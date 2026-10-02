@@ -1,0 +1,285 @@
+---
+// Composición de dibujos al inicio de cada ficha. Cada proyecto tiene la suya,
+// montada con los dibujos de Julia sobre la retícula de 12 columnas.
+// Los dibujos se funden con el papel (mix-blend-mode: multiply), sin recuadros.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  slug: string;
+}
+const { slug } = Astro.props;
+
+const all = import.meta.glob<{ default: ImageMetadata }>('../assets/compose/*/*.jpg', { eager: true });
+const img = (name: string) => all[`../assets/compose/${slug}/${name}.jpg`]?.default;
+const many = (prefix: string) =>
+  Object.entries(all)
+    .filter(([p]) => p.includes(`/compose/${slug}/${prefix}`))
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([, m]) => m.default);
+
+const W = [480, 960, 1600, 2400];
+---
+
+{
+  slug === 'lisbon' && (
+    <section class="compose lisbon" aria-label="Drawings">
+      <figure class="c-8">
+        <Image src={img('skyline')} alt="Torre Douro on the riverside profile, cover drawing of the construction project" widths={W} sizes="100vw" />
+      </figure>
+      <figure class="c-4">
+        <Image src={img('axo')} alt="Constructive axonometric of the ventilated pixel facade" widths={W} sizes="(max-width: 800px) 100vw, 50vw" />
+        <figcaption>Ventilated facade of pixels, after the BioPix system</figcaption>
+      </figure>
+      <figure class="c-2 low">
+        <Image src={img('north')} alt="North elevation" widths={W} sizes="(max-width: 800px) 50vw, 25vw" />
+        <figcaption>North elevation</figcaption>
+      </figure>
+      <figure class="c-2 low">
+        <Image src={img('west')} alt="West elevation" widths={W} sizes="(max-width: 800px) 50vw, 25vw" />
+        <figcaption>West elevation</figcaption>
+      </figure>
+      <figure class="c-8 start">
+        <Image src={img('pixels')} alt="Schematic layout of the facade pixels on the four elevations" widths={W} sizes="100vw" />
+        <figcaption>Layout of the facade pixels: photovoltaic, solar collector, vegetated, glazed</figcaption>
+      </figure>
+    </section>
+  )
+}
+
+{
+  slug === 'bioperfectible-skin' && (
+    <section class="compose catalogue" aria-labelledby="cat-title">
+      <header class="c-12 cat-head">
+        <h2 id="cat-title">Catalogue of pixels</h2>
+        <p>Sixteen modules of the BioPix envelope, from the photovoltaic pixel to the ceramic one. Pages 56 to 71 of the thesis.</p>
+      </header>
+      <ol class="sheets">
+        {many('px-').map((src, i) => (
+          <li>
+            <Image src={src} alt={`Catalogue sheet, pixel ${i + 1}`} widths={[240, 480, 1200]} sizes="(max-width: 700px) 25vw, 12vw" loading={i < 8 ? 'eager' : 'lazy'} />
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
+{
+  slug === 'cartagena' && (
+    <section class="compose cartagena" aria-label="Drawings">
+      <div class="side">
+        <Image src={img('thinker')} alt="The Thinker in the courtyard of the Atalaya Castle, collage" widths={[400, 800, 1200]} sizes="(max-width: 900px) 70vw, 28vw" />
+        <blockquote lang="es">
+          <p>
+            “Somos seres biológicos y culturales. En lugar de aislarnos en un presente superficial y en una artificialidad
+            alienante, la arquitectura necesita mediar nuestras relaciones con nuestro pasado biocultural.
+          </p>
+          <p>
+            ¿Por qué nos gustan los lugares antiguos, como los centros históricos de las ciudades europeas? ¿No será porque
+            esos entornos, con sus ricos estratos históricos, nos cuentan relatos épicos de la cultura humana y del deseo
+            del orden y de la belleza?
+          </p>
+          <p>
+            La erosión natural y el rastro del uso “humanizan” los edificios y los paisajes construidos haciendo que su
+            historia épica sea palpable. Los edificios antiguos materializan instituciones sociales e históricas, y hacen
+            comprensible la evolución de la cultura.
+          </p>
+          <p>
+            Experimentamos un tiempo grueso y háptico que nos enraiza en la continuidad de la cultura y el tiempo.
+            Experimentamos estratos de signos y huellas de la vida, y ese tiempo materializado nos da confianza en el
+            futuro.”
+          </p>
+          <cite>Juhani Pallasmaa, Habitar</cite>
+        </blockquote>
+        <p class="desc" lang="es">
+          Castillo de la Atalaya
+          <span>Centro de estudios teológicos</span>
+          <span>Reutilización de lo existente</span>
+        </p>
+      </div>
+      <div class="main">
+        <Image src={img('situation')} alt="Situation plan of the fortifications of Cartagena" widths={W} sizes="(max-width: 900px) 100vw, 62vw" />
+        <div class="plans">
+          {['current', 'proposal'].map((kind) => (
+            <div class="row">
+              {[1, 2, 3].map((n) => (
+                <Image src={img(`${kind}-${n}`)} alt={`Atalaya Castle, ${kind === 'current' ? 'existing' : 'proposed'} plan, level ${n}`} widths={[400, 800]} sizes="(max-width: 900px) 33vw, 20vw" />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  slug === 'lyulin' && (
+    <section class="compose lyulin" aria-labelledby="typ-title">
+      <header class="c-12 cat-head">
+        <h2 id="typ-title">Housing typologies</h2>
+        <p>Six typologies, drawn with their furniture: the interior changes with the way it is furnished.</p>
+      </header>
+      <div class="strip">
+        {many('typ-').map((src, i) => (
+          <Image src={src} alt={`Housing typology plan ${i + 1}`} widths={[400, 800, 1600]} sizes="25vw" loading={i < 4 ? 'eager' : 'lazy'} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .compose {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 40px 24px;
+    margin: 8px 0 72px;
+  }
+  figure {
+    margin: 0;
+  }
+  .compose :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    mix-blend-mode: multiply;
+  }
+  figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .c-12 {
+    grid-column: 1 / -1;
+  }
+  .c-8 {
+    grid-column: span 8;
+  }
+  .c-4 {
+    grid-column: span 4;
+  }
+  .c-2 {
+    grid-column: span 2;
+  }
+  .start {
+    grid-column-start: 1;
+  }
+  .compose :global(img) {
+    cursor: zoom-in;
+  }
+  .low {
+    align-self: end;
+  }
+
+  /* Catálogo: hojas A4 alineadas como en el documento */
+  .cat-head h2 {
+    margin: 0;
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: 560;
+    letter-spacing: -0.015em;
+  }
+  .cat-head p {
+    margin: 8px 0 0;
+    max-width: 60ch;
+    color: var(--ink-2);
+  }
+  /* Catálogo: una tira de hojas pequeñas en dos filas */
+  .sheets {
+    grid-column: 1 / -1;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 16px 12px;
+  }
+  .sheets :global(img) {
+    transition: transform 0.2s ease;
+  }
+  .sheets :global(img:hover) {
+    transform: translateY(-3px);
+  }
+
+  /* Cartagena: a la izquierda el pensador, la cita y la descripción; a la derecha
+     el plano de situación y, debajo, las plantas del castillo (actual y propuesta) */
+  .side {
+    grid-column: 1 / span 4;
+    align-self: start;
+  }
+  .main {
+    grid-column: 5 / -1;
+  }
+  blockquote {
+    margin: 28px 0 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  blockquote p {
+    margin: 0 0 0.8em;
+  }
+  cite {
+    display: block;
+    margin-top: 10px;
+    font-style: normal;
+    font-size: 13px;
+    color: var(--minio);
+  }
+  .desc {
+    margin: 28px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--ink);
+    font-weight: 540;
+  }
+  .desc span {
+    display: block;
+    font-weight: 400;
+    color: var(--ink-2);
+  }
+  .plans {
+    margin-top: 24px;
+    display: grid;
+    gap: 12px;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  /* Lyulin: tipologías en fila, a la misma altura, varias a la vez */
+  .strip {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 24px 28px;
+  }
+  .strip :global(img) {
+    flex: none;
+    width: auto;
+    height: clamp(120px, 16vw, 200px);
+  }
+
+  @media (max-width: 900px) {
+    .side,
+    .main {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 700px) {
+    .c-8,
+    .c-4 {
+      grid-column: 1 / -1;
+    }
+    .c-2 {
+      grid-column: span 6;
+    }
+    .sheets {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>
