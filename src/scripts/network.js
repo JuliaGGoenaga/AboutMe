@@ -21,6 +21,7 @@ export function initNetwork(root) {
 
   let year = from;
   let nodes = {};
+  let pendingOpen = null;
 
   // --- Maquetación -----------------------------------------------------------
   // Horizontal (escritorio): tiempo en x, experiencias arriba, conocimientos abajo.
@@ -142,9 +143,13 @@ export function initNetwork(root) {
           }
         });
       }
-      el('circle', { r: open ? 11 : 7, class: 'dot' }, g);
-      if (open) el('circle', { r: 17, class: 'halo' }, g);
-      const t = el('text', vertical ? { x: 10, y: -12 } : { x: 16, y: -10 }, g);
+      // La burbuja crece cuando el scroll pasa por su año y luego vuelve a su tamaño.
+      const bub = el('g', { class: 'bub' }, g);
+      el('circle', { r: open ? 11 : 7, class: 'dot' }, bub);
+      if (open) el('circle', { r: 17, class: 'halo' }, bub);
+      const t = el('text', vertical ? { x: 10, y: -12, class: 'name' } : { x: 16, y: -10, class: 'name' }, g);
+      const d = el('text', vertical ? { x: 10, y: 26, class: 'detail' } : { x: 30, y: 30, class: 'detail' }, g);
+      d.textContent = e.detail.length > 70 ? `${e.detail.slice(0, 68).trim()}…` : e.detail;
       t.textContent = e.label;
       expNodes[e.id] = g;
     });
@@ -152,6 +157,17 @@ export function initNetwork(root) {
     svg.classList.toggle('is-vertical', vertical);
     nodes = { edges, spans, skillNodes, expNodes, vertical };
     render();
+
+    if (pendingOpen) {
+      const which = pendingOpen;
+      pendingOpen = null;
+      const target =
+        which === 'other'
+          ? root.querySelector('[data-open-other]')
+          : expNodes[which === 'etsam' ? 'etsam' : 'unav-master'];
+      history.replaceState(null, '', location.pathname);
+      requestAnimationFrame(() => openBubble(document.getElementById(`bubble-${which}`), target));
+    }
   }
 
   // Asigna filas para que ni las etiquetas ni las barras de duración se pisen:
@@ -191,7 +207,16 @@ export function initNetwork(root) {
       if (vertical) l.setAttribute('y2', a.y + (a.y1 - a.y) * Math.min(k, 1));
       else l.setAttribute('x2', a.x + (a.x1 - a.x) * Math.min(k, 1));
     });
-    experiences.forEach((e) => expNodes[e.id].classList.toggle('on', year >= e.start - 0.05));
+    experiences.forEach((e) => {
+      const g = expNodes[e.id];
+      g.classList.toggle('on', year >= e.start - 0.05);
+      // Pulso: máximo justo después de su año de inicio, ~1 año de duración.
+      const k = Math.exp(-(((year - e.start - 0.35) / 0.45) ** 2));
+      g.querySelector('.bub').style.transform = `scale(${1 + k * 1.6})`;
+      g.querySelector('.detail').style.opacity = String(Math.max(0, (k - 0.25) / 0.75));
+      g.querySelector('.name').style.transform = `translate(${k * 18}px, ${-k * 10}px)`;
+      g.classList.toggle('pulse', k > 0.5);
+    });
     yearOut.textContent = Math.floor(year);
   }
 
@@ -229,12 +254,23 @@ export function initNetwork(root) {
     const b = g.getBoundingClientRect();
     dialog.style.setProperty('--x', `${b.left + b.width / 2}px`);
     dialog.style.setProperty('--y', `${b.top + b.height / 2}px`);
+    // Radio final: casi toda la pantalla, de modo que el borde de la burbuja
+    // asoma en las esquinas y recuerda que estás dentro de ella.
+    dialog.style.setProperty('--r', `${Math.round((Math.hypot(innerWidth, innerHeight) / 2) * 0.93)}px`);
     dialog.showModal();
     dialog.addEventListener('close', () => g.focus(), { once: true });
   }
 
   new ResizeObserver(() => build()).observe(stage);
   onScroll();
+
+  // Volver desde un proyecto a su burbuja abierta: /#open-etsam, /#open-unav, /#open-other.
+  // Se resuelve tras el primer dibujado de la red (ver build).
+  pendingOpen = location.hash.match(/^#open-(etsam|unav|other)$/)?.[1] ?? null;
+  if (pendingOpen) {
+    const r = root.getBoundingClientRect();
+    window.scrollTo({ top: window.scrollY + r.bottom - window.innerHeight, behavior: 'auto' });
+  }
 }
 
 // Cierre de los diálogos-burbuja con animación inversa.

@@ -19,7 +19,10 @@ const next = siblings[(i + 1) % siblings.length];
 <Base title={`${p.title} | Julia Gómez Goenaga`} description={`${p.title}. ${p.subtitle}.`}>
   <article class="project">
     <header>
-      <a class="back" href={url('archive/')}>Archive, {group.title}</a>
+      <nav class="crumbs" aria-label="Back">
+        <a class="back" href={url(`#open-${p.group}`)}>Back to the {group.title} bubble</a>
+        <a class="back" href={url('archive/')}>Archive</a>
+      </nav>
       <h1>{p.title}</h1>
       <p class="sub">{p.subtitle}</p>
       <dl class="facts">
@@ -73,6 +76,10 @@ const next = siblings[(i + 1) % siblings.length];
 <style>
   .project {
     padding: 112px var(--gutter) 72px;
+  }
+  .crumbs {
+    display: flex;
+    gap: 20px;
   }
   .back {
     font-size: 14px;
