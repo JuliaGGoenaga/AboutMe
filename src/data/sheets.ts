@@ -31,6 +31,8 @@ export type Sheet = {
   after?: string[];
   // Ancho de esas imágenes si no van a sangre completa (p. ej. '80%')
   afterWidth?: string;
+  // Una fila de dibujos con su título, a todo el ancho, justo después de la lámina
+  band?: { refs: string[]; titles?: string[] };
   // Filas de cajas con filete fino (detalles constructivos), a la misma altura
   boxes?: string[][];
   // Tira horizontal de fotos pequeñas que ocupa todo el ancho, al final
@@ -50,19 +52,20 @@ export type Sheet = {
 };
 
 export const sheets: Record<string, Sheet> = {
-  // La torre: a la derecha el plano de situación y, debajo, las tres tipologías;
-  // a la izquierda el texto y el perfil del río. Después la sección constructiva
-  // completa a todo el ancho, las cajas de detalle y la tira de fotos de maqueta.
+  // La torre: a la izquierda el texto, el perfil del río y el plano de situación
+  // en pequeño; a la derecha la axonometría de Fractal. Debajo, las tres
+  // tipologías a todo el ancho, la sección constructiva, las cajas de detalle y
+  // la tira de fotos de maqueta.
   lisbon: {
     columns: '4fr 8fr',
-    areas: ['text sit', 'logo sit', '. typs'],
+    areas: ['text axo', 'logo axo', 'sit axo'],
     cells: {
       text: 'text',
       logo: 'c:skyline',
       sit: 'c:situation',
-      typs: ['c:typ-1', 'c:typ-2', 'c:typ-3'],
+      axo: 'c:fractal',
     },
-    align: { logo: 'end' },
+    band: { refs: ['c:typ-1', 'c:typ-2', 'c:typ-3'], titles: ['Typology 1', 'Typology 2', 'Typology 3'] },
     after: ['c:section'],
     boxes: [
       ['c:detail-1', 'c:detail-2', 'c:detail-3', 'c:detail-4'],
@@ -111,12 +114,11 @@ export const sheets: Record<string, Sheet> = {
   // por unidad; el horizonte de las canteras y la planta del poblado.
   macael: {
     columns: '4fr 8fr',
-    areas: ['text contact', 'model contact', 'units units', 'hz hz', 'c1 aerial', 'light aerial', 'finals finals'],
+    areas: ['text contact', 'model contact', 'hz hz', 'c1 aerial', 'light aerial', 'finals finals'],
     cells: {
       text: 'text',
       contact: 'flipbook',
       model: 'a:01',
-      units: ['c:unit-1', 'c:unit-2', 'c:unit-3'],
       hz: 'a:13',
       c1: 'a:04',
       aerial: 'a:08',

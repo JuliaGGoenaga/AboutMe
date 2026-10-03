@@ -12,8 +12,12 @@ const groups = (['etsam', 'unav'] as const).map((g) => ({
   pending: archivePending.filter((p) => p.group === g),
 }));
 const allOther = imagesFor('other');
-// Primero la boda (foto del sitting e iconos de mesa), luego logos
-const otherImgs = [allOther[20], ...allOther.slice(4, 9), allOther[0], allOther[3]];
+// Tres recuadros: bodas y comuniones, logos, carteles y otro diseño gráfico
+const otherBoxes = [
+  { id: 'weddings', title: 'Weddings and communions', text: 'Invitations, seating plans, table icons and communion cards.', img: allOther[20] },
+  { id: 'logos', title: 'Logos', text: 'Identities for friends, family and small projects.', img: allOther[21] ?? allOther[0] },
+  { id: 'graphic', title: 'Posters and other graphic design', text: 'Posters, flyers, roll-ups and line drawings.', img: imagesFor('other-posters')[3] },
+];
 ---
 
 <section id="path" class="network" aria-labelledby="path-title">
@@ -164,16 +168,19 @@ const otherImgs = [allOther[20], ...allOther.slice(4, 9), allOther[0], allOther[
       </div>
       <button type="button" data-close>Close</button>
     </header>
-    <ul class="grid other">
+    <ul class="cards other-cards">
       {
-        otherImgs.map((img) => (
+        otherBoxes.map((o) => (
           <li>
-            <Image src={img} alt="" widths={[360, 720]} sizes="(max-width: 700px) 50vw, 25vw" />
+            <a href={url(`other/#${o.id}`)}>
+              {o.img && <Image src={o.img} alt="" widths={[360, 720]} sizes="(max-width: 700px) 90vw, 30vw" />}
+              <h4>{o.title}</h4>
+              <p>{o.text}</p>
+            </a>
           </li>
         ))
       }
     </ul>
-    <p class="more"><a href={url('other/#weddings')}>Weddings</a> · <a href={url('other/#logos')}>Logos</a> · <a href={url('other/')}>See everything</a></p>
   </div>
 </dialog>
 
@@ -535,9 +542,16 @@ const otherImgs = [allOther[20], ...allOther.slice(4, 9), allOther[0], allOther[
   .grid .ph {
     background: repeating-linear-gradient(45deg, transparent 0 6px, var(--line) 6px 7px);
   }
-  .grid.other :global(img) {
+  .other-cards :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
     object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--line);
     padding: 12px;
+    margin-bottom: 6px;
   }
   .grid strong {
     font-weight: 560;

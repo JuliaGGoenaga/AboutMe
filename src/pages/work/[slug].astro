@@ -1,6 +1,8 @@
 ---
 // Página de cada tarjeta de IDOM o del PhD. De momento texto y enlaces; el
 // material gráfico se añadirá cuando llegue.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import { work } from '../../data/content';
 import { url } from '../../lib/images';
@@ -10,6 +12,8 @@ export function getStaticPaths() {
 }
 
 const { item: w } = Astro.props;
+const pics = import.meta.glob<{ default: ImageMetadata }>('../../assets/work/*', { eager: true });
+const pic = w.image ? pics[`../../assets/work/${w.image.file}`]?.default : undefined;
 const parentName = w.parent === 'idom' ? 'IDOM' : 'PhD';
 const siblings = work.filter((x) => x.parent === w.parent);
 const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % siblings.length];
@@ -42,7 +46,24 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
         </ul>
       )}
     </div>
-    <div class="ph" aria-hidden="true"></div>
+    {
+      pic ? (
+        <figure class="pic">
+          <Image src={pic} alt={w.image!.alt} widths={[960, 1600, 2400]} sizes="100vw" />
+        </figure>
+      ) : (
+        <div class="ph" aria-hidden="true" />
+      )
+    }
+    {w.extra && (
+      <ul class="extra">
+        {w.extra.map((l) => (
+          <li>
+            <a href={l.href}>{l.label}</a>
+          </li>
+        ))}
+      </ul>
+    )}
     {next.slug !== w.slug && (
       <nav class="next" aria-label="Next">
         <a href={url(`work/${next.slug}/`)}>
@@ -133,6 +154,38 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
     aspect-ratio: 16 / 7;
     border: 1px solid var(--line);
     background: repeating-linear-gradient(45deg, transparent 0 8px, var(--line) 8px 9px);
+  }
+  .pic {
+    margin: 0;
+  }
+  .pic :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .extra {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    border-top: 1px solid var(--ink);
+  }
+  .extra a {
+    display: block;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+    font-weight: 540;
+  }
+  .extra a::after {
+    content: ' ↗';
+    color: var(--minio);
+  }
+  .extra a:hover {
+    color: var(--minio);
   }
   .next {
     margin-top: 72px;

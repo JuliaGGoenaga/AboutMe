@@ -127,8 +127,10 @@ const anchors = ['left', 'right', 'bottom'];
   .lines {
     position: relative;
     width: 100%;
-    max-width: min(480px, calc((100dvh - 380px) * 1.07));
+    width: min(420px, calc((100dvh - 200px) * 1.07));
     justify-self: end;
+    /* Hueco a la izquierda para la tarjeta */
+    margin-left: 300px;
   }
   svg {
     display: block;
@@ -244,12 +246,16 @@ const anchors = ['left', 'right', 'bottom'];
     opacity: 1;
     transform: none;
   }
-  /* Con el texto de la izquierda fijo, la tarjeta se abre debajo del diagrama */
+  /* La tarjeta se abre a la izquierda del diagrama, en el hueco junto al texto */
   .card {
-    left: 0;
-    right: auto;
-    top: calc(100% + 8px);
-    width: 100%;
+    left: auto;
+    right: calc(100% + 24px);
+    top: 50%;
+    width: 276px;
+    transform: translateY(calc(-50% + 8px)) scale(0.98);
+  }
+  .card.open {
+    transform: translateY(-50%);
   }
   .card h3 {
     margin: 0;
@@ -285,9 +291,23 @@ const anchors = ['left', 'right', 'bottom'];
       transition: none;
     }
   }
+  /* En el móvil la tarjeta vuelve debajo del diagrama */
   @media (max-width: 900px) {
     .lines {
       justify-self: center;
+      width: 100%;
+      max-width: min(480px, calc((100dvh - 380px) * 1.07));
+      margin-left: 0;
+    }
+    .card {
+      right: auto;
+      left: 0;
+      top: calc(100% + 8px);
+      width: 100%;
+      transform: translateY(8px) scale(0.98);
+    }
+    .card.open {
+      transform: none;
     }
   }
 </style>

@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Soleamiento from '../components/Soleamiento.astro';
 import Network from '../components/Network.astro';
 import Lines from '../components/Lines.astro';
+import Portrait from '../components/Portrait.astro';
 import { publications, contact } from '../data/content';
 
 const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida', 'ETSAM, Universidad Politécnica de Madrid'];
@@ -72,19 +73,14 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
     </table>
   </section>
 
-  <section id="engagement" class="section">
-    <h2>Engagement</h2>
-    <p class="lead">
-      I take part in World Youth Alliance and other international organisations, and I have worked on projects in
-      Spain, the United States, Denmark, Ireland, Saudi Arabia and Africa.
-    </p>
-  </section>
-
   <section id="contact" class="section contact">
-    <h2>Contact</h2>
-    <p class="lead">Happy to talk about daylight, envelopes, computational design and tools that help architects decide.</p>
-    <p class="mail"><a href={`mailto:${contact.email}`}>{contact.email}</a></p>
-    <p><a href={contact.linkedin}>LinkedIn</a></p>
+    <div>
+      <h2>Contact</h2>
+      <p class="lead">Happy to talk about daylight, envelopes, computational design and tools that help architects decide.</p>
+      <p class="mail"><a href={`mailto:${contact.email}`}>{contact.email}</a></p>
+      <p><a href={contact.linkedin}>LinkedIn</a></p>
+    </div>
+    <div class="me"><Portrait /></div>
   </section>
 </Base>
 
@@ -125,7 +121,7 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
   .present {
     min-height: 260vh;
     display: grid;
-    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 40px clamp(32px, 5vw, 80px);
     align-items: start;
   }
@@ -229,6 +225,23 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
     }
   }
 
+  .contact {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 40px;
+    align-items: end;
+  }
+  .me {
+    width: clamp(150px, 18vw, 240px);
+  }
+  @media (max-width: 600px) {
+    .contact {
+      grid-template-columns: 1fr;
+    }
+    .me {
+      width: 160px;
+    }
+  }
   .contact .mail {
     margin: 32px 0 8px;
     font-size: clamp(22px, 3vw, 36px);

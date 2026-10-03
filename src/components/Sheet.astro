@@ -207,6 +207,19 @@ const cells = Object.entries(sheet.cells);
 }
 
 {
+  sheet.band && (
+    <section class="band" data-group="band" aria-label="Drawings" style={`grid-template-columns:repeat(${sheet.band.refs.length},minmax(0,1fr))`}>
+      {sheet.band.refs.map((r, k) => (
+        <figure>
+          {sheet.band?.titles?.[k] && <figcaption>{sheet.band.titles[k]}</figcaption>}
+          <Image src={ref(r)} alt={sheet.band?.titles?.[k] ?? `${p.title}, drawing`} widths={[600, 1200, 2000]} sizes="(max-width: 700px) 100vw, 33vw" />
+        </figure>
+      ))}
+    </section>
+  )
+}
+
+{
   sheet.after && (
     <section class="after" aria-label="Sections" style={sheet.afterWidth ? `--aw:${sheet.afterWidth}` : undefined}>
       {sheet.after.map((r) => (
@@ -409,6 +422,35 @@ const cells = Object.entries(sheet.cells);
     }
     .c-bar {
       min-height: 300px;
+    }
+  }
+  /* Fila de dibujos con título, a todo el ancho de la página */
+  .band {
+    display: grid;
+    gap: 32px;
+    align-items: start;
+    margin: 0 0 96px;
+  }
+  .band figure {
+    margin: 0;
+  }
+  .band figcaption {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ink);
+    font-size: 14px;
+    font-weight: 540;
+  }
+  .band :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    mix-blend-mode: multiply;
+    cursor: zoom-in;
+  }
+  @media (max-width: 700px) {
+    .band {
+      grid-template-columns: 1fr !important;
     }
   }
   /* Cajas de detalle constructivo: misma altura en cada fila, filete fino */

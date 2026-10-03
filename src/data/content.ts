@@ -137,6 +137,8 @@ export type WorkItem = {
   year?: string;
   summary: string; // una frase para la tarjeta
   text: string[];
+  image?: { file: string; alt: string }; // en src/assets/work/
+  extra?: { label: string; href: string }[]; // accesos secundarios (p. ej. la web interactiva)
   links?: { label: string; href: string }[];
   featured?: boolean;
 };
@@ -178,14 +180,25 @@ export const work: WorkItem[] = [
     slug: 'literature-review',
     parent: 'phd',
     kind: 'Research',
-    title: 'Digital workflows for envelope design: a systematic literature review',
-    year: '2025',
-    summary: 'How digital workflows support informed decision making in building envelope design.',
+    title: 'Digital workflows for informed decision making in building envelope design',
+    year: '2026',
+    summary: 'A systematic literature review of performance-based optimization in building envelope design, with an interactive app of its results.',
     text: [
-      'A systematic literature review of the digital workflows that support informed decision making in building envelope design: which simulations, data and tools are used, at which design stage, and how their results reach the design team.', // TODO resumen del artículo
-      'J. Gómez Goenaga, A. Monge-Barrio, K. Saldaña Ochoa, A. Villanueva Peñalver. Preprint, SSRN, 2025.',
+      'This paper systematically reviews 152 studies on performance-based optimization in building envelope design. By disaggregating each process into 155 distinct tasks, the review classifies these processes by design stage, design scale, variable type, performance objective, optimization algorithm and decision-making method.',
+      'It identifies patterns in the use of optimization and simulation tools and proposes a methodological framework to guide future integrative workflows. The process leads to several design matrices, shown in an interactive app. The framework lays a foundation for flexible, user-centred digital workflows that improve building efficiency and occupant comfort.',
+      'J. Gómez Goenaga, A. Monge-Barrio, K. Saldaña Ochoa, A. Villanueva Peñalver. Applied Soft Computing, 2026.',
     ],
-    links: [{ label: 'Read the preprint (SSRN)', href: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5359888' }],
+    image: { file: 'literature-review.png', alt: 'General map of the review: design tasks, stages and tools' },
+    links: [
+      { label: 'Read the article', href: 'https://doi.org/10.1016/j.asoc.2025.114377' },
+      { label: 'Interactive results', href: 'https://juliaggoenaga.github.io/Digital_workflows_for_BE_design_LR/' },
+    ],
+    extra: [
+      { label: 'Analysis matrix', href: 'https://juliaggoenaga.github.io/Digital_workflows_for_BE_design_LR/3matrix.html' },
+      { label: 'New design framework', href: 'https://juliaggoenaga.github.io/Digital_workflows_for_BE_design_LR/Proposal.html' },
+      { label: 'Task classification', href: 'https://juliaggoenaga.github.io/Digital_workflows_for_BE_design_LR/Task_explained.html' },
+      { label: 'All references', href: 'https://juliaggoenaga.github.io/Digital_workflows_for_BE_design_LR/All_refs.html' },
+    ],
     featured: true,
   },
   {
@@ -205,8 +218,9 @@ export const work: WorkItem[] = [
     title: 'The solar chart as a topology of the facade',
     summary: 'A predictive model that reads the whole facade on the solar chart to predict daylight and solar loads.',
     text: [
-      'Research on the solar chart as a topology that represents the whole facade. Mapped on the solar chart, the facade becomes the input of a predictive model that estimates daylight and solar loads, and shows possible results of the design options. In preparation.', // TODO
+      'Research on the solar chart as a topology that represents the whole facade. Mapped on the solar chart, the facade becomes the input of a predictive model that estimates daylight and solar loads, and shows possible results of the design options.', // TODO
     ],
+    links: [{ label: 'Preprint: From shading masks to surrogate frameworks (SSRN)', href: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6530551' }],
   },
 ];
 
@@ -405,12 +419,20 @@ export const publications: {
   href?: string;
 }[] = [
   {
-    year: '2025',
-    title: 'Digital workflows for informed decision making in building envelope design: a systematic literature review',
+    year: '2026',
+    title: 'From shading masks to surrogate frameworks: a topological approach for performance-driven envelope design',
     type: 'Preprint',
     venue: 'SSRN',
+    authors: 'J. Gómez Goenaga, S. Gao, A. Monge-Barrio, S. M. Noorani, A. Villanueva Peñalver, B. Nory, K. Saldaña Ochoa',
+    href: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6530551',
+  },
+  {
+    year: '2026',
+    title: 'Digital workflows for informed decision making in building envelope design: a systematic literature review',
+    type: 'Journal article',
+    venue: 'Applied Soft Computing, 114377',
     authors: 'J. Gómez Goenaga, A. Monge-Barrio, K. Saldaña Ochoa, A. Villanueva Peñalver',
-    href: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5359888',
+    href: 'https://doi.org/10.1016/j.asoc.2025.114377',
   },
   {
     year: '2022',

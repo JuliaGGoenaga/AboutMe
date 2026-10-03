@@ -1,0 +1,87 @@
+---
+// Caricatura de Julia en línea, con la tinta de los dibujos y un toque de minio.
+---
+
+<svg class="portrait" viewBox="0 0 240 270" role="img" aria-label="Drawing of Julia’s face">
+  <!-- Melena oscura, ondulada, hasta los hombros -->
+  <path class="hair" d="M62 116C56 62 86 30 120 30C154 30 184 62 178 116C179 146 184 170 194 192C202 208 198 224 186 230Q180 220 172 228Q164 234 156 226L84 226Q76 234 68 228Q60 220 54 230C42 224 38 208 46 192C56 170 61 146 62 116Z" />
+  <path class="strand" d="M70 120C68 150 62 180 52 206M170 120C172 150 178 180 188 206M80 70C72 90 70 110 70 130M160 70C168 90 170 110 170 130" />
+  <!-- Cuello, hombros y camiseta sin mangas -->
+  <path class="face" d="M104 172L104 206Q120 216 136 206L136 172Z" />
+  <path class="top" d="M46 270C50 232 76 214 103 205Q120 218 137 205C164 214 190 232 194 270Z" />
+  <!-- Cara -->
+  <path class="face" d="M74 112C74 78 96 60 120 60C144 60 166 78 166 112C166 150 150 184 120 188C90 184 74 150 74 112Z" />
+  <circle class="cheek" cx="94" cy="146" r="9" />
+  <circle class="cheek" cx="146" cy="146" r="9" />
+  <!-- Pelo que enmarca la cara, con raya al medio -->
+  <path class="hair" d="M120 44C102 44 84 56 76 80C70 98 72 124 68 148C64 168 58 184 52 196C70 180 78 152 80 126C82 100 90 80 102 68C108 62 114 56 120 50Z" />
+  <path class="hair" d="M120 44C138 44 156 56 164 80C170 98 168 124 172 148C176 168 182 184 188 196C170 180 162 152 160 126C158 100 150 80 138 68C132 62 126 56 120 50Z" />
+  <!-- Pendientes -->
+  <circle class="pearl" cx="77" cy="150" r="3.2" />
+  <circle class="pearl" cx="163" cy="150" r="3.2" />
+  <!-- Cejas, ojos que sonríen, nariz y una gran sonrisa -->
+  <path class="brow" d="M90 103Q101 96 112 102M128 102Q139 96 150 103" />
+  <path class="eye" d="M92 117Q101 109 110 117Q101 121 92 117ZM130 117Q139 109 148 117Q139 121 130 117Z" />
+  <circle class="iris" cx="101" cy="116" r="3.4" />
+  <circle class="iris" cx="139" cy="116" r="3.4" />
+  <path class="line" d="M120 121Q117 135 114 139Q119 142 124 140" />
+  <path class="mouth" d="M99 152Q120 146 141 152Q133 171 120 171Q107 171 99 152Z" />
+  <path class="line thin" d="M101 154Q120 159 139 154" />
+</svg>
+
+<style>
+  .portrait {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .portrait path,
+  .portrait circle {
+    stroke: var(--ink);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .hair {
+    fill: var(--ink);
+  }
+  .portrait .strand {
+    fill: none;
+    stroke: var(--paper);
+    stroke-opacity: 0.35;
+    stroke-width: 1.2;
+  }
+  .face,
+  .top,
+  .eye,
+  .mouth {
+    fill: var(--paper);
+  }
+  .top {
+    fill: #fff;
+  }
+  .line,
+  .brow {
+    fill: none;
+  }
+  .brow {
+    stroke-width: 3;
+  }
+  .thin {
+    stroke-width: 1;
+  }
+  .iris {
+    fill: var(--ink);
+  }
+  .portrait .cheek {
+    fill: var(--minio);
+    fill-opacity: 0.16;
+    stroke: none;
+  }
+  .portrait .pearl {
+    fill: #fff;
+    stroke: var(--ink-3);
+    stroke-width: 1;
+  }
+</style>
