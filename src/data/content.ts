@@ -230,7 +230,7 @@ export const featured: { title: string; note: string; href: string; cover: strin
   { title: 'COLAB', note: 'Intergenerational centre', href: 'archive/colab/', cover: 'colab' },
   { title: 'Fortifications of Cartagena', note: 'Atalaya Castle', href: 'archive/cartagena/', cover: 'cartagena' },
   { title: 'Bioperfectible skin', note: 'Bachelor thesis', href: 'archive/bioperfectible-skin/', cover: 'bioperfectible-skin' },
-  { title: 'Literature review', note: 'PhD', href: 'work/literature-review/', cover: 'literature-review' },
+  { title: 'Digital workflows for informed decision making in building envelope design', note: 'PhD', href: 'work/literature-review/', cover: 'literature-review' },
   { title: 'Fehmarnbelt tunnel', note: 'IDOM', href: 'work/fehmarnbelt-tunnel/', cover: 'fehmarnbelt-tunnel' },
 ];
 
