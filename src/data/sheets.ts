@@ -32,7 +32,9 @@ export type Sheet = {
   // Ancho de esas imágenes si no van a sangre completa (p. ej. '80%')
   afterWidth?: string;
   // Una fila de dibujos con su título, a todo el ancho, justo después de la lámina
-  band?: { refs: string[]; titles?: string[] };
+  // sameScale: cada columna tan ancha como su recorte, para que todos los dibujos
+  // (recortados de láminas a la misma escala) se vean a la misma escala
+  band?: { refs: string[]; titles?: string[]; sameScale?: boolean };
   // Filas de cajas con filete fino (detalles constructivos), a la misma altura
   boxes?: string[][];
   // Tira horizontal de fotos pequeñas que ocupa todo el ancho, al final
@@ -65,7 +67,7 @@ export const sheets: Record<string, Sheet> = {
       sit: 'c:situation',
       axo: 'c:fractal',
     },
-    band: { refs: ['c:typ-1', 'c:typ-2', 'c:typ-3'], titles: ['Typology 1', 'Typology 2', 'Typology 3'] },
+    band: { refs: ['c:typ-1', 'c:typ-2', 'c:typ-3'], titles: ['Typology 1', 'Typology 2', 'Typology 3'], sameScale: true },
     after: ['c:section'],
     boxes: [
       ['c:detail-1', 'c:detail-2', 'c:detail-3', 'c:detail-4'],

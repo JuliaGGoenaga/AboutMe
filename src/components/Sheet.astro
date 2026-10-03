@@ -208,7 +208,7 @@ const cells = Object.entries(sheet.cells);
 
 {
   sheet.band && (
-    <section class="band" data-group="band" aria-label="Drawings" style={`grid-template-columns:repeat(${sheet.band.refs.length},minmax(0,1fr))`}>
+    <section class="band" data-group="band" aria-label="Drawings" style={`grid-template-columns:${sheet.band.refs.map((r) => `minmax(0,${sheet.band?.sameScale ? ref(r).width : 1}fr)`).join(' ')}`}>
       {sheet.band.refs.map((r, k) => (
         <figure>
           {sheet.band?.titles?.[k] && <figcaption>{sheet.band.titles[k]}</figcaption>}
