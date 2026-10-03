@@ -208,7 +208,7 @@ const cells = Object.entries(sheet.cells);
 
 {
   sheet.after && (
-    <section class="after" aria-label="Sections">
+    <section class="after" aria-label="Sections" style={sheet.afterWidth ? `--aw:${sheet.afterWidth}` : undefined}>
       {sheet.after.map((r) => (
         <Image src={ref(r)} alt={`${p.title}, section`} widths={[1280, 1920, 3000]} sizes="100vw" />
       ))}
@@ -307,7 +307,8 @@ const cells = Object.entries(sheet.cells);
   }
   .after :global(img) {
     display: block;
-    width: 100%;
+    width: var(--aw, 100%);
+    margin-inline: auto;
     height: auto;
     mix-blend-mode: multiply;
     cursor: zoom-in;

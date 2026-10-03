@@ -29,6 +29,8 @@ export type Sheet = {
   lead?: string[];
   // Imágenes a sangre después de la lámina (secciones de lado a lado)
   after?: string[];
+  // Ancho de esas imágenes si no van a sangre completa (p. ej. '80%')
+  afterWidth?: string;
   // Filas de cajas con filete fino (detalles constructivos), a la misma altura
   boxes?: string[][];
   // Tira horizontal de fotos pequeñas que ocupa todo el ancho, al final
@@ -71,11 +73,12 @@ export const sheets: Record<string, Sheet> = {
 
   // Tesis: el sistema en axonometría junto al catálogo completo de píxeles.
   'bioperfectible-skin': {
-    columns: '4fr 8fr',
+    columns: '5fr 7fr',
     areas: ['axo cat', 'text cat'],
     cells: { axo: 'a:01', text: 'text', cat: 'catalogue' },
     // La tabla comparativa de los 16 píxeles, a todo el ancho
     after: ['c:table'],
+    afterWidth: '80%',
   },
 
   // El barrio en axonometría y las tipologías dibujadas con su mobiliario.

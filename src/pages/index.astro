@@ -42,7 +42,7 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
       </p>
       <p class="hint">Three lines of work, and where they meet.</p>
     </div>
-    <Lines />
+    <div class="lines-track"><Lines /></div>
   </section>
 
   <Network />
@@ -133,6 +133,20 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
     position: sticky;
     top: 96px;
     align-self: start;
+  }
+  /* En el ordenador el recorrido es el de toda la sección; en el móvil el
+     diagrama se queda fijo durante su propio tramo, después del texto */
+  .lines-track {
+    display: contents;
+  }
+  @media (max-width: 900px) {
+    .lines-track {
+      display: block;
+      height: 260vh;
+    }
+    .present :global(.lines) {
+      top: 72px;
+    }
   }
   /* El texto se queda fijo mientras se van marcando las burbujas */
   .intro {
