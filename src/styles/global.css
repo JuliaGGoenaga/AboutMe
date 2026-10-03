@@ -55,3 +55,10 @@ a {
   background: var(--paper);
   padding: 6px 10px;
 }
+
+/* Fichas con fondo blanco (p. ej. COLAB): el papel pasa a ser blanco puro.
+   Las líneas finas de los dibujos se oscurecen en las propias imágenes. */
+:root:has(.paper-white) {
+  --paper: #ffffff;
+  --paper-2: #f2f3f5;
+}

@@ -37,7 +37,7 @@ const next = siblings[(i + 1) % siblings.length];
 ---
 
 <Base title={`${p.title} | Julia Gómez Goenaga`} description={`${p.title}. ${p.subtitle}.`}>
-  <article class="project">
+  <article class:list={['project', { 'paper-white': p.white }]}>
     <header>
       <nav class="crumbs" aria-label="Back">
         <a class="back" href={url(`#open-${p.group}`)}>Back to the {group.title} bubble</a>

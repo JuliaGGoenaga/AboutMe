@@ -169,6 +169,7 @@ export type ArchiveProject = {
   links?: { label: string; href: string }[];
   credit?: string;
   hideImages?: number[]; // posiciones (1 = primera) que ya aparecen en la composición
+  white?: boolean; // fondo blanco y más contraste en los dibujos
 };
 
 export const archiveGroups = {
@@ -290,6 +291,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'colab',
+    white: true,
     group: 'unav',
     title: 'COLAB',
     subtitle: 'Intergenerational centre. Master’s final project',
