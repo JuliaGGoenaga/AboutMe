@@ -5,24 +5,12 @@ import { contact } from '../data/content';
 import { imagesFor } from '../lib/images';
 
 const imgs = imagesFor('other');
-// 01-04 logos · 05-20 iconos de las mesas del sitting · 21 foto del sitting
-const otherSections = [
-  {
-    id: 'weddings',
-    title: 'Weddings and communions',
-    text: 'Invitations, seating plans and table icons, each table named after a place that mattered to the couple and drawn by hand. And illustrated cards for first communions.',
-    items: [imgs[20], ...imgs.slice(4, 20), ...imagesFor('other-communions')],
-    cover: true,
-  },
-  { id: 'logos', title: 'Logos', text: '', items: imgs.slice(0, 4), cover: false },
-  {
-    id: 'graphic',
-    title: 'Posters and other graphic design',
-    text: 'Posters, flyers and a roll-up for student residences and courses, and line drawings.',
-    items: imagesFor('other-posters'),
-    cover: false,
-  },
-];
+// 01-04 logos · 05-20 dibujos de las mesas del sitting · 21 foto del sitting
+const photo = imgs[20];
+const sitting = imgs.slice(4, 20);
+const rest = [...imagesFor('other-communions'), ...imagesFor('other-nativity')];
+const logos = imgs.slice(0, 4);
+const posters = imagesFor('other-posters');
 ---
 
 <Base title="Other stuff | Julia Gómez Goenaga" description="Graphic design by Julia Gómez Goenaga: logos, invitations and illustration.">
@@ -33,23 +21,115 @@ const otherSections = [
       line drawings. Some of it lives on <a href={contact.instagram}>Instagram</a>.
     </p>
 
-    {
-      otherSections.map((sec) => (
-        <section aria-labelledby={sec.id} id={sec.id}>
-          <h2 id={sec.id}>{sec.title}</h2>
-          {sec.text && <p class="sec-text">{sec.text}</p>}
-          <ul class="grid">
-            {sec.items.map((img, k) => (
-              <li class={sec.cover && k === 0 ? 'photo' : ''}>
-                <Image src={img} alt="" widths={[400, 800, 1200]} sizes="(max-width: 700px) 50vw, 25vw" loading={k < 4 ? 'eager' : 'lazy'} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))
-    }
+    <section id="weddings" aria-labelledby="weddings-title">
+      <h2 id="weddings-title">Weddings and communions</h2>
+      <p class="sec-text">
+        The seating plan of my sister’s wedding: each table named after a place that mattered to the couple, drawn by
+        hand. Next to it, illustrated cards for first communions and line drawings in the same style.
+      </p>
+      <div class="wed" data-group="weddings">
+        <div class="wed-photo">
+          <Image src={photo} alt="Seating plan at the wedding, with the table cards among the flowers" widths={[600, 1200]} sizes="(max-width: 800px) 100vw, 33vw" loading="eager" />
+        </div>
+        <ul class="mosaic" aria-label="Table drawings">
+          {sitting.map((img) => (
+            <li>
+              <Image src={img} alt="Table drawing" widths={[240, 480, 1000]} sizes="(max-width: 800px) 25vw, 8vw" />
+            </li>
+          ))}
+        </ul>
+        <ul class="rest">
+          {rest.map((img) => (
+            <li>
+              <Image src={img} alt="Illustration" widths={[300, 600, 1200]} sizes="(max-width: 800px) 33vw, 11vw" />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section id="logos" aria-labelledby="logos-title">
+      <h2 id="logos-title">Logos</h2>
+      <ul class="grid" data-group="logos">
+        {logos.map((img) => (
+          <li>
+            <Image src={img} alt="Logo" widths={[400, 800]} sizes="(max-width: 700px) 50vw, 25vw" />
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section id="graphic" aria-labelledby="graphic-title">
+      <h2 id="graphic-title">Posters and other graphic design</h2>
+      <p class="sec-text">Posters, invitations and posts for student residences, courses and monthly retreats.</p>
+      <ul class="posters" data-group="posters">
+        {posters.map((img, k) => (
+          <li>
+            <Image src={img} alt="Poster" widths={[240, 480, 1200]} sizes="(max-width: 700px) 33vw, 12vw" loading={k < 12 ? 'eager' : 'lazy'} />
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Visor: al pulsar una pieza se abre en grande y se puede pasar a las demás de su grupo -->
+    <dialog class="viewer" aria-label="Image">
+      <button type="button" class="v-close">Close</button>
+      <button type="button" class="v-prev" aria-label="Previous">‹</button>
+      <button type="button" class="v-next" aria-label="Next">›</button>
+      <img alt="" />
+    </dialog>
   </div>
 </Base>
+
+<script>
+  const viewer = document.querySelector<HTMLDialogElement>('dialog.viewer');
+  const big = viewer?.querySelector('img');
+  const largest = (img: HTMLImageElement) =>
+    img.srcset
+      ? img.srcset.split(',').map((c) => c.trim().split(/\s+/)).sort((a, b) => parseInt(b[1]) - parseInt(a[1]))[0][0]
+      : img.currentSrc || img.src;
+  let group: HTMLImageElement[] = [];
+  let at = 0;
+  const show = (k: number) => {
+    if (!big || !group.length) return;
+    at = (k + group.length) % group.length;
+    big.src = largest(group[at]);
+    big.alt = group[at].alt;
+  };
+  document.querySelectorAll<HTMLImageElement>('[data-group] img').forEach((img) => {
+    img.tabIndex = 0;
+    const open = () => {
+      const g = img.closest<HTMLElement>('[data-group]');
+      group = g ? [...g.querySelectorAll<HTMLImageElement>('img')] : [img];
+      viewer?.classList.toggle('has-nav', group.length > 1);
+      show(group.indexOf(img));
+      viewer?.showModal();
+    };
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open();
+      }
+    });
+  });
+  viewer?.querySelector('.v-prev')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    show(at - 1);
+  });
+  viewer?.querySelector('.v-next')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    show(at + 1);
+  });
+  viewer?.querySelector('.v-close')?.addEventListener('click', () => viewer.close());
+  viewer?.addEventListener('click', (e) => {
+    if (e.target === viewer) viewer.close();
+  });
+  viewer?.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') show(at - 1);
+    if (e.key === 'ArrowRight') show(at + 1);
+  });
+</script>
 
 <style>
   .other {
@@ -91,6 +171,140 @@ const otherSections = [
     margin: 0;
     max-width: 60ch;
     color: var(--ink-2);
+  }
+  /* Bodas: la foto, el mosaico de las mesas del mismo tamaño y el resto a la derecha */
+  .wed {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+  }
+  .wed-photo :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    cursor: zoom-in;
+  }
+  .mosaic,
+  .rest {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    aspect-ratio: 1;
+  }
+  .mosaic {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .rest {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .mosaic li,
+  .rest li {
+    min-width: 0;
+    min-height: 0;
+  }
+  .mosaic :global(img),
+  .rest :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #fff;
+    cursor: zoom-in;
+  }
+  .rest :global(img) {
+    border: 1px solid var(--line);
+    padding: 6px;
+  }
+  @media (max-width: 800px) {
+    .wed {
+      grid-template-columns: 1fr;
+    }
+  }
+  /* Carteles: un mosaico apretado, en columnas */
+  .posters {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    columns: 8 120px;
+    column-gap: 8px;
+  }
+  .posters li {
+    break-inside: avoid;
+    margin-bottom: 8px;
+  }
+  .posters :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    cursor: zoom-in;
+    transition: transform 0.2s ease;
+  }
+  .posters :global(img:hover) {
+    transform: scale(1.03);
+  }
+  .viewer {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 48px 72px;
+    border: 0;
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+  }
+  .viewer[open] {
+    display: grid;
+    place-items: center;
+  }
+  .viewer img {
+    max-width: 100%;
+    max-height: calc(100dvh - 96px);
+    object-fit: contain;
+  }
+  .v-close,
+  .v-prev,
+  .v-next {
+    position: fixed;
+    font: inherit;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .v-close {
+    top: 16px;
+    right: 16px;
+    padding: 6px 16px;
+  }
+  .v-prev,
+  .v-next {
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+    line-height: 1;
+    display: none;
+  }
+  .has-nav .v-prev,
+  .has-nav .v-next {
+    display: block;
+  }
+  .v-prev {
+    left: 16px;
+  }
+  .v-next {
+    right: 16px;
   }
   .grid .photo {
     grid-column: span 2;
