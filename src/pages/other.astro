@@ -5,7 +5,7 @@ import { contact } from '../data/content';
 import { imagesFor } from '../lib/images';
 
 const imgs = imagesFor('other');
-// 01-04 y 22 logos · 05-20 iconos de las mesas del sitting · 21 foto del sitting
+// 01-04 logos · 05-20 iconos de las mesas del sitting · 21 foto del sitting
 const otherSections = [
   {
     id: 'weddings',
@@ -14,7 +14,7 @@ const otherSections = [
     items: [imgs[20], ...imgs.slice(4, 20), ...imagesFor('other-communions')],
     cover: true,
   },
-  { id: 'logos', title: 'Logos', text: '', items: [imgs[21], ...imgs.slice(0, 4)].filter(Boolean), cover: false },
+  { id: 'logos', title: 'Logos', text: '', items: imgs.slice(0, 4), cover: false },
   {
     id: 'graphic',
     title: 'Posters and other graphic design',
