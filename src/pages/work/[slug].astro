@@ -34,6 +34,7 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
         {w.year && <div><dt>Year</dt><dd>{w.year}</dd></div>}
       </dl>
     </header>
+    <div class:list={['body', { 'with-pic': pic }]}>
     <div class="text">
       {w.text.map((t) => <p>{t}</p>)}
       {w.links && (
@@ -47,14 +48,14 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
       )}
     </div>
     {
-      pic ? (
+      pic && (
         <figure class="pic">
-          <Image src={pic} alt={w.image!.alt} widths={[960, 1600, 2400]} sizes="100vw" />
+          <Image src={pic} alt={w.image!.alt} widths={[640, 1200, 1800]} sizes="(max-width: 900px) 100vw, 45vw" />
         </figure>
-      ) : (
-        <div class="ph" aria-hidden="true" />
       )
     }
+    </div>
+    {!pic && <div class="ph" aria-hidden="true" />}
     {w.extra && (
       <ul class="extra">
         {w.extra.map((l) => (
@@ -155,6 +156,17 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
     border: 1px solid var(--line);
     background: repeating-linear-gradient(45deg, transparent 0 8px, var(--line) 8px 9px);
   }
+  /* Con imagen: el texto a la izquierda y el gráfico a su derecha, sin fondo */
+  .body.with-pic {
+    display: grid;
+    grid-template-columns: minmax(0, 64ch) minmax(0, 1fr);
+    gap: 48px;
+    align-items: center;
+    margin: 40px 0 56px;
+  }
+  .with-pic .text {
+    margin: 0;
+  }
   .pic {
     margin: 0;
   }
@@ -162,8 +174,12 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
     display: block;
     width: 100%;
     height: auto;
-    border: 1px solid var(--line);
-    background: #fff;
+    mix-blend-mode: multiply;
+  }
+  @media (max-width: 900px) {
+    .body.with-pic {
+      grid-template-columns: 1fr;
+    }
   }
   .extra {
     list-style: none;
