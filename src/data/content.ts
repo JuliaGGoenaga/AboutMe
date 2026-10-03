@@ -292,6 +292,7 @@ export const archive: ArchiveProject[] = [
   {
     slug: 'colab',
     white: true,
+    hideImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], // todo está ya en la lámina
     group: 'unav',
     title: 'COLAB',
     subtitle: 'Intergenerational centre. Master’s final project',

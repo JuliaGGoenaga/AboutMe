@@ -115,7 +115,7 @@ export const sheets: Record<string, Sheet> = {
   // y la axonometría explotada interactiva al final.
   colab: {
     backdrop: 'c:situation',
-    lead: ['c:section-special'],
+    lead: ['c:axo-uses', 'c:section-special'],
     // Franja izquierda al ancho de las secciones bioclimáticas; la derecha se
     // rellena con los alzados enteros y las secciones. Abajo a la izquierda, las maquetas.
     columns: '4fr 8fr',
