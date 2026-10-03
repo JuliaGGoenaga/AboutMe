@@ -225,13 +225,13 @@ export const work: WorkItem[] = [
 ];
 
 // Menú de destacados, arriba a la derecha: archivo y tarjetas, en este orden.
-// `cover` es el dibujo de src/assets/covers/<cover>.jpg
-export const featured: { title: string; note: string; href: string; cover: string }[] = [
-  { title: 'COLAB', note: 'Intergenerational centre', href: 'archive/colab/', cover: 'colab' },
-  { title: 'Fortifications of Cartagena', note: 'Atalaya Castle', href: 'archive/cartagena/', cover: 'cartagena' },
-  { title: 'Bioperfectible skin', note: 'Bachelor thesis', href: 'archive/bioperfectible-skin/', cover: 'bioperfectible-skin' },
-  { title: 'Digital workflows for informed decision making in building envelope design', note: 'PhD', href: 'work/literature-review/', cover: 'literature-review' },
-  { title: 'Fehmarnbelt tunnel', note: 'IDOM', href: 'work/fehmarnbelt-tunnel/', cover: 'fehmarnbelt-tunnel' },
+// `logo` es el dibujo de src/assets/logos/<logo>.svg (o .png, los de Wix)
+export const featured: { title: string; note: string; href: string; logo: string }[] = [
+  { title: 'COLAB', note: 'Intergenerational centre', href: 'archive/colab/', logo: 'colab' },
+  { title: 'Fortifications of Cartagena', note: 'Atalaya Castle', href: 'archive/cartagena/', logo: 'cartagena' },
+  { title: 'Bioperfectible skin', note: 'Bachelor thesis', href: 'archive/bioperfectible-skin/', logo: 'bioperfectible-skin' },
+  { title: 'Digital workflows for informed decision making in building envelope design', note: 'PhD', href: 'work/literature-review/', logo: 'literature-review' },
+  { title: 'Fehmarnbelt tunnel', note: 'IDOM', href: 'work/fehmarnbelt-tunnel/', logo: 'fehmarnbelt-tunnel' },
 ];
 
 // --- Archivo académico -------------------------------------------------------
