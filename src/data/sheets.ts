@@ -121,7 +121,7 @@ export const sheets: Record<string, Sheet> = {
     columns: '4fr 8fr',
     areas: ['tech elevs'],
     cells: {
-      tech: 'stack:c:bioclimatic,c:section-36,a:01,a:02,a:03,a:04',
+      tech: 'stack:c:bioclimatic,c:section-36,a:01,a:02,a:03,a:04,a:05,a:06',
       elevs: 'reveal:c:elev-24,c:elev-26,c:elev-23,c:elev-25,c:sections-28,c:section-31',
     },
     captions: {
