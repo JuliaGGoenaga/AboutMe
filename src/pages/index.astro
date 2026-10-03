@@ -21,7 +21,7 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
   <section id="present" class="section present">
     <div class="intro">
       <h2>Present</h2>
-      <p class="lead">
+      <p class="body">
         I’m an architect specialized in sustainable design, currently working at IDOM, where I help integrate technical
         innovation into architectural practice. Over the past years, I’ve contributed to numerous real-world façade
         projects, applying performance-based methodologies to optimize design processes and support decarbonization
@@ -125,7 +125,7 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
   .present {
     min-height: 260vh;
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
     gap: 40px clamp(32px, 5vw, 80px);
     align-items: start;
   }
@@ -147,9 +147,12 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
       position: static;
     }
   }
+  /* Todo el texto de Present al mismo tamaño */
   .body {
     margin: 16px 0 0;
-    max-width: 60ch;
+    max-width: 72ch;
+    font-size: clamp(16px, 1.25vw, 18px);
+    line-height: 1.6;
     color: var(--ink-2);
   }
   .hint {

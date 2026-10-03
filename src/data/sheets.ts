@@ -29,6 +29,10 @@ export type Sheet = {
   lead?: string[];
   // Imágenes a sangre después de la lámina (secciones de lado a lado)
   after?: string[];
+  // Filas de cajas con filete fino (detalles constructivos), a la misma altura
+  boxes?: string[][];
+  // Tira horizontal de fotos pequeñas que ocupa todo el ancho, al final
+  strip?: string[];
   // Axonometría explotada interactiva al final
   axo?: { src: string; title: string; intro: string; spots: { x: number; y: number; label: string; text: string }[] };
   // Pies de imagen por referencia
@@ -44,28 +48,34 @@ export type Sheet = {
 };
 
 export const sheets: Record<string, Sheet> = {
-  // La torre: el perfil del río como horizonte, la maqueta, dos alzados altos y la
-  // axonometría constructiva en paralelo; la piel de píxeles cierra la lámina.
+  // La torre: a la derecha el plano de situación y, debajo, las tres tipologías;
+  // a la izquierda el texto y el perfil del río. Después la sección constructiva
+  // completa a todo el ancho, las cajas de detalle y la tira de fotos de maqueta.
   lisbon: {
-    columns: '4fr 2fr 2fr 4fr',
-    areas: ['sky sky sky .', 'photo north west axo', 'text north west axo', 'pix pix pix .'],
+    columns: '4fr 8fr',
+    areas: ['text sit', 'logo sit', '. typs'],
     cells: {
-      sky: 'c:skyline',
-      photo: 'a:01',
       text: 'text',
-      north: 'c:north',
-      west: 'c:west',
-      axo: 'c:axo',
-      pix: 'c:pixels',
+      logo: 'c:skyline',
+      sit: 'c:situation',
+      typs: ['c:typ-1', 'c:typ-2', 'c:typ-3'],
     },
-    align: { north: 'end', west: 'end', axo: 'end' },
+    align: { logo: 'end' },
+    after: ['c:section'],
+    boxes: [
+      ['c:detail-1', 'c:detail-2', 'c:detail-3', 'c:detail-4'],
+      ['c:detail-5', 'c:detail-6', 'c:detail-7', 'c:detail-8', 'c:detail-9', 'c:detail-10', 'c:detail-11', 'c:detail-12'],
+    ],
+    strip: ['c:model-1', 'c:model-2', 'c:model-3', 'c:model-4', 'c:model-5', 'c:model-6', 'c:model-7', 'c:model-8', 'c:model-9'],
   },
 
   // Tesis: el sistema en axonometría junto al catálogo completo de píxeles.
   'bioperfectible-skin': {
     columns: '4fr 8fr',
-    areas: ['axo cat', 'text cat', 'text row'],
-    cells: { axo: 'a:01', text: 'text', cat: 'catalogue', row: ['a:02', 'a:07', 'a:08'] },
+    areas: ['axo cat', 'text cat'],
+    cells: { axo: 'a:01', text: 'text', cat: 'catalogue' },
+    // La tabla comparativa de los 16 píxeles, a todo el ancho
+    after: ['c:table'],
   },
 
   // El barrio en axonometría y las tipologías dibujadas con su mobiliario.
@@ -81,22 +91,24 @@ export const sheets: Record<string, Sheet> = {
   'madrid-zoo': {
     backdrop: 'c:madrid',
     columns: '3fr 6fr 3fr',
-    areas: ['s1 map model', 's2 map model', 'row row row'],
+    areas: ['s1 map model', 's2 map model2'],
     cells: {
       map: 'a:05',
       s1: 'a:03',
       s2: 'a:04',
       model: 'a:11',
-      row: ['a:06', 'a:08', 'a:09'],
+      model2: 'a:12',
     },
-    align: { s1: 'start', s2: 'end', model: 'center' },
+    align: { s1: 'start', s2: 'end', model: 'end', model2: 'start' },
+    // La planta en grande, casi a sangre
+    after: ['c:plan'],
   },
 
   // Las fotos de las maquetas de plastilina en su hoja de contactos; las plantas
   // por unidad; el horizonte de las canteras y la planta del poblado.
   macael: {
     columns: '4fr 8fr',
-    areas: ['text contact', 'model contact', 'units units', 'hz hz', 'c1 aerial', 'light aerial'],
+    areas: ['text contact', 'model contact', 'units units', 'hz hz', 'c1 aerial', 'light aerial', 'finals finals'],
     cells: {
       text: 'text',
       contact: 'flipbook',
@@ -106,6 +118,7 @@ export const sheets: Record<string, Sheet> = {
       c1: 'a:04',
       aerial: 'a:08',
       light: 'a:11',
+      finals: ['c:final-1', 'c:final-2', 'c:final-3'],
     },
     align: { model: 'end', light: 'end' },
   },
@@ -151,34 +164,13 @@ export const sheets: Record<string, Sheet> = {
     },
   },
 
-  // TFM: la pregunta junto al texto; la sede de IDOM; el método (ciclo de vida y
-  // sistema TABS); los resultados y las conclusiones, como pares de diapositivas.
+  // TFM: la pregunta de partida dibujada (carbono operacional frente a embebido)
+  // junto al texto, y debajo el póster completo a todo el ancho.
   'embodied-carbon': {
     columns: '5fr 7fr',
-    areas: ['text q', 'cover q', 'sede sede', 'lca tabs', 'r1 r2', 'conc prop'],
-    cells: {
-      text: 'text',
-      q: 'stack:c:s06',
-      cover: 'stack:c:s01',
-      sede: 'stack:c:s10',
-      lca: 'stack:c:s04',
-      tabs: 'stack:c:s12',
-      r1: 'stack:c:s21',
-      r2: 'stack:c:s22',
-      conc: 'stack:c:s24',
-      prop: 'stack:c:s27',
-    },
-    captions: {
-      'c:s06': 'Highly efficient buildings, highly polluting buildings?',
-      'c:s10': 'IDOM headquarters in Madrid',
-      'c:s04': 'Life cycle assessment, EN 15978: embodied and operational carbon',
-      'c:s12': 'Thermally activated building structure (TABS): the concrete stores heat and smooths the peaks',
-      'c:s21': 'Embodied and operational carbon: headquarters and reference building',
-      'c:s22': 'Total emissions over the life cycle',
-      'c:s24': 'Global emissions compared with other office buildings',
-      'c:s27': 'Proposals: reducing embodied carbon',
-    },
-    align: { cover: 'end' },
+    areas: ['text q'],
+    cells: { text: 'text', q: 'carbon' },
+    after: ['c:poster'],
   },
 
   // Solo el póster del concurso, a sangre, para recorrerlo bajando.

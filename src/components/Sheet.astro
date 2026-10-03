@@ -113,10 +113,10 @@ const cells = Object.entries(sheet.cells);
         {value === 'catalogue' && (
           <>
             <p class="block-head">Catalogue of pixels. Sixteen modules of the BioPix envelope, pages 56 to 71 of the thesis.</p>
-            <ol class="sheets">
+            <ol class="sheets" data-group="catalogue">
               {many('px-').map((src, k) => (
                 <li>
-                  <Image src={src} alt={`Catalogue sheet, pixel ${k + 1}`} widths={[240, 480, 1200]} sizes="(max-width: 700px) 25vw, 11vw" loading={k < 8 ? 'eager' : 'lazy'} />
+                  <Image src={src} alt={`Catalogue sheet, pixel ${k + 1}`} widths={[240, 480, 1200]} sizes="(max-width: 700px) 25vw, 16vw" loading={k < 8 ? 'eager' : 'lazy'} />
                 </li>
               ))}
             </ol>
@@ -125,7 +125,6 @@ const cells = Object.entries(sheet.cells);
 
         {value === 'typologies' && (
           <>
-            <p class="block-head">06 / Living in motion. The six typologies in use, drawn with their furniture and inhabitants.</p>
             <ol class="typs">
               {many('typ-').map((src, k) => (
                 <li>
@@ -135,6 +134,30 @@ const cells = Object.entries(sheet.cells);
               ))}
             </ol>
           </>
+        )}
+
+        {value === 'carbon' && (
+          <figure class="cq" aria-label="Highly efficient buildings, highly polluting buildings? Operational and embodied carbon">
+            <p class="c-claim">Highly efficient buildings</p>
+            <svg class="c-op" viewBox="0 0 200 150" aria-hidden="true">
+              <path d="M10 10V140H190" class="axis" />
+              <path d="M14 22C60 40 90 96 186 122" class="op" />
+              <text x="186" y="112" text-anchor="end">operational</text>
+              <text x="186" y="148" text-anchor="end">efficiency →</text>
+            </svg>
+            <div class="c-bar">
+              <span class="v op-l">Operational carbon</span>
+              <span class="v em-l">Embodied carbon</span>
+            </div>
+            <svg class="c-em" viewBox="0 0 200 150" aria-hidden="true">
+              <path d="M10 10V140H190" class="axis" />
+              <path d="M14 122C80 112 120 70 186 18" class="em" />
+              <path d="M14 22C60 40 90 96 186 122" class="op ghost" />
+              <text x="20" y="20">embodied?</text>
+              <text x="186" y="148" text-anchor="end">efficiency →</text>
+            </svg>
+            <p class="c-claim c-q">Highly polluting buildings?</p>
+          </figure>
         )}
 
         {value === 'axo' && sheet.axo && (
@@ -189,6 +212,38 @@ const cells = Object.entries(sheet.cells);
       {sheet.after.map((r) => (
         <Image src={ref(r)} alt={`${p.title}, section`} widths={[1280, 1920, 3000]} sizes="100vw" />
       ))}
+    </section>
+  )
+}
+
+{
+  sheet.boxes && (
+    <section class="boxes" data-group="details" aria-label="Constructive details">
+      {sheet.boxes.map((row) => (
+        <div class="boxrow">
+          {row.map((r) => {
+            const m = ref(r);
+            return (
+              <figure style={`flex:${(m.width / m.height).toFixed(4)} 1 0`}>
+                <Image src={m} alt={`${p.title}, constructive detail`} widths={[400, 800, 1400]} sizes="(max-width: 700px) 50vw, 25vw" />
+              </figure>
+            );
+          })}
+        </div>
+      ))}
+    </section>
+  )
+}
+
+{
+  sheet.strip && (
+    <section class="strip" data-group="models" aria-label="Model photos">
+      {sheet.strip.map((r) => {
+        const m = ref(r);
+        return (
+          <Image src={m} alt={`${p.title}, model photo`} widths={[320, 640, 1200]} sizes="(max-width: 700px) 33vw, 12vw" style={`flex:${(m.width / m.height).toFixed(4)} 1 0`} />
+        );
+      })}
     </section>
   )
 }
@@ -256,6 +311,156 @@ const cells = Object.entries(sheet.cells);
     height: auto;
     mix-blend-mode: multiply;
     cursor: zoom-in;
+  }
+  /* La pregunta del TFM: eficiente frente a contaminante, con la franja negra
+     del carbono operacional y el embebido en medio */
+  .cq {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr minmax(64px, 0.42fr) 1fr;
+    grid-template-rows: auto auto;
+    gap: 28px 32px;
+    align-items: start;
+  }
+  .c-claim {
+    margin: 0;
+    font-size: clamp(26px, 3vw, 44px);
+    line-height: 1.04;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .cq .c-claim:first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .c-op {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
+  }
+  .c-bar {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: stretch;
+    min-height: 420px;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 10px;
+  }
+  .c-bar .v {
+    writing-mode: vertical-rl;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: clamp(13px, 1.3vw, 18px);
+    font-weight: 500;
+  }
+  .c-bar .em-l {
+    align-self: flex-end;
+    color: var(--minio);
+  }
+  .c-em {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .c-q {
+    grid-column: 3;
+    grid-row: 2;
+    align-self: end;
+    text-align: right;
+  }
+  .cq svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .cq svg text {
+    font: 400 10px var(--font);
+    fill: var(--ink-3);
+  }
+  .cq .axis {
+    fill: none;
+    stroke: var(--ink-3);
+    stroke-width: 0.8;
+  }
+  .cq .op,
+  .cq .em {
+    fill: none;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+  .cq .op {
+    stroke: var(--ink);
+  }
+  .cq .ghost {
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+    opacity: 0.5;
+  }
+  .cq .em {
+    stroke: var(--minio);
+  }
+  @media (max-width: 700px) {
+    .cq {
+      gap: 16px;
+    }
+    .c-bar {
+      min-height: 300px;
+    }
+  }
+  /* Cajas de detalle constructivo: misma altura en cada fila, filete fino */
+  .boxes {
+    display: grid;
+    gap: 14px;
+    margin: 0 0 96px;
+  }
+  .boxrow {
+    display: flex;
+    gap: 14px;
+  }
+  .boxes figure {
+    margin: 0;
+    min-width: 0;
+    border: 1px solid var(--line);
+    padding: 8px;
+  }
+  .boxes :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    mix-blend-mode: multiply;
+    cursor: zoom-in;
+  }
+  /* Tira de fotos de maqueta a lo ancho de la pantalla */
+  .strip {
+    display: flex;
+    gap: 4px;
+    margin: 0 calc(-1 * var(--gutter)) 96px;
+  }
+  .strip :global(img) {
+    display: block;
+    min-width: 0;
+    width: 100%;
+    height: auto;
+    cursor: zoom-in;
+  }
+  @media (max-width: 700px) {
+    .boxrow {
+      flex-wrap: wrap;
+    }
+    .boxrow figure {
+      flex-basis: 40% !important;
+    }
+    .strip {
+      overflow-x: auto;
+    }
+    .strip :global(img) {
+      width: auto;
+      height: 120px;
+      flex: none !important;
+    }
   }
   /* Hoja de contactos de las maquetas de Macael */
   .contact {
@@ -410,13 +615,18 @@ const cells = Object.entries(sheet.cells);
     font-size: 13px;
     color: var(--ink-3);
   }
+  /* Catálogo: 4 x 4, las 16 hojas, con un filete fino */
   .sheets {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 14px 12px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px 14px;
+  }
+  .sheets :global(img) {
+    border: 1px solid var(--line);
+    background: #fff;
   }
   .sheets :global(img) {
     transition: transform 0.2s ease;

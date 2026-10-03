@@ -1,0 +1,159 @@
+---
+// Página de cada tarjeta de IDOM o del PhD. De momento texto y enlaces; el
+// material gráfico se añadirá cuando llegue.
+import Base from '../../layouts/Base.astro';
+import { work } from '../../data/content';
+import { url } from '../../lib/images';
+
+export function getStaticPaths() {
+  return work.map((w) => ({ params: { slug: w.slug }, props: { item: w } }));
+}
+
+const { item: w } = Astro.props;
+const parentName = w.parent === 'idom' ? 'IDOM' : 'PhD';
+const siblings = work.filter((x) => x.parent === w.parent);
+const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % siblings.length];
+---
+
+<Base title={`${w.title} | Julia Gómez Goenaga`} description={`${w.title}. ${w.summary}`}>
+  <article class="project">
+    <header>
+      <nav class="crumbs" aria-label="Back">
+        <a class="back" href={url(`#open-${w.parent}`)}>Back to the {parentName} bubble</a>
+      </nav>
+      <p class="kind">{w.kind}</p>
+      <h1>{w.title}</h1>
+      <p class="sub">{w.summary}</p>
+      <dl class="facts">
+        <div><dt>Context</dt><dd>{w.parent === 'idom' ? 'IDOM' : 'Practice-based PhD. IDOM, Universidad de Navarra and University of Florida'}</dd></div>
+        {w.place && <div><dt>Place</dt><dd>{w.place}</dd></div>}
+        {w.year && <div><dt>Year</dt><dd>{w.year}</dd></div>}
+      </dl>
+    </header>
+    <div class="text">
+      {w.text.map((t) => <p>{t}</p>)}
+      {w.links && (
+        <ul class="links">
+          {w.links.map((l) => (
+            <li>
+              <a href={l.href}>{l.label}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+    <div class="ph" aria-hidden="true"></div>
+    {next.slug !== w.slug && (
+      <nav class="next" aria-label="Next">
+        <a href={url(`work/${next.slug}/`)}>
+          <span>Next in {parentName}</span>
+          <strong>{next.title}</strong>
+        </a>
+      </nav>
+    )}
+  </article>
+</Base>
+
+<style>
+  .project {
+    padding: 112px var(--gutter) 72px;
+  }
+  .back {
+    font-size: 14px;
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+  .back:hover {
+    color: var(--minio);
+  }
+  .kind {
+    margin: 24px 0 0;
+    font-size: 13px;
+    color: var(--minio);
+  }
+  h1 {
+    margin: 8px 0 0;
+    max-width: 20ch;
+    font-size: clamp(36px, 6vw, 84px);
+    font-weight: 560;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+  .sub {
+    margin: 12px 0 0;
+    max-width: 60ch;
+    font-size: clamp(18px, 1.8vw, 24px);
+    color: var(--ink-2);
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 40px;
+    margin: 32px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--ink);
+  }
+  .facts dt {
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .facts dd {
+    margin: 0;
+  }
+  .text {
+    max-width: 64ch;
+    margin: 40px 0 56px;
+    font-size: 18px;
+  }
+  .text p {
+    margin: 0 0 1em;
+  }
+  .links {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .links a {
+    display: inline-block;
+    padding: 7px 16px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 15px;
+  }
+  .links a:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  /* Hueco rayado donde irá el material gráfico */
+  .ph {
+    aspect-ratio: 16 / 7;
+    border: 1px solid var(--line);
+    background: repeating-linear-gradient(45deg, transparent 0 8px, var(--line) 8px 9px);
+  }
+  .next {
+    margin-top: 72px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ink);
+  }
+  .next a {
+    display: grid;
+    gap: 4px;
+    text-decoration: none;
+  }
+  .next span {
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .next strong {
+    font-size: clamp(24px, 3vw, 40px);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+  }
+  .next a:hover strong {
+    color: var(--minio);
+  }
+</style>

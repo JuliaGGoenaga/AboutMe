@@ -105,6 +105,8 @@ const next = siblings[(i + 1) % siblings.length];
     <!-- Visor: al hacer clic en un dibujo se abre en grande sobre papel translúcido -->
     <dialog class="viewer" aria-label="Drawing">
       <button type="button" class="viewer-close">Close</button>
+      <button type="button" class="viewer-prev" aria-label="Previous">‹</button>
+      <button type="button" class="viewer-next" aria-label="Next">›</button>
       <img alt="" />
     </dialog>
 
@@ -120,6 +122,8 @@ const next = siblings[(i + 1) % siblings.length];
 <script>
   const viewer = document.querySelector<HTMLDialogElement>('dialog.viewer');
   const big = viewer?.querySelector('img');
+  const prev = viewer?.querySelector<HTMLButtonElement>('.viewer-prev');
+  const next = viewer?.querySelector<HTMLButtonElement>('.viewer-next');
   // La versión más grande disponible del srcset
   const largest = (img: HTMLImageElement) =>
     img.srcset
@@ -128,22 +132,47 @@ const next = siblings[(i + 1) % siblings.length];
           .map((c) => c.trim().split(/\s+/))
           .sort((a, b) => parseInt(b[1]) - parseInt(a[1]))[0][0]
       : img.currentSrc || img.src;
-  document.querySelectorAll<HTMLImageElement>('.compose img, .bleed img, .bleed-only img, .pair img, .after img, .sheet img:not(.contact img), .backdrop img, .scroller img, .gallery img').forEach((img) => {
-    img.tabIndex = 0;
-    img.setAttribute('role', 'button');
-    const open = () => {
-      if (!viewer || !big) return;
-      big.src = largest(img);
-      big.alt = img.alt;
-      viewer.showModal();
-    };
-    img.addEventListener('click', open);
-    img.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        open();
-      }
+  let group: HTMLImageElement[] = [];
+  let at = 0;
+  const show = (k: number) => {
+    if (!big || !group.length) return;
+    at = (k + group.length) % group.length;
+    big.src = largest(group[at]);
+    big.alt = group[at].alt;
+  };
+  document
+    .querySelectorAll<HTMLImageElement>('.compose img, .sheet img:not(.contact img), .backdrop img, .bleed img, .bleed-only img, .pair img, .after img, .scroller img, .gallery img')
+    .forEach((img) => {
+      img.tabIndex = 0;
+      img.setAttribute('role', 'button');
+      const open = () => {
+        if (!viewer) return;
+        // Si la imagen es parte de un grupo (p. ej. el catálogo), se puede pasar de una a otra
+        const g = img.closest<HTMLElement>('[data-group]');
+        group = g ? [...g.querySelectorAll<HTMLImageElement>('img')] : [img];
+        viewer.classList.toggle('has-nav', group.length > 1);
+        show(group.indexOf(img));
+        viewer.showModal();
+      };
+      img.addEventListener('click', open);
+      img.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      });
     });
+  prev?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    show(at - 1);
+  });
+  next?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    show(at + 1);
+  });
+  viewer?.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') show(at - 1);
+    if (e.key === 'ArrowRight') show(at + 1);
   });
   viewer?.addEventListener('click', () => viewer.close());
 </script>
@@ -174,6 +203,38 @@ const next = siblings[(i + 1) % siblings.length];
     max-height: calc(100dvh - 2 * clamp(16px, 4vw, 56px));
     object-fit: contain;
     mix-blend-mode: multiply;
+  }
+  .viewer-prev,
+  .viewer-next {
+    display: none;
+    position: fixed;
+    top: 50%;
+    translate: 0 -50%;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .viewer.has-nav .viewer-prev,
+  .viewer.has-nav .viewer-next {
+    display: block;
+  }
+  .viewer-prev {
+    left: var(--gutter);
+  }
+  .viewer-next {
+    right: var(--gutter);
+  }
+  .viewer-prev:hover,
+  .viewer-next:hover {
+    background: var(--ink);
+    color: var(--paper);
   }
   .viewer-close {
     position: fixed;

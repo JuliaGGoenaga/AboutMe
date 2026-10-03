@@ -123,39 +123,100 @@ export const experiences: Experience[] = [
 
 export const PRESENT_YEAR = 2026;
 
-// --- Trabajo en IDOM -----------------------------------------------------------
-// Un proyecto de ejemplo, un desarrollo propio (la herramienta) y dos campos de trabajo.
-// Pendiente de material en "Material web/01 IDOM".
+// --- Trabajo en IDOM y en el doctorado ----------------------------------------
+// Cada tarjeta es un proyecto con su propia página (/work/<slug>/) y vive dentro
+// de la burbuja de IDOM o del PhD. Las marcadas como `featured` salen también en
+// el menú de destacados. Pendiente de material en "Material web/01 IDOM".
 
-export type ProKind = 'Field of work' | 'Project' | 'Tool';
+export type WorkItem = {
+  slug: string;
+  parent: 'idom' | 'phd';
+  kind: 'Project' | 'Field of work' | 'Tool' | 'Research';
+  title: string;
+  place?: string;
+  year?: string;
+  summary: string; // una frase para la tarjeta
+  text: string[];
+  links?: { label: string; href: string }[];
+  featured?: boolean;
+};
 
-export const professional: { kind: ProKind; title: string; place?: string; text: string; line: LineId }[] = [
+export const work: WorkItem[] = [
   {
-    kind: 'Field of work',
-    title: 'Sustainable facades',
-    text: 'Daylight, solar radiation and energy analyses that inform facade design, from early options to the final envelope.',
-    line: 'sustainable',
-  },
-  {
-    kind: 'Field of work',
-    title: 'AI and digital transformation',
-    text: 'Part of the digital transformation group: bringing computational design and AI into everyday design processes across the company.',
-    line: 'computational',
-  },
-  {
+    slug: 'fehmarnbelt-tunnel',
+    parent: 'idom',
     kind: 'Project',
-    title: 'Facade analysis in practice', // TODO nombre del proyecto
-    place: 'Germany and Denmark', // TODO confirmar
-    text: 'A project case study: how the performance analysis shaped the facade. In preparation.',
-    line: 'sustainable',
+    title: 'Fehmarnbelt tunnel',
+    place: 'Denmark and Germany',
+    summary: 'The immersed tunnel between Denmark and Germany. Case study in preparation.',
+    text: [
+      'The Fehmarnbelt fixed link, the immersed tunnel between Rødby (Denmark) and Puttgarden (Germany). Case study in preparation.', // TODO texto y material
+    ],
+    featured: true,
   },
   {
-    kind: 'Tool',
-    title: 'Facade design tool',
-    place: 'IDOM',
-    text: 'A computational tool to explore and compare facade options with performance feedback.',
-    line: 'computational',
+    slug: 'multiparametric-facade-analysis',
+    parent: 'idom',
+    kind: 'Field of work',
+    title: 'Multiparametric facade analysis',
+    summary: 'Daylight, solar radiation and energy analyses that inform facade design, from early options to the final envelope.',
+    text: [
+      'Daylight, solar radiation and energy analyses that inform facade design, from early options to the final envelope. Many parameters are explored at once, so that the design team can compare options with performance feedback. Examples in preparation.', // TODO ejemplos
+    ],
   },
+  {
+    slug: 'digital-transformation',
+    parent: 'idom',
+    kind: 'Field of work',
+    title: 'Digital transformation processes',
+    summary: 'Bringing computational design and AI into everyday design processes across the company.',
+    text: [
+      'As part of IDOM’s digital transformation group, I help bring computational design and AI into everyday design processes across the company: new workflows, tools and training for architects and engineers. In preparation.', // TODO
+    ],
+  },
+  {
+    slug: 'literature-review',
+    parent: 'phd',
+    kind: 'Research',
+    title: 'Digital workflows for envelope design: a systematic literature review',
+    year: '2025',
+    summary: 'How digital workflows support informed decision making in building envelope design.',
+    text: [
+      'A systematic literature review of the digital workflows that support informed decision making in building envelope design: which simulations, data and tools are used, at which design stage, and how their results reach the design team.', // TODO resumen del artículo
+      'J. Gómez Goenaga, A. Monge-Barrio, K. Saldaña Ochoa, A. Villanueva Peñalver. Preprint, SSRN, 2025.',
+    ],
+    links: [{ label: 'Read the preprint (SSRN)', href: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5359888' }],
+    featured: true,
+  },
+  {
+    slug: 'flex',
+    parent: 'phd',
+    kind: 'Tool',
+    title: 'FLEX',
+    summary: 'A Rhino tool for facade analysis.',
+    text: [
+      'FLEX is a tool for Rhino developed to analyse facades: it brings performance analysis into the modelling environment architects already use, so that options can be compared while they are being drawn. In preparation.', // TODO
+    ],
+  },
+  {
+    slug: 'solar-chart-topology',
+    parent: 'phd',
+    kind: 'Research',
+    title: 'The solar chart as a topology of the facade',
+    summary: 'A predictive model that reads the whole facade on the solar chart to predict daylight and solar loads.',
+    text: [
+      'Research on the solar chart as a topology that represents the whole facade. Mapped on the solar chart, the facade becomes the input of a predictive model that estimates daylight and solar loads, and shows possible results of the design options. In preparation.', // TODO
+    ],
+  },
+];
+
+// Menú de destacados, arriba a la derecha: archivo y tarjetas, en este orden.
+export const featured: { title: string; note: string; href: string }[] = [
+  { title: 'COLAB', note: 'Intergenerational centre', href: 'archive/colab/' },
+  { title: 'Fortifications of Cartagena', note: 'Atalaya Castle', href: 'archive/cartagena/' },
+  { title: 'Bioperfectible skin', note: 'Bachelor thesis', href: 'archive/bioperfectible-skin/' },
+  { title: 'Literature review', note: 'PhD', href: 'work/literature-review/' },
+  { title: 'Fehmarnbelt tunnel', note: 'IDOM', href: 'work/fehmarnbelt-tunnel/' },
 ];
 
 // --- Archivo académico -------------------------------------------------------
@@ -190,7 +251,7 @@ export const archiveGroups = {
 export const archive: ArchiveProject[] = [
   {
     slug: 'bioperfectible-skin',
-    hideImages: [4, 5, 6],
+    hideImages: [1, 2, 3, 4, 5, 6, 7, 8], // después del catálogo solo va la tabla
     group: 'etsam',
     title: 'Bioperfectible skin',
     subtitle: 'The BioPix envelope as integral architecture. Bachelor thesis',
@@ -207,7 +268,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'lisbon',
-    hideImages: [11],
+    hideImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], // todo va en la lámina
     group: 'etsam',
     title: 'Housing tower in Lisbon',
     subtitle: 'Torre Douro. Next to the 25 de Abril bridge',
@@ -245,6 +306,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'madrid-zoo',
+    hideImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], // no hay nada después de la lámina
     group: 'etsam',
     title: 'Sports space at Madrid Zoo',
     subtitle: 'Reuse of Javier Carvajal’s structures',
@@ -257,6 +319,7 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'macael',
+    hideImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], // no hay nada después de la lámina
     group: 'etsam',
     title: 'Retreat in Macael',
     subtitle: 'In the marble quarries',
@@ -279,15 +342,16 @@ export const archive: ArchiveProject[] = [
   },
   {
     slug: 'embodied-carbon',
+    hideImages: [1], // la lámina ya lleva la pregunta y el póster
     group: 'unav',
     title: 'Embodied and operational carbon',
     subtitle: "Master's thesis. The case of IDOM's Madrid headquarters",
     year: '2022',
     place: 'Madrid',
     text: [
-      'Buildings account for 37% of global energy-related carbon emissions. Highly efficient buildings reduce their operational carbon, but what about the carbon embodied in their materials and systems?',
-      'The thesis analyses the full life cycle of IDOM’s Madrid headquarters (2010) and its thermally activated building structure (TABS), which uses the thermal mass of the concrete to store heat and reduce the power of the plant.',
-      'The result was unexpected: TABS lowers both operational and embodied carbon, because exposing the concrete removes most interior finishes. Supervised by Aurora Monge-Barrio (Universidad de Navarra) and Antonio Villanueva Peñalver (IDOM). Master in Environmental Design and Management of Buildings.',
+      'Carbon emissions from buildings account for 37% of global energy-related emissions, and more and more projects now assess the whole life cycle to reduce them. Many studies state that the more energy efficient a building is, the lower its carbon emissions. That holds for operational carbon. But what about embodied carbon?',
+      'IDOM’s Madrid headquarters, built in 2010, uses many measures to cut consumption and, with it, operational carbon. One of them reduces both embodied and operational carbon: the thermally activated building structure (TABS) uses the thermal mass of the concrete to store heat and reduce the power of the machines. To work, it has to do without most interior finishes, so it also has less embodied carbon on top of the expected cut in operational carbon.',
+      'A relatively new system, then, that opens the door to reducing the embodied carbon of building services. Supervised by Aurora Monge-Barrio (Universidad de Navarra) and Antonio Villanueva Peñalver (IDOM). Master in Environmental Design and Management of Buildings.',
     ],
     links: [{ label: 'Read the thesis (PDF)', href: drive('1uIsijZs_7Vw1rIy9RSDDzJloHE797KWu') }],
   },

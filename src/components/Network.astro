@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { experiences, skills, lines, PRESENT_YEAR, archive, archiveGroups, archivePending, professional } from '../data/content';
+import { experiences, skills, lines, PRESENT_YEAR, archive, archiveGroups, archivePending, work } from '../data/content';
 import { imagesFor, url } from '../lib/images';
 
 const from = Math.min(...experiences.map((e) => e.start));
@@ -93,27 +93,19 @@ const otherImgs = [allOther[20], ...allOther.slice(4, 9), allOther[0], allOther[
       </div>
       <button type="button" data-close>Close</button>
     </header>
-    <ul class="fields">
+    <ul class="cards">
       {
-        professional.filter((p) => p.kind === 'Field of work').map((p) => (
+        work.filter((w) => w.parent === 'idom').map((w) => (
           <li>
-            <span class="kind">{p.kind}</span>
-            <h4>{p.title}</h4>
-            <p>{p.text}</p>
-          </li>
-        ))
-      }
-    </ul>
-    <ul class="fields pro">
-      {
-        professional.filter((p) => p.kind !== 'Field of work').map((p) => (
-          <li>
-            <span class="kind">
-              {p.kind}
-              {p.place && ` · ${p.place}`}
-            </span>
-            <h4>{p.title}</h4>
-            <p>{p.text}</p>
+            <a href={url(`work/${w.slug}/`)}>
+              <span class="kind">
+                {w.kind}
+                {w.place && ` · ${w.place}`}
+                {w.featured && <em>Featured</em>}
+              </span>
+              <h4>{w.title}</h4>
+              <p>{w.summary}</p>
+            </a>
           </li>
         ))
       }
@@ -143,6 +135,23 @@ const otherImgs = [allOther[20], ...allOther.slice(4, 9), allOther[0], allOther[
       </p>
       <p class="more"><a href={url('#publications')} data-close>Publications</a></p>
     </div>
+    <ul class="cards">
+      {
+        work.filter((w) => w.parent === 'phd').map((w) => (
+          <li>
+            <a href={url(`work/${w.slug}/`)}>
+              <span class="kind">
+                {w.kind}
+                {w.year && ` · ${w.year}`}
+                {w.featured && <em>Featured</em>}
+              </span>
+              <h4>{w.title}</h4>
+              <p>{w.summary}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </dialog>
 
@@ -542,6 +551,59 @@ const otherImgs = [allOther[20], ...allOther.slice(4, 9), allOther[0], allOther[
   }
   .more {
     margin-top: 32px;
+  }
+  /* Tarjetas de IDOM y del PhD: cada una lleva a su página */
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+    gap: 16px;
+  }
+  .phd-body + .cards {
+    margin-top: 40px;
+  }
+  .cards a {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    height: 100%;
+    padding: 18px 20px 22px;
+    border: 1px solid var(--ink);
+    text-decoration: none;
+    background: var(--paper);
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
+  }
+  .cards a:hover,
+  .cards a:focus-visible {
+    background: color-mix(in srgb, var(--minio) 7%, var(--paper));
+    transform: translateY(-3px);
+  }
+  .cards h4 {
+    margin: 0;
+    font-size: clamp(20px, 2vw, 26px);
+    font-weight: 560;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+  }
+  .cards a:hover h4 {
+    color: var(--minio);
+  }
+  .cards p {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .cards em {
+    font-style: normal;
+    margin-left: 10px;
+    padding: 1px 8px;
+    border: 1px solid var(--minio);
+    border-radius: 999px;
+    font-size: 11.5px;
   }
   /* IDOM y PhD dentro de su burbuja */
   .fields {

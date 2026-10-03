@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import { url } from '../lib/images';
-import { contact } from '../data/content';
+import { contact, featured } from '../data/content';
 
 interface Props {
   title: string;
@@ -31,6 +31,20 @@ const home = url();
         <a href={`${home}#publications`}>Publications</a>
         <a href={`${home}#contact`}>Contact</a>
       </nav>
+      <details class="featured">
+        <summary>Featured projects</summary>
+        <ol>
+          {featured.map((f, k) => (
+            <li>
+              <a href={url(f.href)}>
+                <span class="n">{String(k + 1).padStart(2, '0')}</span>
+                <strong>{f.title}</strong>
+                <span class="note">{f.note}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </details>
     </header>
     <main id="main">
       <slot />
@@ -43,6 +57,20 @@ const home = url();
     </footer>
   </body>
 </html>
+
+<script>
+  // El desplegable de destacados se cierra al pulsar fuera o con Escape
+  const menu = document.querySelector<HTMLDetailsElement>('details.featured');
+  document.addEventListener('click', (e) => {
+    if (menu?.open && !menu.contains(e.target as Node)) menu.open = false;
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu?.open) {
+      menu.open = false;
+      menu.querySelector('summary')?.focus();
+    }
+  });
+</script>
 
 <style>
   .site-header {
@@ -64,6 +92,7 @@ const home = url();
     white-space: nowrap;
   }
   nav {
+    margin-left: auto;
     display: flex;
     gap: clamp(14px, 2.2vw, 28px);
     font-size: 15px;
@@ -79,6 +108,66 @@ const home = url();
     nav {
       display: none;
     }
+  }
+  /* Destacados: una pastilla con el acento y una lista desplegable */
+  .featured {
+    position: relative;
+    font-size: 15px;
+  }
+  .featured summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 6px 14px;
+    border: 1px solid var(--minio);
+    border-radius: 999px;
+    color: var(--minio);
+    white-space: nowrap;
+  }
+  .featured summary::-webkit-details-marker {
+    display: none;
+  }
+  .featured summary:hover,
+  .featured[open] summary {
+    background: var(--minio);
+    color: var(--paper);
+  }
+  .featured ol {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    width: min(360px, calc(100vw - 2 * var(--gutter)));
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.35);
+  }
+  .featured li + li {
+    border-top: 1px solid var(--line);
+  }
+  .featured ol a {
+    display: grid;
+    grid-template-columns: 2.2em 1fr;
+    column-gap: 6px;
+    padding: 12px 18px;
+    text-decoration: none;
+  }
+  .featured .n {
+    grid-row: span 2;
+    color: var(--ink-3);
+    font-size: 13px;
+    padding-top: 3px;
+  }
+  .featured strong {
+    font-weight: 540;
+  }
+  .featured .note {
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .featured ol a:hover strong {
+    color: var(--minio);
   }
   .site-footer {
     display: flex;
