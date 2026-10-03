@@ -124,7 +124,7 @@ const anchors = ['left', 'right', 'bottom'];
   .lines {
     position: relative;
     width: 100%;
-    max-width: 640px;
+    max-width: min(480px, calc((100dvh - 380px) * 1.07));
     justify-self: end;
   }
   svg {
@@ -241,33 +241,12 @@ const anchors = ['left', 'right', 'bottom'];
     opacity: 1;
     transform: none;
   }
-  /* La tarjeta se abre a la izquierda del diagrama, pisando apenas el borde
-     de las burbujas, a la altura del círculo activo */
+  /* Con el texto de la izquierda fijo, la tarjeta se abre debajo del diagrama */
   .card {
-    right: 86%;
-  }
-  .at-left,
-  .at-right {
-    top: 14%;
-  }
-  .at-bottom {
-    top: 44%;
-  }
-  .at-core {
-    top: 30%;
-  }
-  /* En una sola columna no hay hueco a la izquierda: encima, centrada */
-  @media (max-width: 900px) {
-    .card {
-      right: auto;
-      left: 50%;
-      translate: -50% 0;
-    }
-    .at-left,
-    .at-right,
-    .at-bottom {
-      top: 6%;
-    }
+    left: 0;
+    right: auto;
+    top: calc(100% + 8px);
+    width: 100%;
   }
   .card h3 {
     margin: 0;

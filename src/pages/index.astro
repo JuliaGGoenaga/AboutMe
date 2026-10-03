@@ -134,10 +134,18 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
     top: 96px;
     align-self: start;
   }
+  /* El texto se queda fijo mientras se van marcando las burbujas */
   .intro {
     display: grid;
     gap: 0;
     align-self: start;
+    position: sticky;
+    top: 96px;
+  }
+  @media (max-width: 900px) {
+    .intro {
+      position: static;
+    }
   }
   .body {
     margin: 16px 0 0;

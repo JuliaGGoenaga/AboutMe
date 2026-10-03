@@ -1,56 +1,37 @@
 ---
-// Axonometría explotada animada: las capas de la estructura empiezan ensambladas
-// y se separan al hacer scroll hasta quedar como en el dibujo de Julia.
-// Los números explican cada pieza al pasar por encima o al tocarlos.
+// Axonometría explotada: el dibujo completo con puntos numerados. Al pasar por
+// un número (o tocarlo) se destaca y su explicación aparece en la leyenda.
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 
-type Spot = { label: string; text: string };
 interface Props {
-  bg: ImageMetadata;
+  src: ImageMetadata;
   title: string;
   intro: string;
-  // Capas en % de la escena (x, y, ancho, alto), de arriba abajo
-  layers: { src: ImageMetadata; x: number; y: number; w: number; h: number; spot: Spot }[];
-  // Detalles fijos sobre el edificio, en % de la escena
-  spots: (Spot & { x: number; y: number })[];
+  spots: { x: number; y: number; label: string; text: string }[];
 }
-const { bg, title, intro, layers, spots } = Astro.props;
-const all = [...layers.map((l) => l.spot), ...spots];
+const { src, title, intro, spots } = Astro.props;
 ---
 
 <section class="axo" data-axo aria-labelledby="axo-title">
-  <div class="pin">
-    <header>
-      <h2 id="axo-title">{title}</h2>
-      <p>{intro}</p>
-    </header>
-    <div class="stage" data-stage style={`aspect-ratio:${bg.width}/${bg.height};--ratio:${bg.width / bg.height}`}>
-      <Image class="bg" src={bg} alt="Exploded axonometric of the building and its precast structure" widths={[1280, 1920, 2560]} sizes="80vw" />
+  <header>
+    <h2 id="axo-title">{title}</h2>
+    <p>{intro}</p>
+  </header>
+  <div class="body">
+    <div class="stage">
+      <Image src={src} alt="Exploded axonometric of the building and its precast structure" widths={[1280, 1920, 2560]} sizes="(max-width: 900px) 100vw, 70vw" />
       {
-        layers.map((l, i) => (
-          <div class="layer" data-layer={i} style={`left:${l.x}%;top:${l.y}%;width:${l.w}%;height:${l.h}%`}>
-            <Image src={l.src} alt="" widths={[600, 1000]} sizes="20vw" />
-            <button type="button" class="spot" style="left:100%;top:50%" data-i={i} aria-describedby={`axo-note-${i}`}>
-              <span>{i + 1}</span>
-            </button>
-          </div>
+        spots.map((s, i) => (
+          <button type="button" class="spot" style={`left:${s.x}%;top:${s.y}%`} data-i={i} aria-describedby={`axo-note-${i}`}>
+            <span>{i + 1}</span>
+          </button>
         ))
-      }
-      {
-        spots.map((s, k) => {
-          const i = layers.length + k;
-          return (
-            <button type="button" class="spot" style={`left:${s.x}%;top:${s.y}%`} data-i={i} aria-describedby={`axo-note-${i}`}>
-              <span>{i + 1}</span>
-            </button>
-          );
-        })
       }
     </div>
     <ol class="legend">
       {
-        all.map((s, i) => (
+        spots.map((s, i) => (
           <li data-i={i} id={`axo-note-${i}`}>
             <span>{i + 1}</span>
             <div>
@@ -66,69 +47,31 @@ const all = [...layers.map((l) => l.spot), ...spots];
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-axo]').forEach((root) => {
-    const stage = root.querySelector<HTMLElement>('[data-stage]')!;
-    const layers = [...root.querySelectorAll<HTMLElement>('.layer')];
     const spots = root.querySelectorAll<HTMLElement>('.spot');
     const items = root.querySelectorAll<HTMLElement>('.legend li');
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const n = layers.length;
-
-    // Al principio las capas se solapan (ensambladas); al bajar se separan.
-    const STEP = 0.065; // desplazamiento por nivel, en fracción de la altura de la escena
-    const place = () => {
-      const r = root.getBoundingClientRect();
-      const k = reduce ? 1 : Math.min(Math.max(-r.top / Math.max(r.height - innerHeight, 1), 0), 1);
-      const e = k * k * (3 - 2 * k); // suavizado
-      const h = stage.getBoundingClientRect().height;
-      layers.forEach((l, i) => {
-        l.style.transform = `translate3d(0, ${(n - 1 - i) * STEP * h * (1 - e)}px, 0)`;
-      });
-      root.style.setProperty('--legend', String(e));
-    };
-    addEventListener('scroll', place, { passive: true });
-    addEventListener('resize', place);
-    place();
-
     const show = (i: string | null) => {
       spots.forEach((s) => s.classList.toggle('on', s.dataset.i === i));
       items.forEach((s) => s.classList.toggle('on', s.dataset.i === i));
     };
-    spots.forEach((s) => {
+    [...spots, ...items].forEach((s) => {
       s.addEventListener('pointerenter', () => show(s.dataset.i ?? null));
+      s.addEventListener('pointerleave', () => show(null));
+    });
+    spots.forEach((s) => {
       s.addEventListener('focus', () => show(s.dataset.i ?? null));
       s.addEventListener('click', () => show(s.dataset.i ?? null));
-      s.addEventListener('pointerleave', () => show(null));
       s.addEventListener('blur', () => show(null));
-    });
-    items.forEach((s) => {
-      s.addEventListener('pointerenter', () => show(s.dataset.i ?? null));
-      s.addEventListener('pointerleave', () => show(null));
     });
   });
 </script>
 
 <style>
-  /* Escena fija mientras se recorre la sección: el scroll anima la explosión */
   .axo {
-    position: relative;
-    height: 240vh;
     margin: 0 0 88px;
   }
-  .pin {
-    position: sticky;
-    top: 64px;
-    display: grid;
-    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
-    grid-template-rows: auto 1fr;
-    gap: 12px 32px;
-    height: calc(100dvh - 64px);
-    padding-bottom: 16px;
-    /* sticky crea su propio contexto: con fondo de papel el blanco del dibujo se funde */
-    background: var(--paper);
-  }
   header {
-    grid-column: 1 / -1;
     max-width: 70ch;
+    margin-bottom: 16px;
   }
   h2 {
     margin: 0;
@@ -141,25 +84,20 @@ const all = [...layers.map((l) => l.spot), ...spots];
     color: var(--ink-2);
     font-size: 15px;
   }
-  /* La escena cabe en la pantalla sin deformarse: ancho limitado por la altura disponible */
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 9fr) minmax(0, 3fr);
+    gap: 32px;
+    align-items: center;
+  }
   .stage {
     position: relative;
-    width: min(100%, calc((100dvh - 240px) * var(--ratio)));
-    justify-self: start;
-    align-self: start;
   }
   .stage :global(img) {
     display: block;
     width: 100%;
     height: auto;
     mix-blend-mode: multiply;
-  }
-  .layer :global(img) {
-    height: 100%;
-  }
-  .layer {
-    position: absolute;
-    will-change: transform;
   }
   .spot {
     position: absolute;
@@ -175,7 +113,6 @@ const all = [...layers.map((l) => l.spot), ...spots];
     font-size: 11.5px;
     font-weight: 600;
     cursor: help;
-    z-index: 3;
   }
   .spot.on,
   .spot:hover,
@@ -187,18 +124,15 @@ const all = [...layers.map((l) => l.spot), ...spots];
     list-style: none;
     margin: 0;
     padding: 0;
-    align-self: center;
     display: grid;
     gap: 10px;
     font-size: 13.5px;
     color: var(--ink-2);
-    opacity: calc(0.35 + var(--legend, 0) * 0.65);
   }
   .legend li {
     display: grid;
     grid-template-columns: 1.6em 1fr;
     gap: 6px;
-    transition: color 0.15s ease;
   }
   .legend li > span {
     color: var(--minio);
@@ -219,19 +153,8 @@ const all = [...layers.map((l) => l.spot), ...spots];
     color: var(--minio);
   }
   @media (max-width: 900px) {
-    .axo {
-      height: auto;
-    }
-    .pin {
-      position: static;
-      height: auto;
+    .body {
       grid-template-columns: 1fr;
-    }
-    .stage {
-      width: 100%;
-    }
-    .legend {
-      opacity: 1;
     }
     .legend li:not(.on) p {
       display: block;

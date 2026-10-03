@@ -25,16 +25,12 @@ export type Sheet = {
   bleed?: string;
   // Dos o más imágenes una junto a otra, a sangre (p. ej. dos pósters)
   pair?: string[];
+  // Imágenes a sangre justo debajo del plano de fondo, antes de la lámina
+  lead?: string[];
   // Imágenes a sangre después de la lámina (secciones de lado a lado)
   after?: string[];
   // Axonometría explotada interactiva al final
-  axo?: {
-    bg: string;
-    title: string;
-    intro: string;
-    layers: { src: string; x: number; y: number; w: number; h: number; label: string; text: string }[];
-    spots: { x: number; y: number; label: string; text: string }[];
-  };
+  axo?: { src: string; title: string; intro: string; spots: { x: number; y: number; label: string; text: string }[] };
   // Pies de imagen por referencia
   captions?: Record<string, string>;
   // Celdas que se quedan fijas mientras se recorre la lámina (p. ej. el texto junto a un póster)
@@ -119,37 +115,33 @@ export const sheets: Record<string, Sheet> = {
   // y la axonometría explotada interactiva al final.
   colab: {
     backdrop: 'c:situation',
+    lead: ['c:section-special'],
+    // Franja izquierda al ancho de las secciones bioclimáticas; la derecha se
+    // rellena con los alzados enteros y las secciones. Abajo a la izquierda, las maquetas.
     columns: '4fr 8fr',
-    areas: ['tech elevs', 's28 s28', 's36 s31'],
+    areas: ['tech elevs'],
     cells: {
-      tech: 'stack:c:bioclimatic',
-      elevs: 'reveal:c:elev-24,c:elev-26,c:elev-23,c:elev-25',
-      s28: 'stack:c:sections-28',
-      s36: 'stack:c:section-36',
-      s31: 'stack:c:section-31',
+      tech: 'stack:c:bioclimatic,c:section-36,a:01,a:02,a:03,a:04',
+      elevs: 'reveal:c:elev-24,c:elev-26,c:elev-23,c:elev-25,c:sections-28,c:section-31',
     },
-    align: { s36: 'end' },
-    maxw: { s28: '820px', s36: '340px' },
     captions: {
       'c:bioclimatic': 'Bioclimatic sections: spring and autumn, summer day and night, winter day and night. Cross ventilation, solar protection and thermal mass through the year.',
+      'c:section-36': 'Constructive section, central courtyard',
+      'a:01': 'Models',
       'c:elev-24': 'Elevations',
       'c:sections-28': 'Sections A-A and B-B',
-      'c:section-36': 'Constructive section, central courtyard',
       'c:section-31': 'Constructive section, housing',
     },
-    after: ['c:section-special'],
     axo: {
-      bg: 'c:axo-bg',
+      src: 'c:axo',
       title: 'Prefabrication',
-      intro: 'The building is assembled from precast elements. Scroll to take the structure apart; move over the numbers to read each piece.',
-      layers: [
-        { src: 'c:axo-layer-1', x: 16.07, y: 7.19, w: 17.36, h: 20.69, label: 'Structure of the private floors', text: 'Precast slabs of 4 by 3.3 metres on a regular grid of columns.' },
-        { src: 'c:axo-layer-2', x: 16.07, y: 27.43, w: 17.36, h: 15.6, label: 'Beam grid at the transition floor', text: 'A grid of beams collects the loads of the private floors above.' },
-        { src: 'c:axo-layer-3', x: 15.86, y: 44.36, w: 17.0, h: 14.6, label: 'Transition trees', text: 'Branching supports that carry the housing floors over the open public floors.' },
-        { src: 'c:axo-layer-4', x: 15.86, y: 58.85, w: 17.57, h: 20.58, label: 'Structure of the public floors', text: 'A wider frame that frees the ground floors for public use.' },
-        { src: 'c:axo-layer-5', x: 15.86, y: 78.65, w: 17.71, h: 17.04, label: 'Hollow-core slabs', text: 'Precast hollow-core slabs span the public floors.' },
-      ],
+      intro: 'The building is designed to be assembled from precast elements. Move over the numbers to read each part.',
       spots: [
+        { x: 24.3, y: 18.3, label: 'Structure of the private floors', text: 'Precast slabs of 4 by 3.3 metres on a regular grid of columns.' },
+        { x: 24.3, y: 34.8, label: 'Beam grid at the transition floor', text: 'A grid of beams collects the loads of the private floors above.' },
+        { x: 23.6, y: 50.9, label: 'Transition trees', text: 'Branching supports that carry the housing floors over the open public floors.' },
+        { x: 24.3, y: 68.0, label: 'Structure of the public floors', text: 'A wider frame that frees the ground floors for public use.' },
+        { x: 26.4, y: 87.9, label: 'Hollow-core slabs', text: 'Precast hollow-core slabs span the public floors.' },
         { x: 53.2, y: 32.1, label: 'Precast slabs', text: 'The floor slabs of the private levels are placed as precast pieces.' },
         { x: 80.0, y: 44.2, label: 'Railing and solar protection', text: 'An industrialised railing that also works as solar protection on the balconies.' },
         { x: 70.4, y: 73.6, label: 'Precast concrete facade', text: 'Precast concrete panels close the public volume.' },
@@ -210,6 +202,7 @@ export function usedArchive(slug: string): number[] {
   if (!s) return [];
   return Object.values(s.cells)
     .flat()
+    .flatMap((r) => (r.startsWith('stack:') || r.startsWith('reveal:') ? r.slice(r.indexOf(':') + 1).split(',') : [r]))
     .filter((r) => r.startsWith('a:'))
     .map((r) => Number(r.slice(2)));
 }
