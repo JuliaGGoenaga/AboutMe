@@ -225,12 +225,13 @@ export const work: WorkItem[] = [
 ];
 
 // Menú de destacados, arriba a la derecha: archivo y tarjetas, en este orden.
-export const featured: { title: string; note: string; href: string }[] = [
-  { title: 'COLAB', note: 'Intergenerational centre', href: 'archive/colab/' },
-  { title: 'Fortifications of Cartagena', note: 'Atalaya Castle', href: 'archive/cartagena/' },
-  { title: 'Bioperfectible skin', note: 'Bachelor thesis', href: 'archive/bioperfectible-skin/' },
-  { title: 'Literature review', note: 'PhD', href: 'work/literature-review/' },
-  { title: 'Fehmarnbelt tunnel', note: 'IDOM', href: 'work/fehmarnbelt-tunnel/' },
+// `cover` es el dibujo de src/assets/covers/<cover>.jpg
+export const featured: { title: string; note: string; href: string; cover: string }[] = [
+  { title: 'COLAB', note: 'Intergenerational centre', href: 'archive/colab/', cover: 'colab' },
+  { title: 'Fortifications of Cartagena', note: 'Atalaya Castle', href: 'archive/cartagena/', cover: 'cartagena' },
+  { title: 'Bioperfectible skin', note: 'Bachelor thesis', href: 'archive/bioperfectible-skin/', cover: 'bioperfectible-skin' },
+  { title: 'Literature review', note: 'PhD', href: 'work/literature-review/', cover: 'literature-review' },
+  { title: 'Fehmarnbelt tunnel', note: 'IDOM', href: 'work/fehmarnbelt-tunnel/', cover: 'fehmarnbelt-tunnel' },
 ];
 
 // --- Archivo académico -------------------------------------------------------

@@ -1,7 +1,11 @@
 ---
 import '../styles/global.css';
 import { url } from '../lib/images';
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
 import { contact, featured } from '../data/content';
+
+const covers = import.meta.glob<{ default: ImageMetadata }>('../assets/covers/*.jpg', { eager: true });
 
 interface Props {
   title: string;
@@ -37,6 +41,9 @@ const home = url();
           {featured.map((f, k) => (
             <li>
               <a href={url(f.href)}>
+                {covers[`../assets/covers/${f.cover}.jpg`] && (
+                  <Image src={covers[`../assets/covers/${f.cover}.jpg`].default} alt="" widths={[320, 640]} sizes="(max-width: 720px) 60vw, 220px" />
+                )}
                 <span class="n">{String(k + 1).padStart(2, '0')}</span>
                 <strong>{f.title}</strong>
                 <span class="note">{f.note}</span>
@@ -131,36 +138,53 @@ const home = url();
     background: var(--minio);
     color: var(--paper);
   }
+  /* Panel ancho bajo la cabecera: las opciones en horizontal, cada una con su dibujo */
   .featured ol {
-    position: absolute;
-    right: 0;
-    top: calc(100% + 10px);
-    width: min(360px, calc(100vw - 2 * var(--gutter)));
-    margin: 0;
-    padding: 6px 0;
+    position: fixed;
+    left: var(--gutter);
+    right: var(--gutter);
+    top: 64px;
+    margin: 0 auto;
+    max-width: 1280px;
+    padding: 20px;
     list-style: none;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
     background: var(--paper);
     border: 1px solid var(--ink);
-    box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.35);
-  }
-  .featured li + li {
-    border-top: 1px solid var(--line);
+    box-shadow: 0 24px 60px -30px rgb(0 0 0 / 0.4);
   }
   .featured ol a {
     display: grid;
-    grid-template-columns: 2.2em 1fr;
-    column-gap: 6px;
-    padding: 12px 18px;
+    grid-template-columns: auto 1fr;
+    column-gap: 8px;
+    row-gap: 2px;
     text-decoration: none;
+  }
+  .featured ol :global(img) {
+    grid-column: 1 / -1;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-top: 1px solid var(--ink);
+    margin-bottom: 8px;
+    transition: transform 0.25s ease;
+  }
+  .featured ol a:hover :global(img) {
+    transform: translateY(-3px);
   }
   .featured .n {
     grid-row: span 2;
     color: var(--ink-3);
     font-size: 13px;
-    padding-top: 3px;
+    padding-top: 2px;
   }
   .featured strong {
     font-weight: 540;
+    line-height: 1.25;
   }
   .featured .note {
     font-size: 13px;
@@ -169,16 +193,21 @@ const home = url();
   .featured ol a:hover strong {
     color: var(--minio);
   }
-  .site-footer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 28px;
-    padding: 28px var(--gutter);
-    border-top: 1px solid var(--line);
-    font-size: 14px;
-    color: var(--ink-2);
-  }
-  .site-footer span {
-    margin-right: auto;
+  /* En el móvil se recorren deslizando */
+  @media (max-width: 720px) {
+    .featured ol {
+      left: 0;
+      right: 0;
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 62vw;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      border-left: 0;
+      border-right: 0;
+    }
+    .featured li {
+      scroll-snap-align: start;
+    }
   }
 </style>
