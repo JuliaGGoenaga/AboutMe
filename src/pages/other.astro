@@ -5,8 +5,9 @@ import { contact } from '../data/content';
 import { imagesFor } from '../lib/images';
 
 const imgs = imagesFor('other');
-// 01-04 logos · 05-20 dibujos de las mesas del sitting · 21 foto del sitting
+// 01-04 logos · 05-20 dibujos de las mesas del sitting · 21 y 22 fotos del sitting
 const photo = imgs[20];
+const closeUp = imgs[21];
 const sitting = imgs.slice(4, 20);
 const rest = [...imagesFor('other-communions'), ...imagesFor('other-nativity')];
 const logos = imgs.slice(0, 4);
@@ -38,6 +39,9 @@ const posters = imagesFor('other-posters');
             </li>
           ))}
         </ul>
+        <div class="wed-photo">
+          <Image src={closeUp} alt="A table card among the flowers of the seating plan" widths={[600, 1200]} sizes="(max-width: 800px) 100vw, 33vw" />
+        </div>
         <ul class="rest">
           {rest.map((img) => (
             <li>
@@ -177,6 +181,7 @@ const posters = imagesFor('other-posters');
     margin-top: 24px;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* La foto, el mosaico y el detalle, en ese orden */
     gap: 16px;
     align-items: start;
   }
@@ -202,10 +207,15 @@ const posters = imagesFor('other-posters');
     background: #fff;
     border: 1px solid var(--line);
   }
+  /* Debajo de las dos fotos y el mosaico, el resto en una fila */
   .rest {
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(7, 1fr);
+    aspect-ratio: auto;
     gap: 8px;
+  }
+  .rest li {
+    aspect-ratio: 1;
   }
   .mosaic li,
   .rest li {
