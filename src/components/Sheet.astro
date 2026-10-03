@@ -137,6 +137,10 @@ const cells = Object.entries(sheet.cells);
           </>
         )}
 
+        {value === 'axo' && sheet.axo && (
+          <ExplodedAxo src={ref(sheet.axo.src)} title={sheet.axo.title} intro={sheet.axo.intro} spots={sheet.axo.spots} stacked />
+        )}
+
         {value === 'flipbook' && (
           <ol class="contact">
             {many('ph-').map((src, k) => (
@@ -189,7 +193,7 @@ const cells = Object.entries(sheet.cells);
   )
 }
 
-{sheet.axo && <ExplodedAxo src={ref(sheet.axo.src)} title={sheet.axo.title} intro={sheet.axo.intro} spots={sheet.axo.spots} />}
+{sheet.axo && !Object.values(sheet.cells).includes('axo') && <ExplodedAxo src={ref(sheet.axo.src)} title={sheet.axo.title} intro={sheet.axo.intro} spots={sheet.axo.spots} />}
 
 <script>
   // Alzados que aparecen uno a uno al bajar

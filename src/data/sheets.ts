@@ -119,10 +119,11 @@ export const sheets: Record<string, Sheet> = {
     // Franja izquierda al ancho de las secciones bioclimáticas; la derecha se
     // rellena con los alzados enteros y las secciones. Abajo a la izquierda, las maquetas.
     columns: '4fr 8fr',
-    areas: ['tech elevs'],
+    areas: ['tech elevs', 'tech axo'],
     cells: {
-      tech: 'stack:c:bioclimatic,c:sections-28,c:section-36,a:01,a:02,a:03,a:04,a:05',
+      tech: 'stack:c:bioclimatic,c:sections-28,c:section-36,a:01,a:02,a:03,a:04,a:05,a:06',
       elevs: 'reveal:c:elev-24,c:elev-26,c:elev-23,c:elev-25,c:section-31',
+      axo: 'axo',
     },
     captions: {
       'c:bioclimatic': 'Bioclimatic sections: spring and autumn, summer day and night, winter day and night. Cross ventilation, solar protection and thermal mass through the year.',

@@ -9,11 +9,13 @@ interface Props {
   title: string;
   intro: string;
   spots: { x: number; y: number; label: string; text: string }[];
+  // Dentro de una columna: leyenda debajo del dibujo
+  stacked?: boolean;
 }
-const { src, title, intro, spots } = Astro.props;
+const { src, title, intro, spots, stacked = false } = Astro.props;
 ---
 
-<section class="axo" data-axo aria-labelledby="axo-title">
+<section class:list={['axo', { stacked }]} data-axo aria-labelledby="axo-title">
   <header>
     <h2 id="axo-title">{title}</h2>
     <p>{intro}</p>
@@ -151,6 +153,21 @@ const { src, title, intro, spots } = Astro.props;
   }
   .legend li.on strong {
     color: var(--minio);
+  }
+  .stacked {
+    margin-bottom: 0;
+  }
+  .stacked .body {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .stacked .legend {
+    grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr));
+    gap: 8px 24px;
+    align-items: start;
+  }
+  .stacked .legend li:not(.on) p {
+    display: block;
   }
   @media (max-width: 900px) {
     .body {
