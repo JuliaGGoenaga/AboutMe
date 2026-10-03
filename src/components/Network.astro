@@ -269,14 +269,15 @@ const otherImgs = [allOther[20], ...allOther.slice(4, 9), allOther[0], allOther[
       animation: none;
     }
   }
+  /* En el móvil flota a la altura del año, a la derecha, sin tapar la red */
   @media (max-width: 760px) {
     .floating {
-      width: 84px;
-      height: 84px;
-      font-size: 12.5px;
-      top: auto;
-      bottom: 4%;
-      right: 4%;
+      width: 76px;
+      height: 76px;
+      font-size: 12px;
+      top: -86px;
+      bottom: auto;
+      right: 0;
     }
   }
   .controls button,

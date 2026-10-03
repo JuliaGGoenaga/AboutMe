@@ -325,11 +325,30 @@ const cells = Object.entries(sheet.cells);
     max-width: none;
   }
   @media (max-width: 760px) {
+    .backdrop {
+      margin-bottom: 32px;
+    }
     .veil {
       position: static;
       width: auto;
-      margin: 16px var(--gutter) 0;
+      margin: 20px var(--gutter) 0;
+      padding: 0;
+      border: 0;
+      background: none;
       backdrop-filter: none;
+    }
+    .after {
+      margin-bottom: 32px;
+    }
+    .sheet {
+      gap: 28px !important;
+      margin-bottom: 48px;
+    }
+    .reveal {
+      gap: 28px;
+    }
+    .stack {
+      gap: 24px;
     }
   }
   .sheet {

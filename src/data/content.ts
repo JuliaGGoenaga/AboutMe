@@ -62,6 +62,7 @@ export const skills: { id: string; label: string; line: LineId }[] = [
 export type Experience = {
   id: string;
   label: string;
+  short?: string; // nombre corto para el móvil
   detail: string;
   start: number;
   end?: number; // sin `end` = sigue hoy
@@ -112,6 +113,7 @@ export const experiences: Experience[] = [
   {
     id: 'wya',
     label: 'World Youth Alliance',
+    short: 'WYA',
     detail: 'And other international organisations',
     start: 2020, // TODO confirmar
     place: 'International',

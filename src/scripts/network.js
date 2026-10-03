@@ -150,7 +150,8 @@ export function initNetwork(root) {
       const t = el('text', vertical ? { x: 10, y: -12, class: 'name' } : { x: 16, y: -10, class: 'name' }, g);
       const d = el('text', vertical ? { x: 10, y: 26, class: 'detail' } : { x: 30, y: 30, class: 'detail' }, g);
       d.textContent = e.detail.length > 70 ? `${e.detail.slice(0, 68).trim()}…` : e.detail;
-      t.textContent = e.label;
+      // En el móvil (vertical) el nombre corto, para no pisar los conocimientos
+      t.textContent = vertical ? (e.short ?? e.label.split(',')[0]) : e.label;
       expNodes[e.id] = g;
     });
 
