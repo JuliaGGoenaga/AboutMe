@@ -115,6 +115,9 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
   }
   /* Altura extra para que, al bajar, se abran las tres líneas y el centro */
   .present {
+    /* Por encima de la sección siguiente: la tarjeta abierta nunca queda bajo su borde */
+    position: relative;
+    z-index: 1;
     min-height: 260vh;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -135,6 +138,9 @@ const affiliations = ['IDOM', 'Universidad de Navarra', 'University of Florida',
     .lines-track {
       display: block;
       height: 260vh;
+      /* Sitio para la tarjeta, que cuelga bajo el diagrama */
+      padding-bottom: 240px;
+      box-sizing: content-box;
     }
     .present :global(.lines) {
       top: 72px;
