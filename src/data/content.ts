@@ -20,21 +20,21 @@ export const lines: {
     id: 'sustainable',
     title: 'Sustainable architecture',
     summary:
-      'Daylight and solar radiation analysis and optimization, so that envelopes are designed with performance data from the first sketch.',
-    work: ['Daylight and radiation analysis', 'Energy analysis', 'Facade design', 'Passive design strategies', 'Embodied carbon'],
+      'A conscious architecture, designed to belong to its place and its climate, adapted to the environment and to the people who live in it, and using as little waste and as few resources as possible. Above all, passive design.',
+    work: ['Passive design strategies', 'Daylight and radiation analysis', 'Energy analysis', 'Facade design', 'Embodied carbon'],
   },
   {
     id: 'computational',
     title: 'Computational design and AI',
     summary:
-      'Computational tools and AI models applied to design, and the digital transformation of design processes inside a large engineering and architecture firm.',
+      'The tool as a way to think: to generate solutions that would be impossible by hand, to optimize and to systematize. More autonomy and efficiency, for a better service.',
     work: ['Computational design tools', 'AI model training for design', 'Digital transformation at IDOM'],
   },
   {
     id: 'integrated',
     title: 'Integrated design and human-computer interaction',
     summary:
-      'Methods that bring sustainability into the earliest design phases, and simple interactive tools that help architects learn and decide.',
+      'Thinking with the tool, driving a change of mindset in the architecture and engineering design processes of a large firm. And when tools are also intuitive, they train the architect: they shape the way designers think.',
     work: ['Integrated design methods', 'Simple interactive tools', 'Training architects'],
   },
 ];
@@ -228,7 +228,7 @@ export const work: WorkItem[] = [
 // `logo` es el dibujo de src/assets/logos/<logo>.svg (o .png, los de Wix)
 export const featured: { title: string; note: string; href: string; logo: string }[] = [
   { title: 'COLAB', note: 'Intergenerational centre', href: 'archive/colab/', logo: 'colab' },
-  { title: 'Fortifications of Cartagena', note: 'Atalaya Castle', href: 'archive/cartagena/', logo: 'cartagena' },
+  { title: 'Sports space at Madrid Zoo', note: 'Reuse of Javier Carvajal’s structures', href: 'archive/madrid-zoo/', logo: 'madrid-zoo' },
   { title: 'Bioperfectible skin', note: 'Bachelor thesis', href: 'archive/bioperfectible-skin/', logo: 'bioperfectible-skin' },
   { title: 'Digital workflows for informed decision making in building envelope design', note: 'PhD', href: 'work/literature-review/', logo: 'literature-review' },
   { title: 'Fehmarnbelt tunnel', note: 'IDOM', href: 'work/fehmarnbelt-tunnel/', logo: 'fehmarnbelt-tunnel' },
