@@ -154,9 +154,10 @@ export const work: WorkItem[] = [
     kind: 'Project',
     title: 'Fehmarnbelt tunnel',
     place: 'Denmark and Germany',
-    summary: 'The immersed tunnel between Denmark and Germany. Case study in preparation.',
+    summary: 'Design of the skylights at the tunnel portal, with daylight simulations and their constructive detailing.',
     text: [
-      'The Fehmarnbelt fixed link, the immersed tunnel between Rødby (Denmark) and Puttgarden (Germany). Case study in preparation.', // TODO texto y material
+      'The Fehmarnbelt fixed link, the immersed tunnel between Rødby (Denmark) and Puttgarden (Germany).',
+      'I worked on the design of the skylights over the tunnel portal: daylight simulations of the natural light entering the tunnel, and resolving the constructive complexity of the skylights themselves.',
     ],
     gallery: [
       { file: 'fehmarnbelt-1.jpg', alt: 'The tunnel portal at Rødbyhavn, with the daylight louvres over the entrance' },
