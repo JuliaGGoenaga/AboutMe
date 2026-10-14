@@ -49,8 +49,9 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
     </div>
     {
       pic && (
-        <figure class="pic">
+        <figure class:list={['pic', { photo: w.image?.photo }]}>
           <Image src={pic} alt={w.image!.alt} widths={[640, 1200, 1800]} sizes="(max-width: 900px) 100vw, 45vw" />
+          {w.image?.credit && <figcaption>{w.image.credit}</figcaption>}
         </figure>
       )
     }
@@ -169,6 +170,14 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
   }
   .pic {
     margin: 0;
+  }
+  .pic.photo :global(img) {
+    mix-blend-mode: normal;
+  }
+  .pic figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--ink-3);
   }
   .pic :global(img) {
     display: block;

@@ -137,7 +137,8 @@ export type WorkItem = {
   year?: string;
   summary: string; // una frase para la tarjeta
   text: string[];
-  image?: { file: string; alt: string }; // en src/assets/work/
+  // En src/assets/work/. `photo`: foto o render (sin fundir con el papel); `credit`: autoría de la imagen
+  image?: { file: string; alt: string; photo?: boolean; credit?: string };
   extra?: { label: string; href: string }[]; // accesos secundarios (p. ej. la web interactiva)
   links?: { label: string; href: string }[];
   featured?: boolean;
@@ -154,6 +155,7 @@ export const work: WorkItem[] = [
     text: [
       'The Fehmarnbelt fixed link, the immersed tunnel between Rødby (Denmark) and Puttgarden (Germany). Case study in preparation.', // TODO texto y material
     ],
+    image: { file: 'fehmarnbelt-tunnel.jpg', alt: 'Visualisation of the Fehmarnbelt tunnel portal, with daylight louvres over the entrance', photo: true, credit: 'Visualisation: Femern A/S' },
     featured: true,
   },
   {
