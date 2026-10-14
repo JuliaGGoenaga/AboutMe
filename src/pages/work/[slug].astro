@@ -171,6 +171,10 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
   .pic {
     margin: 0;
   }
+  /* Fotos y renders: más pequeños que los esquemas, para no forzar su resolución */
+  .pic.photo {
+    max-width: 440px;
+  }
   .pic.photo :global(img) {
     mix-blend-mode: normal;
   }
