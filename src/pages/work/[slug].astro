@@ -34,7 +34,7 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
         {w.year && <div><dt>Year</dt><dd>{w.year}</dd></div>}
       </dl>
     </header>
-    <div class:list={['body', { 'with-pic': pic }]}>
+    <div class:list={['body', { 'with-pic': pic && !w.image?.photo, 'with-photo': w.image?.photo }]}>
     <div class="text">
       {w.text.map((t) => <p>{t}</p>)}
       {w.links && (
@@ -171,9 +171,15 @@ const next = siblings[(siblings.findIndex((x) => x.slug === w.slug) + 1) % sibli
   .pic {
     margin: 0;
   }
-  /* Fotos y renders: más pequeños que los esquemas, para no forzar su resolución */
+  /* Fotos y renders: el texto arriba y la imagen debajo, ancha */
+  .body.with-photo {
+    margin: 40px 0 56px;
+  }
+  .with-photo .text {
+    margin: 0 0 32px;
+  }
   .pic.photo {
-    max-width: 440px;
+    max-width: 960px;
   }
   .pic.photo :global(img) {
     mix-blend-mode: normal;
